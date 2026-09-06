@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --soc-bg: #071018;
+    --soc-surface: #0D1721;
+    --soc-card: #111F2C;
+    --soc-card-hover: #162636;
+    --soc-border: #243443;
+    --soc-border-subtle: #192634;
+    --soc-border-accent: #38BDF8;
+    --soc-text: #E7EEF5;
+    --soc-muted: #8EA1B2;
+    --soc-muted-dark: #586C7E;
+    --soc-accent: #38BDF8;
+    --soc-accent-glow: rgba(56, 189, 248, 0.15);
+
+    --risk-low: #10B981;
+    --risk-low-bg: rgba(16, 185, 129, 0.12);
+    --risk-low-border: rgba(16, 185, 129, 0.35);
+
+    --risk-medium: #F59E0B;
+    --risk-medium-bg: rgba(245, 158, 11, 0.12);
+    --risk-medium-border: rgba(245, 158, 11, 0.35);
+
+    --risk-high: #F97316;
+    --risk-high-bg: rgba(249, 115, 22, 0.12);
+    --risk-high-border: rgba(249, 115, 22, 0.35);
+
+    --risk-critical: #EF4444;
+    --risk-critical-bg: rgba(239, 68, 68, 0.12);
+    --risk-critical-border: rgba(239, 68, 68, 0.35);
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #071018;
+    color: #E7EEF5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  .font-mono-code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #071018;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #243443;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #38BDF8;
+}
+
+/* Keyframes for subtle SOC pulses and animated particle flows */
+@keyframes pulseSubtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 2.5s infinite ease-in-out;
+}
+
+@keyframes flowDash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.animate-flow-dash {
+  animation: flowDash 1.2s linear infinite;
+}
+
+@keyframes radarScan {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-radar {
+  animation: radarScan 4s linear infinite;
+  transform-origin: center;
+}
