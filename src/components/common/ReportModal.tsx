@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
-import { X, Printer, Download, Copy, Check, FileText, ShieldAlert } from 'lucide-react';
+import { X, Printer, Download, Copy, Check, FileText, ShieldAlert, ArrowUpRight } from 'lucide-react';
 import { MockCase, ComplianceReferral } from '../../types';
 import { RiskBadge } from './RiskBadge';
 import { RiskExplanationBox } from './RiskExplanationBox';
+import { CyberCellHandoffModal } from './CyberCellHandoffModal';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface ReportModalProps {
   caseData: MockCase;
   referral?: ComplianceReferral | null;
   onClose: () => void;
+  onUpdateCase?: (updated: MockCase) => void;
 }
 
 export const ReportModal: React.FC<ReportModalProps> = ({
   caseData,
   referral,
-  onClose
+  onClose,
+  onUpdateCase
 }) => {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
+  const [isHandoffModalOpen, setIsHandoffModalOpen] = useState(false);
 
   const reportReference = referral?.referenceNumber || `TG-REP-${caseData.id}`;
   const reportDate = referral?.timestamp || new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
@@ -129,6 +135,13 @@ analytical testing only. No real financial institution was contacted or notified
 
           <div className="flex items-center gap-2">
             <button
+              onClick={() => setIsHandoffModalOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold font-mono-code flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+            >
+              <ArrowUpRight className="w-3.5 h-3.5" />
+              <span>{t('handoff.escalateButton')}</span>
+            </button>
+            <button
               onClick={handleCopyJson}
               className="px-2.5 py-1.5 rounded-lg bg-[#071018] border border-[#243443] hover:border-[#38BDF8] text-[#8EA1B2] hover:text-white text-xs font-mono-code flex items-center gap-1.5 transition-colors cursor-pointer"
               title="Copy JSON representation"
@@ -163,6 +176,18 @@ analytical testing only. No real financial institution was contacted or notified
 
         {/* Scrollable Report Document */}
         <div className="p-6 overflow-y-auto space-y-6 text-[#E7EEF5] text-xs font-sans">
+          {/* Specialist Forensic Handoff Notice Banner */}
+          <div className="p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-200 flex items-start gap-2.5">
+            <ShieldAlert className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" />
+            <div className="space-y-0.5">
+              <div className="font-bold text-amber-300 uppercase tracking-wider text-[10px] font-mono-code">
+                {t('handoff.triageNoticeTitle')}
+              </div>
+              <p className="text-[11px] text-amber-200/90 leading-relaxed font-sans">
+                {t('handoff.triageNoticeBody')}
+              </p>
+            </div>
+          </div>
           {/* Header Banner */}
           <div className="p-4 rounded-lg bg-[#071018] border border-[#243443] flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -305,6 +330,16 @@ analytical testing only. No real financial institution was contacted or notified
           </div>
         </div>
       </div>
+
+      {isHandoffModalOpen && (
+        <CyberCellHandoffModal
+          caseData={caseData}
+          onClose={() => setIsHandoffModalOpen(false)}
+          onUpdateEscalationStatus={(updatedCase) => {
+            if (onUpdateCase) onUpdateCase(updatedCase);
+          }}
+        />
+      )}
     </div>
   );
 };

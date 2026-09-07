@@ -171,6 +171,7 @@ export function App() {
               casesList={casesList}
               onSelectCase={handleSelectCase}
               onNavigateToInvestigation={() => setActiveTab('investigation')}
+              onUpdateCase={handleUpdateCase}
             />
           )}
 
@@ -192,7 +193,12 @@ export function App() {
             <ComplianceAlertsPage referrals={referrals} />
           )}
 
-          {activeTab === 'reports' && <ReportsPage />}
+          {activeTab === 'reports' && (
+            <ReportsPage
+              casesList={casesList}
+              onUpdateCase={handleUpdateCase}
+            />
+          )}
 
           {activeTab === 'settings' && <SettingsPage />}
         </div>

@@ -126,5 +126,21 @@
     "officialPortal": "Visit NCRP Portal (cybercrime.gov.in)",
     "notFound": "Complaint Reference Not Found",
     "notFoundDesc": "We could not find an active complaint matching this reference number. Please verify the reference format (e.g., TG-2026-8841) or call the helpline at 1930."
+  },
+  "handoff": {
+    "title": "Specialist Forensic Handoff & Cyber Cell Escalation",
+    "subtitle": "Generate machine-readable JSON telemetry packages and formal briefing dossiers for specialist cyber cell units and deep forensics platforms.",
+    "triageNoticeTitle": "NOTICE: SPECIALIST FORENSIC HANDOFF PACKAGE",
+    "triageNoticeBody": "This package is formatted for handoff to specialist forensic teams and platforms (e.g., cyber cell units) for deep transaction tracing and bank/UPI-level attribution. TraceGuard serves as a first-response triage and pattern-matching layer.",
+    "escalateButton": "Escalate to Cyber Cell",
+    "downloadJson": "Export JSON Package",
+    "downloadPdf": "Download Briefing Dossier",
+    "copyJson": "Copy JSON Payload",
+    "escalationStatus": "Escalation Status",
+    "statusNotEscalated": "Not Escalated",
+    "statusEscalated": "Escalated to Cyber Cell",
+    "statusAccepted": "Accepted by Specialist Team",
+    "statusReturned": "Returned for More Info",
+    "updateStatus": "Update Escalation Status"
   }
 }

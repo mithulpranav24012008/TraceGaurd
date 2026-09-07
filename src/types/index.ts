@@ -151,6 +151,12 @@ export interface PatternMatchResult {
   matchingReports: NationalRegistryEntry[];
 }
 
+export type EscalationStatus = 
+  | 'Not Escalated' 
+  | 'Escalated' 
+  | 'Accepted by Specialist Team' 
+  | 'Returned for More Info';
+
 export interface MockCase {
   id: string;
   title: string;
@@ -171,6 +177,7 @@ export interface MockCase {
   attribution: ExchangeAttribution;
   highRiskReasons: string[];
   status: 'Investigating' | 'Attributed' | 'Alerted';
+  escalationStatus?: EscalationStatus;
 }
 
 export type TriageAction = 'Escalate to Cyber Cell' | 'Monitor' | 'Low Priority';

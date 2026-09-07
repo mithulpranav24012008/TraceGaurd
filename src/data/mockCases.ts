@@ -13,6 +13,7 @@ export const MOCK_CASES: MockCase[] = [
     suspiciousAmount: 73420,
     source: 'Victim Report',
     status: 'Alerted',
+    escalationStatus: 'Escalated',
     seedDetails: {
       address: '0x71c89f2a2810a993e827b508f7d8e0a2e399A42',
       blockchain: 'Ethereum',
@@ -1084,6 +1085,7 @@ export function generateSimulatedCaseForAddress(address: string, blockchain: 'Et
     suspiciousAmount: 64200,
     source,
     status: 'Investigating',
+    escalationStatus: 'Not Escalated',
     seedDetails: {
       address,
       blockchain,

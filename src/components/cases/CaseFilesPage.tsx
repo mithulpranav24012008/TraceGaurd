@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
-import { Search, Filter, FolderSearch, ArrowUpRight, ShieldAlert, CheckCircle2, ChevronRight } from 'lucide-react';
-import { MockCase, RiskLevel } from '../../types';
+import { Search, Filter, FolderSearch, ArrowUpRight, ShieldAlert, CheckCircle2, ChevronRight, FileCode } from 'lucide-react';
+import { MockCase, RiskLevel, EscalationStatus } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
 import { RiskBadge } from '../common/RiskBadge';
+import { CyberCellHandoffModal } from '../common/CyberCellHandoffModal';
 import { truncateAddress } from '../../utils/formatters';
 
 interface CaseFilesPageProps {
   casesList?: MockCase[];
   onSelectCase: (c: MockCase) => void;
   onNavigateToInvestigation: () => void;
+  onUpdateCase?: (updated: MockCase) => void;
 }
 
 export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
   casesList = MOCK_CASES,
   onSelectCase,
-  onNavigateToInvestigation
+  onNavigateToInvestigation,
+  onUpdateCase
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [riskFilter, setRiskFilter] = useState<string>('All');
+  const [handoffCase, setHandoffCase] = useState<MockCase | null>(null);
 
   const filteredCases = casesList.filter((c) => {
     const matchesSearch =
@@ -38,6 +42,19 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
     onNavigateToInvestigation();
   };
 
+  const getEscalationBadge = (status?: EscalationStatus) => {
+    switch (status) {
+      case 'Escalated':
+        return 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30';
+      case 'Accepted by Specialist Team':
+        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+      case 'Returned for More Info':
+        return 'bg-amber-500/10 text-amber-300 border-amber-500/30';
+      default:
+        return 'bg-slate-800 text-slate-400 border-slate-700';
+    }
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6 select-none">
       {/* Page Header */}
@@ -45,10 +62,10 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
         <div>
           <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
             <FolderSearch className="w-5 h-5 text-[#38BDF8]" />
-            <span>Forensic Case Repository</span>
+            <span>Forensic Case Repository & Cyber Cell Triage Handoff</span>
           </h1>
           <p className="text-xs text-[#8EA1B2] mt-0.5">
-            Active and archived blockchain fraud investigations with real-time heuristic status.
+            Active and archived blockchain fraud investigations. First-response triage layer feeding into specialist forensic units.
           </p>
         </div>
 
@@ -120,8 +137,8 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
                 <th className="px-4 py-3">Threat Tier</th>
                 <th className="px-4 py-3">Attributed CEX</th>
                 <th className="px-4 py-3">Traced Funds</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Action</th>
+                <th className="px-4 py-3">Escalation Status</th>
+                <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#243443]/60 text-[#E7EEF5]">
@@ -175,19 +192,27 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
 
                     <td className="px-4 py-3.5">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${
-                          c.status === 'Alerted'
-                            ? 'bg-red-500/10 text-red-400 border-red-500/30'
-                            : c.status === 'Attributed'
-                            ? 'bg-[#38BDF8]/10 text-[#38BDF8] border-[#38BDF8]/30'
-                            : 'bg-amber-500/10 text-amber-300 border-amber-500/30'
-                        }`}
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold border ${getEscalationBadge(
+                          c.escalationStatus
+                        )}`}
                       >
-                        {c.status}
+                        {c.escalationStatus || 'Not Escalated'}
                       </span>
                     </td>
 
-                    <td className="px-4 py-3.5 text-right">
+                    <td className="px-4 py-3.5 text-right space-x-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setHandoffCase(c);
+                        }}
+                        className="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white px-2.5 py-1.5 rounded-lg border border-indigo-500/40 transition-all text-xs font-semibold inline-flex items-center gap-1 cursor-pointer"
+                        title="Export handoff package for Cyber Cell"
+                      >
+                        <FileCode className="w-3 h-3" />
+                        <span>Handoff</span>
+                      </button>
+
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -206,6 +231,17 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
           </table>
         </div>
       </div>
+
+      {/* Cyber Cell Handoff Modal */}
+      {handoffCase && (
+        <CyberCellHandoffModal
+          caseData={handoffCase}
+          onClose={() => setHandoffCase(null)}
+          onUpdateEscalationStatus={(updatedCase) => {
+            if (onUpdateCase) onUpdateCase(updatedCase);
+          }}
+        />
+      )}
     </div>
   );
 };
