@@ -56,51 +56,51 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6 select-none">
+    <div className="p-6 max-w-7xl mx-auto space-y-6 select-none font-mono text-black">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="neo-card-yellow p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-            <FolderSearch className="w-5 h-5 text-[#38BDF8]" />
+          <h1 className="text-xl font-mono font-bold text-black uppercase tracking-tight flex items-center gap-2">
+            <FolderSearch className="w-5 h-5 text-black" />
             <span>Forensic Case Repository & Cyber Cell Triage Handoff</span>
           </h1>
-          <p className="text-xs text-[#8EA1B2] mt-0.5">
+          <p className="text-xs text-black/80 font-mono mt-0.5">
             Active and archived blockchain fraud investigations. First-response triage layer feeding into specialist forensic units.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono-code text-[#8EA1B2]">
-          <span className="p-2 rounded-lg bg-[#0D1721] border border-[#243443]">
-            Total Cases: <strong className="text-white">{casesList.length}</strong>
+        <div className="flex items-center gap-2 text-xs font-mono font-bold text-black">
+          <span className="p-2 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+            Total Cases: <strong className="text-black underline">{casesList.length}</strong>
           </span>
-          <span className="p-2 rounded-lg bg-[#0D1721] border border-[#243443]">
-            Matching: <strong className="text-[#38BDF8]">{filteredCases.length}</strong>
+          <span className="p-2 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+            Matching: <strong className="text-black underline">{filteredCases.length}</strong>
           </span>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="p-4 rounded-xl bg-[#0D1721] border border-[#243443] flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="neo-card p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Search Input */}
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-[#8EA1B2] absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-black absolute left-3 top-2.5" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by case ID, suspect address, exchange, or title..."
-            className="w-full bg-[#071018] border border-[#243443] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-lg pl-9 pr-3 py-2 text-xs font-mono-code text-white placeholder-[#586C7E] outline-hidden transition-all"
+            className="w-full neo-input pl-9"
           />
         </div>
 
         {/* Dropdown Filters */}
-        <div className="flex items-center gap-3 font-mono-code text-xs">
+        <div className="flex items-center gap-3 font-mono text-xs text-black">
           <div className="flex items-center gap-1.5">
-            <span className="text-[#8EA1B2] text-[11px]">STATUS:</span>
+            <span className="text-black/70 text-[11px] font-bold">STATUS:</span>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-[#071018] border border-[#243443] focus:border-[#38BDF8] text-white rounded-lg px-2.5 py-1.5 text-xs outline-hidden cursor-pointer"
+              className="neo-input py-1 cursor-pointer"
             >
               <option value="All">All Statuses</option>
               <option value="Investigating">Investigating</option>
@@ -110,11 +110,11 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="text-[#8EA1B2] text-[11px]">RISK:</span>
+            <span className="text-black/70 text-[11px] font-bold">RISK:</span>
             <select
               value={riskFilter}
               onChange={(e) => setRiskFilter(e.target.value)}
-              className="bg-[#071018] border border-[#243443] focus:border-[#38BDF8] text-white rounded-lg px-2.5 py-1.5 text-xs outline-hidden cursor-pointer"
+              className="neo-input py-1 cursor-pointer"
             >
               <option value="All">All Tiers</option>
               <option value="Critical">Critical</option>
@@ -127,10 +127,10 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
       </div>
 
       {/* Case Files Table */}
-      <div className="bg-[#0D1721] border border-[#243443] rounded-xl overflow-hidden shadow-xl">
+      <div className="neo-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono-code">
-            <thead className="bg-[#111F2C] border-b border-[#243443] text-[10px] text-[#8EA1B2] uppercase tracking-wider">
+          <table className="w-full text-left text-xs font-mono">
+            <thead className="bg-[#FBBF24] border-b-2 border-black text-[10px] text-black font-mono font-bold uppercase tracking-wider">
               <tr>
                 <th className="px-4 py-3">Case ID & Scenario</th>
                 <th className="px-4 py-3">Chain & Target Address</th>
@@ -141,10 +141,10 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#243443]/60 text-[#E7EEF5]">
+            <tbody className="divide-y-2 divide-black text-black">
               {filteredCases.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-[#8EA1B2]">
+                  <td colSpan={7} className="px-4 py-12 text-center text-black/70 font-bold">
                     No forensic case records match your query.
                   </td>
                 </tr>
@@ -153,21 +153,21 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
                   <tr
                     key={c.id}
                     onClick={() => handleOpenCase(c)}
-                    className="hover:bg-[#111F2C]/80 cursor-pointer transition-colors group"
+                    className="hover:bg-[#FEF9EF] cursor-pointer transition-colors group"
                   >
                     <td className="px-4 py-3.5">
-                      <div className="font-bold text-white flex items-center gap-2">
+                      <div className="font-bold text-black flex items-center gap-2">
                         <span>{c.id}</span>
-                        <ChevronRight className="w-3 h-3 text-[#38BDF8] opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <ChevronRight className="w-3 h-3 text-black opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
-                      <div className="text-[11px] text-[#8EA1B2] font-sans mt-0.5 truncate max-w-xs">
+                      <div className="text-[11px] text-black/70 font-mono mt-0.5 truncate max-w-xs">
                         {c.scenario}
                       </div>
                     </td>
 
                     <td className="px-4 py-3.5">
-                      <div className="text-[#38BDF8] font-semibold">{c.blockchain}</div>
-                      <div className="text-[10px] text-[#8EA1B2] mt-0.5">
+                      <div className="text-black font-bold underline">{c.blockchain}</div>
+                      <div className="text-[10px] text-black/70 mt-0.5">
                         {truncateAddress(c.seedDetails.address, 6, 6)}
                       </div>
                     </td>
@@ -177,24 +177,22 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
                     </td>
 
                     <td className="px-4 py-3.5">
-                      <div className="text-white font-semibold">{c.attribution.exchange}</div>
-                      <div className="text-[10px] text-emerald-400 mt-0.5">
+                      <div className="text-black font-bold">{c.attribution.exchange}</div>
+                      <div className="text-[10px] text-green-700 font-bold mt-0.5">
                         {c.attribution.confidence}% Confidence
                       </div>
                     </td>
 
                     <td className="px-4 py-3.5">
-                      <div className="text-emerald-400 font-bold">
+                      <div className="text-green-800 font-bold">
                         ${c.suspiciousAmount.toLocaleString()}
                       </div>
-                      <div className="text-[10px] text-[#8EA1B2]">USD Value</div>
+                      <div className="text-[10px] text-black/70 font-bold">USD Value</div>
                     </td>
 
                     <td className="px-4 py-3.5">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold border ${getEscalationBadge(
-                          c.escalationStatus
-                        )}`}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold border-2 border-black shadow-[1px_1px_0px_0px_#000] bg-white text-black"
                       >
                         {c.escalationStatus || 'Not Escalated'}
                       </span>
@@ -206,10 +204,10 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
                           e.stopPropagation();
                           setHandoffCase(c);
                         }}
-                        className="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white px-2.5 py-1.5 rounded-lg border border-indigo-500/40 transition-all text-xs font-semibold inline-flex items-center gap-1 cursor-pointer"
+                        className="neo-btn bg-indigo-600 text-white px-2.5 py-1.5 text-xs inline-flex items-center gap-1"
                         title="Export handoff package for Cyber Cell"
                       >
-                        <FileCode className="w-3 h-3" />
+                        <FileCode className="w-3 h-3 text-white" />
                         <span>Handoff</span>
                       </button>
 
@@ -218,10 +216,10 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
                           e.stopPropagation();
                           handleOpenCase(c);
                         }}
-                        className="bg-[#071018] hover:bg-[#38BDF8] text-[#8EA1B2] hover:text-slate-950 px-2.5 py-1.5 rounded-lg border border-[#243443] hover:border-[#38BDF8] transition-all text-xs font-semibold inline-flex items-center gap-1 cursor-pointer"
+                        className="neo-btn-sec px-2.5 py-1.5 text-xs inline-flex items-center gap-1"
                       >
                         <span>Investigate</span>
-                        <ArrowUpRight className="w-3 h-3" />
+                        <ArrowUpRight className="w-3 h-3 text-black" />
                       </button>
                     </td>
                   </tr>

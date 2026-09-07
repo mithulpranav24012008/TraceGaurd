@@ -338,23 +338,23 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6 select-none font-sans">
+    <div className="p-6 max-w-7xl mx-auto space-y-6 select-none font-mono text-black">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-16 right-6 z-50 bg-[#0D1721] border border-emerald-500/40 text-emerald-300 text-xs px-4 py-2.5 rounded-lg shadow-2xl flex items-center gap-2 font-mono-code animate-in slide-in-from-top-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="fixed top-16 right-6 z-50 bg-[#FBBF24] border-2 border-black text-black text-xs px-4 py-2.5 rounded-lg shadow-[4px_4px_0px_0px_#000] flex items-center gap-2 font-mono font-bold animate-in slide-in-from-top-2">
+          <CheckCircle2 className="w-4 h-4 text-black shrink-0" />
           <span>{notification}</span>
         </div>
       )}
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="neo-card-yellow p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-            <Inbox className="w-5 h-5 text-[#38BDF8]" />
+          <h1 className="text-xl font-mono font-bold text-black uppercase tracking-tight flex items-center gap-2">
+            <Inbox className="w-5 h-5 text-black" />
             <span>Station Triage Queue — Multi-Complaint Backlog Processing</span>
           </h1>
-          <p className="text-xs text-[#8EA1B2] mt-0.5 max-w-3xl">
+          <p className="text-xs text-black/80 font-mono mt-1 max-w-3xl">
             Station-level desk for processing incoming cybercrime complaints in bulk. Automated multi-factor risk scoring ranks backlog priority for immediate escalation.
           </p>
         </div>
@@ -363,75 +363,75 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setIsCsvModalOpen(true)}
-            className="bg-[#111F2C] hover:bg-[#162636] border border-[#243443] hover:border-[#38BDF8] text-white px-3.5 py-2 rounded-lg text-xs font-mono-code flex items-center gap-2 transition-all cursor-pointer"
+            className="neo-btn-sec px-3.5 py-2 text-xs flex items-center gap-2"
           >
-            <Upload className="w-3.5 h-3.5 text-[#38BDF8]" />
+            <Upload className="w-3.5 h-3.5 text-black" />
             <span>Bulk CSV Import</span>
           </button>
 
           <button
             onClick={() => setIsManualModalOpen(true)}
-            className="bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 font-bold px-3.5 py-2 rounded-lg text-xs font-mono-code flex items-center gap-1.5 transition-all cursor-pointer shadow-lg shadow-[#38BDF8]/10"
+            className="neo-btn px-3.5 py-2 text-xs flex items-center gap-1.5"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-white" />
             <span>Add Complaint</span>
           </button>
         </div>
       </div>
 
       {/* Quick Summary KPIs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono-code text-xs">
-        <div className="p-3 rounded-lg bg-[#0D1721] border border-[#243443]">
-          <div className="text-[10px] text-[#8EA1B2] uppercase">Pending Backlog</div>
-          <div className="text-lg font-bold text-white mt-0.5">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
+        <div className="neo-card p-3">
+          <div className="text-[10px] text-black/70 font-bold uppercase">Pending Backlog</div>
+          <div className="text-lg font-bold text-black mt-0.5">
             {complaints.filter((c) => c.status === 'Pending Triage').length}
           </div>
         </div>
 
-        <div className="p-3 rounded-lg bg-[#0D1721] border border-[#243443]">
-          <div className="text-[10px] text-red-400 uppercase">Urgent Escalation Needed</div>
-          <div className="text-lg font-bold text-red-400 mt-0.5">
+        <div className="neo-card-pink p-3">
+          <div className="text-[10px] text-black font-bold uppercase">Urgent Escalation Needed</div>
+          <div className="text-lg font-bold text-black mt-0.5">
             {complaints.filter((c) => c.recommendedAction === 'Escalate to Cyber Cell' && c.status === 'Pending Triage').length}
           </div>
         </div>
 
-        <div className="p-3 rounded-lg bg-[#0D1721] border border-[#243443]">
-          <div className="text-[10px] text-amber-400 uppercase">Pattern Hits (≥1 Victims)</div>
-          <div className="text-lg font-bold text-amber-400 mt-0.5">
+        <div className="neo-card-yellow p-3">
+          <div className="text-[10px] text-black font-bold uppercase">Pattern Hits (≥1 Victims)</div>
+          <div className="text-lg font-bold text-black mt-0.5">
             {complaints.filter((c) => c.patternMatchCount > 0).length}
           </div>
         </div>
 
-        <div className="p-3 rounded-lg bg-[#0D1721] border border-[#243443]">
-          <div className="text-[10px] text-emerald-400 uppercase">Total Case Value</div>
-          <div className="text-lg font-bold text-emerald-400 mt-0.5">
+        <div className="neo-card-mint p-3">
+          <div className="text-[10px] text-black font-bold uppercase">Total Case Value</div>
+          <div className="text-lg font-bold text-black mt-0.5">
             {formatINR(complaints.reduce((s, c) => s + c.amount, 0))}
           </div>
         </div>
       </div>
 
       {/* Filter and Bulk Action Bar */}
-      <div className="p-4 rounded-xl bg-[#0D1721] border border-[#243443] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="neo-card p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-[#8EA1B2] absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-black absolute left-3 top-2.5" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by complainant, wallet address, station, or complaint ID..."
-            className="w-full bg-[#071018] border border-[#243443] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-lg pl-9 pr-3 py-2 text-xs font-mono-code text-white placeholder-[#586C7E] outline-hidden transition-all"
+            className="w-full neo-input pl-9"
           />
         </div>
 
         {/* Dropdown Filters */}
-        <div className="flex flex-wrap items-center gap-2.5 font-mono-code text-xs">
+        <div className="flex flex-wrap items-center gap-2.5 font-mono text-xs text-black">
           <div className="flex items-center gap-1">
-            <span className="text-[#8EA1B2] text-[10px]">STATUS:</span>
+            <span className="text-black/70 text-[10px] font-bold">STATUS:</span>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-[#071018] border border-[#243443] text-white rounded-lg px-2 py-1 text-xs outline-hidden cursor-pointer"
+              className="neo-input py-1 cursor-pointer"
             >
               <option value="Pending Triage">Pending Triage</option>
               <option value="Escalated">Escalated</option>
@@ -440,11 +440,11 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
           </div>
 
           <div className="flex items-center gap-1">
-            <span className="text-[#8EA1B2] text-[10px]">CHAIN:</span>
+            <span className="text-black/70 text-[10px] font-bold">CHAIN:</span>
             <select
               value={chainFilter}
               onChange={(e) => setChainFilter(e.target.value)}
-              className="bg-[#071018] border border-[#243443] text-white rounded-lg px-2 py-1 text-xs outline-hidden cursor-pointer"
+              className="neo-input py-1 cursor-pointer"
             >
               <option value="All">All Chains</option>
               <option value="Ethereum">Ethereum</option>
@@ -455,11 +455,11 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
           </div>
 
           <div className="flex items-center gap-1">
-            <span className="text-[#8EA1B2] text-[10px]">RISK:</span>
+            <span className="text-black/70 text-[10px] font-bold">RISK:</span>
             <select
               value={riskFilter}
               onChange={(e) => setRiskFilter(e.target.value)}
-              className="bg-[#071018] border border-[#243443] text-white rounded-lg px-2 py-1 text-xs outline-hidden cursor-pointer"
+              className="neo-input py-1 cursor-pointer"
             >
               <option value="All">All Tiers</option>
               <option value="Critical">Critical</option>
@@ -470,11 +470,11 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
           </div>
 
           <div className="flex items-center gap-1">
-            <span className="text-[#8EA1B2] text-[10px]">ACTION:</span>
+            <span className="text-black/70 text-[10px] font-bold">ACTION:</span>
             <select
               value={actionFilter}
               onChange={(e) => setActionFilter(e.target.value)}
-              className="bg-[#071018] border border-[#243443] text-white rounded-lg px-2 py-1 text-xs outline-hidden cursor-pointer"
+              className="neo-input py-1 cursor-pointer"
             >
               <option value="All">All Actions</option>
               <option value="Escalate to Cyber Cell">Escalate to Cyber Cell</option>
@@ -488,19 +488,19 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
         {selectedIds.size > 0 && (
           <button
             onClick={handleBulkEscalate}
-            className="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-lg text-xs font-mono-code flex items-center gap-2 transition-all cursor-pointer shadow-lg shadow-red-500/20 animate-in fade-in shrink-0"
+            className="neo-btn bg-red-600 text-white font-bold px-4 py-2 text-xs flex items-center gap-2 shrink-0"
           >
-            <Send className="w-3.5 h-3.5" />
+            <Send className="w-3.5 h-3.5 text-white" />
             <span>Select and Escalate ({selectedIds.size}) to Case Files</span>
           </button>
         )}
       </div>
 
       {/* Dense Triage Table */}
-      <div className="bg-[#0D1721] border border-[#243443] rounded-xl overflow-hidden shadow-2xl">
+      <div className="neo-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono-code border-collapse">
-            <thead className="bg-[#111F2C] border-b border-[#243443] text-[10px] text-[#8EA1B2] uppercase tracking-wider sticky top-0 z-10">
+          <table className="w-full text-left text-xs font-mono border-collapse">
+            <thead className="bg-[#FBBF24] border-b-2 border-black text-[10px] text-black font-mono font-bold uppercase tracking-wider sticky top-0 z-10">
               <tr>
                 <th className="px-3 py-3 w-10 text-center">
                   <input
@@ -510,15 +510,13 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                       processedComplaints.every((c) => selectedIds.has(c.id))
                     }
                     onChange={handleSelectAll}
-                    className="accent-[#38BDF8] rounded cursor-pointer"
+                    className="accent-black rounded cursor-pointer"
                   />
                 </th>
                 <th className="px-3 py-3">
                   <button
                     onClick={() => toggleSort('riskScore')}
-                    className={`flex items-center gap-1 font-bold hover:text-white cursor-pointer ${
-                      sortField === 'riskScore' ? 'text-[#38BDF8]' : ''
-                    }`}
+                    className="flex items-center gap-1 font-bold text-black hover:underline cursor-pointer"
                   >
                     <span>Threat Score</span>
                     <ArrowUpDown className="w-3 h-3" />
@@ -529,9 +527,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                 <th className="px-3 py-3">
                   <button
                     onClick={() => toggleSort('amount')}
-                    className={`flex items-center gap-1 font-bold hover:text-white cursor-pointer ${
-                      sortField === 'amount' ? 'text-[#38BDF8]' : ''
-                    }`}
+                    className="flex items-center gap-1 font-bold text-black hover:underline cursor-pointer"
                   >
                     <span>Reported Value</span>
                     <ArrowUpDown className="w-3 h-3" />
@@ -540,9 +536,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                 <th className="px-3 py-3">
                   <button
                     onClick={() => toggleSort('daysAgo')}
-                    className={`flex items-center gap-1 font-bold hover:text-white cursor-pointer ${
-                      sortField === 'daysAgo' ? 'text-[#38BDF8]' : ''
-                    }`}
+                    className="flex items-center gap-1 font-bold text-black hover:underline cursor-pointer"
                   >
                     <span>Reported</span>
                     <ArrowUpDown className="w-3 h-3" />
@@ -551,11 +545,9 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                 <th className="px-3 py-3">
                   <button
                     onClick={() => toggleSort('patternMatchCount')}
-                    className={`flex items-center gap-1 font-bold hover:text-white cursor-pointer ${
-                      sortField === 'patternMatchCount' ? 'text-[#38BDF8]' : ''
-                    }`}
+                    className="flex items-center gap-1 font-bold text-black hover:underline cursor-pointer"
                   >
-                    <Radar className="w-3 h-3 text-red-400" />
+                    <Radar className="w-3 h-3 text-black" />
                     <span>Pattern Hits</span>
                     <ArrowUpDown className="w-3 h-3" />
                   </button>
@@ -564,10 +556,10 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                 <th className="px-3 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#243443]/60 text-[#E7EEF5]">
+            <tbody className="divide-y-2 divide-black text-black">
               {processedComplaints.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center text-[#8EA1B2]">
+                  <td colSpan={9} className="px-4 py-12 text-center text-black/70 font-bold">
                     No complaints match your triage filters.
                   </td>
                 </tr>
@@ -579,8 +571,8 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                   return (
                     <tr
                       key={c.id}
-                      className={`hover:bg-[#111F2C]/80 transition-colors ${
-                        isSelected ? 'bg-[#38BDF8]/8' : ''
+                      className={`hover:bg-[#FEF9EF] transition-colors ${
+                        isSelected ? 'bg-[#94D3AC]/30' : ''
                       } ${c.status === 'Escalated' ? 'opacity-60' : ''}`}
                     >
                       <td className="px-3 py-2.5 text-center">
@@ -588,7 +580,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => toggleSelectRow(c.id)}
-                          className="accent-[#38BDF8] rounded cursor-pointer"
+                          className="accent-black rounded cursor-pointer"
                         />
                       </td>
 
@@ -599,11 +591,11 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
 
                       {/* Complainant Name & Station */}
                       <td className="px-3 py-2.5">
-                        <div className="font-bold text-white flex items-center gap-1.5">
+                        <div className="font-bold text-black flex items-center gap-1.5">
                           <span>{c.complainantName}</span>
-                          <span className="text-[10px] text-[#8EA1B2] font-normal">({c.id})</span>
+                          <span className="text-[10px] text-black/60 font-normal">({c.id})</span>
                         </div>
-                        <div className="text-[10px] text-[#8EA1B2] font-sans truncate max-w-xs mt-0.5">
+                        <div className="text-[10px] text-black/70 truncate max-w-xs mt-0.5">
                           {c.stationDistrict}
                         </div>
                       </td>
@@ -611,34 +603,34 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                       {/* Target Address & Chain */}
                       <td className="px-3 py-2.5">
                         <div className="flex items-center gap-1">
-                          <span className="text-white font-mono-code font-semibold" title={c.walletAddress}>
+                          <span className="text-black font-mono font-bold" title={c.walletAddress}>
                             {truncateAddress(c.walletAddress, 6, 4)}
                           </span>
                           <button
                             onClick={() => handleCopy(c.walletAddress)}
-                            className="text-[#8EA1B2] hover:text-white p-0.5 cursor-pointer"
+                            className="text-black hover:opacity-75 p-0.5 cursor-pointer"
                             title="Copy address"
                           >
                             {copiedAddress === c.walletAddress ? (
-                              <Check className="w-3 h-3 text-emerald-400" />
+                              <Check className="w-3 h-3 text-green-700 font-bold" />
                             ) : (
                               <Copy className="w-3 h-3" />
                             )}
                           </button>
                         </div>
-                        <div className="text-[10px] text-[#38BDF8] mt-0.5">{c.chain}</div>
+                        <div className="text-[10px] text-black font-bold mt-0.5 underline">{c.chain}</div>
                       </td>
 
                       {/* Reported Value */}
                       <td className="px-3 py-2.5 whitespace-nowrap">
-                        <div className="text-emerald-400 font-bold">{formatINR(c.amount)}</div>
-                        <div className="text-[10px] text-[#8EA1B2]">${c.amountUsd.toLocaleString()} USD</div>
+                        <div className="text-green-800 font-bold">{formatINR(c.amount)}</div>
+                        <div className="text-[10px] text-black/70 font-bold">${c.amountUsd.toLocaleString()} USD</div>
                       </td>
 
                       {/* Reported Date / Days Ago */}
                       <td className="px-3 py-2.5 whitespace-nowrap">
-                        <div className="text-white">{c.dateReported}</div>
-                        <div className="text-[10px] text-[#8EA1B2]">
+                        <div className="text-black font-bold">{c.dateReported}</div>
+                        <div className="text-[10px] text-black/70">
                           {daysAgo === 0 ? 'Today' : `${daysAgo} day(s) ago`}
                         </div>
                       </td>
@@ -647,27 +639,31 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                       <td className="px-3 py-2.5">
                         {c.patternMatchCount > 0 ? (
                           <div className="space-y-0.5">
-                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/30">
-                              <Radar className="w-3 h-3" />
+                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#FBCFE8] text-black border border-black shadow-[1px_1px_0px_0px_#000]">
+                              <Radar className="w-3 h-3 text-black" />
                               {c.patternMatchCount} prior victims
                             </span>
                             {c.patternStates.length > 0 && (
-                              <div className="text-[9px] text-[#8EA1B2] truncate max-w-[140px]">
+                              <div className="text-[9px] text-black/70 truncate max-w-[140px]">
                                 {c.patternStates.slice(0, 2).join(', ')}
                               </div>
                             )}
                           </div>
                         ) : (
-                          <span className="text-[10px] text-[#586C7E]">No prior hits</span>
+                          <span className="text-[10px] text-black/50">No prior hits</span>
                         )}
                       </td>
 
                       {/* Recommended Action */}
                       <td className="px-3 py-2.5 whitespace-nowrap">
                         <span
-                          className={`px-2 py-1 rounded text-[10px] uppercase font-bold border inline-block ${getActionBadgeClass(
-                            c.recommendedAction
-                          )}`}
+                          className={`px-2 py-1 rounded text-[10px] uppercase font-bold border-2 border-black shadow-[1px_1px_0px_0px_#000] inline-block ${
+                            c.recommendedAction === 'Escalate to Cyber Cell'
+                              ? 'bg-red-300 text-black'
+                              : c.recommendedAction === 'Monitor'
+                              ? 'bg-[#FBBF24] text-black'
+                              : 'bg-[#94D3AC] text-black'
+                          }`}
                         >
                           {c.recommendedAction}
                         </span>
@@ -677,17 +673,17 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                       <td className="px-3 py-2.5 text-right whitespace-nowrap space-x-1">
                         <button
                           onClick={() => handleInspect(c)}
-                          className="bg-[#071018] hover:bg-[#38BDF8] text-[#8EA1B2] hover:text-slate-950 px-2 py-1 rounded border border-[#243443] hover:border-[#38BDF8] transition-all text-[11px] font-semibold inline-flex items-center gap-1 cursor-pointer"
+                          className="neo-btn-sec px-2 py-1 text-[11px] inline-flex items-center gap-1"
                           title="Run full forensic trace"
                         >
                           <span>Trace</span>
-                          <ChevronRight className="w-3 h-3" />
+                          <ChevronRight className="w-3 h-3 text-black" />
                         </button>
 
                         {c.status === 'Pending Triage' && (
                           <button
                             onClick={() => handleEscalateSingle(c)}
-                            className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-1 rounded text-[11px] font-semibold cursor-pointer"
+                            className="neo-btn px-2 py-1 text-[11px]"
                             title="Escalate directly to Case Files"
                           >
                             Escalate
@@ -705,36 +701,36 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
 
       {/* CSV Import Modal */}
       {isCsvModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-xs">
-          <div className="bg-[#0D1721] border border-[#243443] rounded-xl max-w-2xl w-full p-6 text-white space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[#243443] pb-3">
-              <h3 className="text-sm font-bold flex items-center gap-2 font-mono-code">
-                <FileSpreadsheet className="w-4 h-4 text-[#38BDF8]" />
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-[#FDFBF7] border-2 border-black rounded-xl max-w-2xl w-full p-6 text-black space-y-4 shadow-[6px_6px_0px_0px_#000]">
+            <div className="flex items-center justify-between border-b-2 border-black pb-3">
+              <h3 className="text-sm font-mono font-bold flex items-center gap-2 uppercase">
+                <FileSpreadsheet className="w-4 h-4 text-black" />
                 <span>Bulk CSV Complaint Import</span>
               </h3>
               <button
                 onClick={() => setIsCsvModalOpen(false)}
-                className="text-[#8EA1B2] hover:text-white p-1 cursor-pointer"
+                className="text-black hover:bg-black/10 p-1 rounded cursor-pointer border border-black"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-[#8EA1B2]">
+            <p className="text-xs text-black/80 font-mono">
               Paste CSV data or upload a file containing complaint records. Required columns:
               <br />
-              <code className="text-[#38BDF8] text-[11px]">
+              <code className="text-black font-bold bg-[#FBBF24] px-1 rounded border border-black text-[11px]">
                 Complainant Name, Wallet Address, Chain, Amount (INR), Date (YYYY-MM-DD), Station/District
               </code>
             </p>
 
-            <form onSubmit={handleImportCsvSubmit} className="space-y-4 font-mono-code text-xs">
+            <form onSubmit={handleImportCsvSubmit} className="space-y-4 font-mono text-xs">
               <textarea
                 rows={6}
                 value={csvInput}
                 onChange={(e) => setCsvInput(e.target.value)}
                 placeholder={`Complainant Name, Wallet Address, Chain, Amount, Date, Station\nRajesh Kumar, 0x71c89f2a2810a993e827b508f7d8e0a2e399A42, Ethereum, 1500000, 2026-09-06, Cyber PS Bengaluru\nPriya S, bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh, Bitcoin, 3200000, 2026-09-05, Cyber Cell Mumbai`}
-                className="w-full bg-[#071018] border border-[#243443] focus:border-[#38BDF8] rounded-lg p-3 text-xs text-white placeholder-[#586C7E] outline-hidden font-mono-code"
+                className="w-full neo-input font-mono"
               />
 
               <div className="flex items-center justify-between">
@@ -745,7 +741,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                       `Complainant Name, Wallet Address, Chain, Amount, Date, Station\nArun Varma, 0xAA3f9028Dc74E2bF6f1C45e8c3219bbE54E81c99, Ethereum, 2400000, 2026-09-07, Cyber Crime Cell Delhi\nSunil Patil, bc1qsuperoffender88291ab37cd9182ef0a78b450c, Bitcoin, 5400000, 2026-09-07, Cyber Cell Pune\nNisha Rao, 0x2a91029384710293847102938471029384710293, Polygon, 950000, 2026-09-06, Jaipur Cyber PS`
                     )
                   }
-                  className="text-xs text-[#38BDF8] hover:underline cursor-pointer"
+                  className="text-xs text-black font-bold underline cursor-pointer"
                 >
                   Load Sample CSV Payload
                 </button>
@@ -754,13 +750,13 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsCsvModalOpen(false)}
-                    className="px-4 py-2 rounded-lg bg-[#071018] border border-[#243443] text-[#8EA1B2] hover:text-white cursor-pointer"
+                    className="neo-btn-sec px-4 py-2 text-xs"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-lg bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 font-bold cursor-pointer"
+                    className="neo-btn px-4 py-2 text-xs"
                   >
                     Parse & Import Queue
                   </button>
@@ -773,31 +769,31 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
 
       {/* Manual Multi-Row Entry Modal */}
       {isManualModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-xs">
-          <div className="bg-[#0D1721] border border-[#243443] rounded-xl max-w-4xl w-full p-6 text-white space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-[#243443] pb-3">
-              <h3 className="text-sm font-bold flex items-center gap-2 font-mono-code">
-                <Plus className="w-4 h-4 text-[#38BDF8]" />
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-[#FDFBF7] border-2 border-black rounded-xl max-w-4xl w-full p-6 text-black space-y-4 shadow-[6px_6px_0px_0px_#000] max-h-[90vh] overflow-y-auto font-mono">
+            <div className="flex items-center justify-between border-b-2 border-black pb-3">
+              <h3 className="text-sm font-mono font-bold flex items-center gap-2 uppercase">
+                <Plus className="w-4 h-4 text-black" />
                 <span>Manual Multi-Row Complaint Entry Form</span>
               </h3>
               <button
                 onClick={() => setIsManualModalOpen(false)}
-                className="text-[#8EA1B2] hover:text-white p-1 cursor-pointer"
+                className="text-black hover:bg-black/10 p-1 rounded cursor-pointer border border-black"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleManualSubmit} className="space-y-4 font-mono-code text-xs">
+            <form onSubmit={handleManualSubmit} className="space-y-4 font-mono text-xs">
               {manualRows.map((row, idx) => (
-                <div key={idx} className="p-3 rounded-lg bg-[#071018] border border-[#243443] space-y-2 relative">
-                  <div className="flex items-center justify-between text-[10px] text-[#8EA1B2]">
+                <div key={idx} className="p-3 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000] space-y-2 relative">
+                  <div className="flex items-center justify-between text-[10px] text-black/70 font-bold">
                     <span>COMPLAINT ENTRY #{idx + 1}</span>
                     {manualRows.length > 1 && (
                       <button
                         type="button"
                         onClick={() => setManualRows(manualRows.filter((_, i) => i !== idx))}
-                        className="text-red-400 hover:text-red-300 p-0.5 cursor-pointer"
+                        className="text-red-600 hover:opacity-75 p-0.5 cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -815,7 +811,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                         setManualRows(copy);
                       }}
                       required
-                      className="bg-[#0D1721] border border-[#243443] rounded px-2.5 py-1.5 text-xs text-white"
+                      className="neo-input"
                     />
 
                     <input
@@ -828,7 +824,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                         setManualRows(copy);
                       }}
                       required
-                      className="bg-[#0D1721] border border-[#243443] rounded px-2.5 py-1.5 text-xs text-white"
+                      className="neo-input"
                     />
 
                     <select
@@ -838,7 +834,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                         copy[idx].chain = e.target.value as Blockchain;
                         setManualRows(copy);
                       }}
-                      className="bg-[#0D1721] border border-[#243443] rounded px-2.5 py-1.5 text-xs text-white cursor-pointer"
+                      className="neo-input cursor-pointer"
                     >
                       <option value="Ethereum">Ethereum</option>
                       <option value="Bitcoin">Bitcoin</option>
@@ -857,7 +853,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                         copy[idx].amount = e.target.value;
                         setManualRows(copy);
                       }}
-                      className="bg-[#0D1721] border border-[#243443] rounded px-2.5 py-1.5 text-xs text-white"
+                      className="neo-input"
                     />
 
                     <input
@@ -868,7 +864,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                         copy[idx].dateReported = e.target.value;
                         setManualRows(copy);
                       }}
-                      className="bg-[#0D1721] border border-[#243443] rounded px-2.5 py-1.5 text-xs text-white cursor-pointer"
+                      className="neo-input cursor-pointer"
                     />
 
                     <input
@@ -880,13 +876,13 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                         copy[idx].stationDistrict = e.target.value;
                         setManualRows(copy);
                       }}
-                      className="bg-[#0D1721] border border-[#243443] rounded px-2.5 py-1.5 text-xs text-white"
+                      className="neo-input"
                     />
                   </div>
                 </div>
               ))}
 
-              <div className="flex items-center justify-between pt-2">
+              <div className="flex items-center justify-between pt-2 font-mono">
                 <button
                   type="button"
                   onClick={() =>
@@ -902,7 +898,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                       }
                     ])
                   }
-                  className="text-xs text-[#38BDF8] hover:underline flex items-center gap-1 cursor-pointer font-bold"
+                  className="text-xs text-black font-bold underline flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add Another Entry Row</span>
@@ -912,13 +908,13 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsManualModalOpen(false)}
-                    className="px-4 py-2 rounded-lg bg-[#071018] border border-[#243443] text-[#8EA1B2] hover:text-white cursor-pointer"
+                    className="neo-btn-sec px-4 py-2 text-xs"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-lg bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 font-bold cursor-pointer"
+                    className="neo-btn px-4 py-2 text-xs"
                   >
                     Process Entries & Calculate Risk
                   </button>

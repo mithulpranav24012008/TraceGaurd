@@ -95,41 +95,41 @@ export const SeedStage: React.FC<SeedStageProps> = ({
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-6 font-mono p-2">
       {/* Top Banner */}
-      <div className="p-5 rounded-xl bg-[#0D1721] border border-[#243443] flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="neo-card-yellow p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-white tracking-tight">Stage 1: Seed Address Ingestion & Live On-Chain Analysis</h2>
-            <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono-code text-[11px] font-bold flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <h2 className="text-base font-mono font-bold text-black uppercase tracking-tight">Stage 1: Seed Address Ingestion & Live On-Chain Analysis</h2>
+            <span className="px-2 py-0.5 rounded bg-black text-white font-mono text-[10px] font-bold flex items-center gap-1.5 border border-black shadow-[1px_1px_0px_0px_#000]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
               LIVE GATEWAYS ACTIVE
             </span>
           </div>
-          <p className="text-xs text-[#8EA1B2] mt-1">
+          <p className="text-xs text-black/80 font-mono mt-1">
             Analyze any real-world wallet address across Ethereum, Bitcoin, Polygon, or BNB Smart Chain using direct blockchain RPC and telemetry nodes.
           </p>
         </div>
 
         {/* Mode & Preset incident buttons */}
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center bg-[#071018] p-1 rounded-lg border border-[#243443] font-mono-code text-xs mr-2">
+          <div className="flex items-center bg-white p-1 rounded-lg border-2 border-black font-mono text-xs shadow-[2px_2px_0px_0px_#000]">
             <button
               onClick={() => setMode('live')}
-              className={`px-2.5 py-1 rounded text-xs font-bold transition-colors cursor-pointer ${
+              className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-colors cursor-pointer ${
                 mode === 'live'
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                  : 'text-[#8EA1B2] hover:text-white'
+                  ? 'bg-black text-white shadow-[1px_1px_0px_0px_#000]'
+                  : 'text-black hover:bg-black/10'
               }`}
             >
               🟢 Live Address Mode
             </button>
             <button
               onClick={() => setMode('demo')}
-              className={`px-2.5 py-1 rounded text-xs font-bold transition-colors cursor-pointer ${
+              className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-colors cursor-pointer ${
                 mode === 'demo'
-                  ? 'bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/40'
-                  : 'text-[#8EA1B2] hover:text-white'
+                  ? 'bg-black text-white shadow-[1px_1px_0px_0px_#000]'
+                  : 'text-black hover:bg-black/10'
               }`}
             >
               🎭 Demo Presets
@@ -138,8 +138,8 @@ export const SeedStage: React.FC<SeedStageProps> = ({
 
           {mode === 'demo' && (
             <div className="flex items-center gap-1.5 flex-wrap animate-in fade-in">
-              <span className="text-[11px] font-mono-code text-[#8EA1B2] mr-1 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-[#38BDF8]" /> Presets:
+              <span className="text-[11px] font-mono font-bold text-black flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-black" /> Presets:
               </span>
               {MOCK_CASES.map(c => (
                 <button
@@ -151,10 +151,10 @@ export const SeedStage: React.FC<SeedStageProps> = ({
                     setSeverity(c.severity);
                     onSelectPreloadedCase(c);
                   }}
-                  className={`px-2.5 py-1 rounded text-xs font-mono-code transition-colors cursor-pointer border ${
+                  className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-colors cursor-pointer border-2 border-black ${
                     currentCase.id === c.id
-                      ? 'bg-[#38BDF8]/15 border-[#38BDF8] text-white'
-                      : 'bg-[#111F2C] border-[#243443] text-[#8EA1B2] hover:text-white hover:border-[#8EA1B2]'
+                      ? 'bg-black text-white shadow-[2px_2px_0px_0px_#000]'
+                      : 'bg-white text-black hover:bg-[#FEF9EF] shadow-[1px_1px_0px_0px_#000]'
                   }`}
                 >
                   {c.blockchain.split(' ')[0]} ({c.scenario.split(' ')[0]})
@@ -168,34 +168,34 @@ export const SeedStage: React.FC<SeedStageProps> = ({
       {/* Input Form & Telemetry Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Form Column */}
-        <div className="lg:col-span-6 bg-[#0D1721] border border-[#243443] rounded-xl p-5 space-y-4">
-          <div className="flex items-center justify-between border-b border-[#243443] pb-3">
-            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Search className="w-4 h-4 text-[#38BDF8]" />
+        <div className="lg:col-span-6 neo-card p-5 space-y-4">
+          <div className="flex items-center justify-between border-b-2 border-black pb-3">
+            <h3 className="text-sm font-mono font-bold text-black uppercase flex items-center gap-2">
+              <Search className="w-4 h-4 text-black" />
               <span>Target Wallet Address Parameters</span>
             </h3>
-            <span className="text-[10px] font-mono-code text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 font-bold">
+            <span className="text-[10px] font-mono font-bold text-black bg-[#94D3AC] px-2 py-0.5 rounded border border-black shadow-[1px_1px_0px_0px_#000]">
               LIVE MAINNET QUERY
             </span>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* OCR Screenshot Upload Section */}
-            <div className="p-3.5 rounded-lg bg-[#071018] border border-[#243443] space-y-3 font-mono-code">
+            <div className="p-3.5 rounded-xl bg-[#FDFBF7] border-2 border-black shadow-[3px_3px_0px_0px_#000] space-y-3 font-mono">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-white flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-[#38BDF8]" />
+                <label className="text-xs font-mono font-bold text-black flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-black" />
                   <span>{t('ocr.uploadTitle')}</span>
                 </label>
-                <span className="text-[10px] text-[#38BDF8] bg-[#38BDF8]/10 px-2 py-0.5 rounded border border-[#38BDF8]/30">
+                <span className="text-[10px] text-black bg-[#FBBF24] px-2 py-0.5 rounded border border-black font-bold shadow-[1px_1px_0px_0px_#000]">
                   AUTO-REGEX DETECT
                 </span>
               </div>
 
               {/* Upload Dropzone / File Selector */}
               <div className="flex flex-col sm:flex-row items-center gap-3">
-                <label className="flex-1 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-dashed border-[#243443] hover:border-[#38BDF8] bg-[#0D1721] hover:bg-[#111F2C] text-xs text-[#8EA1B2] hover:text-white cursor-pointer transition-all">
-                  <Upload className="w-4 h-4 text-[#38BDF8]" />
+                <label className="flex-1 w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border-2 border-dashed border-black hover:bg-black/5 text-xs text-black font-bold cursor-pointer transition-all shadow-[2px_2px_0px_0px_#000] bg-white">
+                  <Upload className="w-4 h-4 text-black" />
                   <span>{t('ocr.dragDrop')}</span>
                   <input
                     type="file"
@@ -211,17 +211,17 @@ export const SeedStage: React.FC<SeedStageProps> = ({
               </div>
 
               {/* Demo Sample Chat Screenshots for Instant Testing */}
-              <div className="space-y-1.5 pt-1 border-t border-[#243443]/60">
-                <div className="text-[10px] text-[#8EA1B2]">{t('ocr.demoPresetPrompt')}</div>
+              <div className="space-y-1.5 pt-1 border-t-2 border-black">
+                <div className="text-[10px] text-black/80 font-bold">{t('ocr.demoPresetPrompt')}</div>
                 <div className="flex flex-wrap gap-2">
                   {SAMPLE_SCAM_SCREENSHOTS.map((sample) => (
                     <button
                       key={sample.id}
                       type="button"
                       onClick={() => handleOcrFileSelect(sample.dataUrl)}
-                      className="px-2.5 py-1 rounded text-[11px] bg-[#111F2C] hover:bg-[#162636] text-[#38BDF8] border border-[#243443] hover:border-[#38BDF8] transition-colors cursor-pointer flex items-center gap-1.5"
+                      className="px-2.5 py-1 rounded-md text-[11px] bg-white hover:bg-[#FEF9EF] text-black font-mono font-bold border-2 border-black shadow-[2px_2px_0px_0px_#000] transition-all cursor-pointer flex items-center gap-1.5"
                     >
-                      <FileSearch className="w-3 h-3" />
+                      <FileSearch className="w-3 h-3 text-black" />
                       <span>{sample.title.split(' ')[0]} {sample.title.split(' ')[1]}</span>
                     </button>
                   ))}
@@ -230,17 +230,17 @@ export const SeedStage: React.FC<SeedStageProps> = ({
 
               {/* Scanning Spinner */}
               {isScanningOcr && (
-                <div className="flex items-center gap-2 text-xs text-[#38BDF8] py-1 animate-pulse">
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                <div className="flex items-center gap-2 text-xs text-black font-bold py-1 animate-pulse">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-black" />
                   <span>{t('ocr.processing')}</span>
                 </div>
               )}
 
               {/* Detected Addresses Suggestion Chips */}
               {detectedAddresses.length > 0 && (
-                <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 space-y-2">
-                  <div className="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
-                    <CheckCircle className="w-3.5 h-3.5" />
+                <div className="p-2.5 rounded-lg bg-[#94D3AC] border-2 border-black shadow-[2px_2px_0px_0px_#000] space-y-2">
+                  <div className="text-[11px] font-bold text-black flex items-center gap-1.5">
+                    <CheckCircle className="w-3.5 h-3.5 text-black" />
                     <span>{t('ocr.detectedTitle')}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -252,14 +252,14 @@ export const SeedStage: React.FC<SeedStageProps> = ({
                           setAddressInput(res.address);
                           setBlockchain(res.chain);
                         }}
-                        className={`px-2.5 py-1 rounded text-xs font-mono-code font-bold border transition-all cursor-pointer ${
+                        className={`px-2.5 py-1 rounded text-xs font-mono font-bold border-2 border-black transition-all cursor-pointer shadow-[1px_1px_0px_0px_#000] ${
                           addressInput === res.address
-                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-xs'
-                            : 'bg-[#0D1721] text-[#E7EEF5] border-[#243443] hover:border-[#38BDF8]'
+                            ? 'bg-black text-white'
+                            : 'bg-white text-black hover:bg-[#FEF9EF]'
                         }`}
                       >
                         <span>{res.address}</span>
-                        <span className="ml-1 text-[10px] opacity-75">({res.chain})</span>
+                        <span className="ml-1 text-[10px] opacity-80">({res.chain})</span>
                       </button>
                     ))}
                   </div>
@@ -268,18 +268,18 @@ export const SeedStage: React.FC<SeedStageProps> = ({
 
               {/* Collapsible Raw OCR Text Inspector */}
               {extractedOcrText && (
-                <div className="border-t border-[#243443]/60 pt-2 space-y-1">
+                <div className="border-t-2 border-black pt-2 space-y-1">
                   <button
                     type="button"
                     onClick={() => setShowRawText(!showRawText)}
-                    className="flex items-center justify-between w-full text-[11px] text-[#8EA1B2] hover:text-white cursor-pointer"
+                    className="flex items-center justify-between w-full text-[11px] text-black font-mono font-bold hover:underline cursor-pointer"
                   >
                     <span>{t('ocr.rawTextTitle')}</span>
                     {showRawText ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                   </button>
 
                   {showRawText && (
-                    <pre className="p-2.5 rounded bg-[#071018] border border-[#243443] text-[10px] text-slate-300 overflow-x-auto whitespace-pre-wrap font-mono max-h-32">
+                    <pre className="p-2.5 rounded bg-white border-2 border-black text-[10px] text-black overflow-x-auto whitespace-pre-wrap font-mono max-h-32 shadow-[1px_1px_0px_0px_#000]">
                       {extractedOcrText}
                     </pre>
                   )}
@@ -288,7 +288,7 @@ export const SeedStage: React.FC<SeedStageProps> = ({
             </div>
 
             <div>
-              <label htmlFor="suspect-wallet-input" className="block text-xs font-medium text-[#E7EEF5] mb-1.5 font-mono-code">
+              <label htmlFor="suspect-wallet-input" className="block text-xs font-mono font-bold text-black mb-1.5">
                 Suspect Wallet Address (EVM / BTC / Solana)
               </label>
               <div className="relative">
@@ -298,38 +298,38 @@ export const SeedStage: React.FC<SeedStageProps> = ({
                   value={addressInput}
                   onChange={(e) => setAddressInput(e.target.value)}
                   placeholder="Enter real wallet address (e.g., 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 or bc1q...)"
-                  className="w-full bg-[#071018] border border-[#243443] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-lg px-3 py-2 text-xs font-mono-code text-white placeholder-[#586C7E] transition-all outline-hidden"
+                  className="w-full neo-input"
                   required
                 />
                 {addressInput && (
                   <button
                     type="button"
                     onClick={() => handleCopy(addressInput)}
-                    className="absolute right-2.5 top-2.5 text-[#8EA1B2] hover:text-white cursor-pointer"
+                    className="absolute right-2.5 top-2 text-black hover:opacity-75 cursor-pointer"
                     title="Copy address"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-green-700 font-bold" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                 )}
               </div>
-              <p className="text-[11px] text-amber-400/90 mt-1.5 font-mono-code flex items-center gap-1.5">
+              <p className="text-[11px] text-black/80 mt-1.5 font-mono font-bold flex items-center gap-1.5">
                 <span>{t('ocr.confirmNotice')}</span>
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="blockchain-select" className="block text-xs font-medium text-[#8EA1B2] mb-1 font-mono-code">
+                <label htmlFor="blockchain-select" className="block text-xs font-mono font-bold text-black mb-1">
                   Blockchain Network
                 </label>
                 <select
                   id="blockchain-select"
                   value={blockchain}
                   onChange={(e) => setBlockchain(e.target.value as Blockchain)}
-                  className="w-full bg-[#071018] border border-[#243443] focus:border-[#38BDF8] rounded-lg px-3 py-2 text-xs text-white font-mono-code cursor-pointer outline-hidden"
+                  className="w-full neo-input cursor-pointer"
                 >
                   {blockchains.map(b => (
-                    <option key={b} value={b} className="bg-[#0D1721] text-white">
+                    <option key={b} value={b} className="bg-white text-black">
                       {b}
                     </option>
                   ))}
@@ -337,17 +337,17 @@ export const SeedStage: React.FC<SeedStageProps> = ({
               </div>
 
               <div>
-                <label htmlFor="source-select" className="block text-xs font-medium text-[#8EA1B2] mb-1 font-mono-code">
+                <label htmlFor="source-select" className="block text-xs font-mono font-bold text-black mb-1">
                   Investigation Source
                 </label>
                 <select
                   id="source-select"
                   value={source}
                   onChange={(e) => setSource(e.target.value as InvestigationSource)}
-                  className="w-full bg-[#071018] border border-[#243443] focus:border-[#38BDF8] rounded-lg px-3 py-2 text-xs text-white font-mono-code cursor-pointer outline-hidden"
+                  className="w-full neo-input cursor-pointer"
                 >
                   {sources.map(s => (
-                    <option key={s} value={s} className="bg-[#0D1721] text-white">
+                    <option key={s} value={s} className="bg-white text-black">
                       {s}
                     </option>
                   ))}
@@ -356,17 +356,17 @@ export const SeedStage: React.FC<SeedStageProps> = ({
             </div>
 
             <div>
-              <label htmlFor="severity-select" className="block text-xs font-medium text-[#8EA1B2] mb-1 font-mono-code">
+              <label htmlFor="severity-select" className="block text-xs font-mono font-bold text-black mb-1">
                 Case Severity Override
               </label>
               <select
                 id="severity-select"
                 value={severity}
                 onChange={(e) => setSeverity(e.target.value as RiskLevel)}
-                className="w-full bg-[#071018] border border-[#243443] focus:border-[#38BDF8] rounded-lg px-3 py-2 text-xs text-white font-mono-code cursor-pointer outline-hidden"
+                className="w-full neo-input cursor-pointer"
               >
                 {severities.map(sev => (
-                  <option key={sev} value={sev} className="bg-[#0D1721] text-white">
+                  <option key={sev} value={sev} className="bg-white text-black">
                     {sev} Severity
                   </option>
                 ))}
@@ -376,16 +376,16 @@ export const SeedStage: React.FC<SeedStageProps> = ({
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#38BDF8] hover:bg-[#0284C7] disabled:opacity-60 text-slate-950 font-bold py-2.5 px-4 rounded-lg text-xs font-mono-code tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#38BDF8]/10 cursor-pointer"
+              className="w-full neo-btn py-2.5 px-4 text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <RefreshCw className="w-4 h-4 animate-spin text-white" />
                   <span>FETCHING LIVE ON-CHAIN TELEMETRY...</span>
                 </>
               ) : (
                 <>
-                  <Zap className="w-4 h-4 fill-current" />
+                  <Zap className="w-4 h-4 fill-current text-white" />
                   <span>RUN LIVE ON-CHAIN FORENSIC TRACE</span>
                 </>
               )}
@@ -394,67 +394,67 @@ export const SeedStage: React.FC<SeedStageProps> = ({
         </div>
 
         {/* Current Seed Address Profile Card */}
-        <div className="lg:col-span-6 bg-[#0D1721] border border-[#243443] rounded-xl p-5 flex flex-col justify-between space-y-4">
+        <div className="lg:col-span-6 neo-card p-5 flex flex-col justify-between space-y-4">
           <div>
-            <div className="flex items-center justify-between border-b border-[#243443] pb-3">
-              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                <Database className="w-4 h-4 text-[#38BDF8]" />
+            <div className="flex items-center justify-between border-b-2 border-black pb-3">
+              <h3 className="text-sm font-mono font-bold text-black uppercase flex items-center gap-2">
+                <Database className="w-4 h-4 text-black" />
                 <span>Seed Address Telemetry Profile</span>
               </h3>
               <RiskBadge level={currentCase.severity} score={currentCase.riskScore} size="sm" />
             </div>
 
-            <div className="mt-4 space-y-3 font-mono-code text-xs">
-              <div className="p-3 rounded-lg bg-[#071018] border border-[#243443] space-y-1">
-                <div className="flex items-center justify-between text-[10px] text-[#8EA1B2] uppercase">
+            <div className="mt-4 space-y-3 font-mono text-xs">
+              <div className="p-3 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000] space-y-1">
+                <div className="flex items-center justify-between text-[10px] text-black/70 font-bold uppercase">
                   <span>Target Address</span>
-                  <span className="text-emerald-400 font-bold">VERIFIED MAINNET</span>
+                  <span className="text-black bg-[#94D3AC] px-1.5 py-0.5 rounded border border-black">VERIFIED MAINNET</span>
                 </div>
-                <div className="text-white text-xs font-semibold break-all selection:bg-[#38BDF8] selection:text-black">
+                <div className="text-black text-xs font-bold break-all">
                   {currentCase.seedDetails.address}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
-                <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443]">
-                  <div className="text-[10px] text-[#8EA1B2]">BLOCKCHAIN</div>
-                  <div className="text-white font-semibold mt-0.5">{currentCase.seedDetails.blockchain}</div>
+                <div className="p-2.5 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+                  <div className="text-[10px] text-black/70 font-bold">BLOCKCHAIN</div>
+                  <div className="text-black font-bold mt-0.5">{currentCase.seedDetails.blockchain}</div>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443]">
-                  <div className="text-[10px] text-[#8EA1B2]">TRANSACTIONS</div>
-                  <div className="text-white font-semibold mt-0.5">{currentCase.seedDetails.transactions} txns</div>
+                <div className="p-2.5 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+                  <div className="text-[10px] text-black/70 font-bold">TRANSACTIONS</div>
+                  <div className="text-black font-bold mt-0.5">{currentCase.seedDetails.transactions} txns</div>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443]">
-                  <div className="text-[10px] text-[#8EA1B2]">FIRST SEEN</div>
-                  <div className="text-white font-semibold mt-0.5 truncate">{currentCase.seedDetails.firstSeen.split(' ')[0]}</div>
+                <div className="p-2.5 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+                  <div className="text-[10px] text-black/70 font-bold">FIRST SEEN</div>
+                  <div className="text-black font-bold mt-0.5 truncate">{currentCase.seedDetails.firstSeen.split(' ')[0]}</div>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443]">
-                  <div className="text-[10px] text-[#8EA1B2]">CURRENT BALANCE</div>
-                  <div className="text-white font-semibold mt-0.5 truncate">{currentCase.seedDetails.currentBalance}</div>
+                <div className="p-2.5 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+                  <div className="text-[10px] text-black/70 font-bold">CURRENT BALANCE</div>
+                  <div className="text-black font-bold mt-0.5 truncate">{currentCase.seedDetails.currentBalance}</div>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443]">
-                  <div className="text-[10px] text-[#8EA1B2]">TOTAL INFLOW</div>
-                  <div className="text-emerald-400 font-semibold mt-0.5">{currentCase.seedDetails.totalInflow}</div>
+                <div className="p-2.5 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+                  <div className="text-[10px] text-black/70 font-bold">TOTAL INFLOW</div>
+                  <div className="text-green-700 font-bold mt-0.5">{currentCase.seedDetails.totalInflow}</div>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443]">
-                  <div className="text-[10px] text-[#8EA1B2]">TOTAL OUTFLOW</div>
-                  <div className="text-orange-400 font-semibold mt-0.5">{currentCase.seedDetails.totalOutflow}</div>
+                <div className="p-2.5 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+                  <div className="text-[10px] text-black/70 font-bold">TOTAL OUTFLOW</div>
+                  <div className="text-orange-700 font-bold mt-0.5">{currentCase.seedDetails.totalOutflow}</div>
                 </div>
               </div>
 
               {/* Evidence Attachment Thumbnail */}
               {evidenceScreenshot && (
-                <div className="p-3 rounded-lg bg-[#071018] border border-sky-500/30 space-y-2">
-                  <div className="flex items-center justify-between text-[10px] text-[#38BDF8] font-bold uppercase">
+                <div className="p-3 rounded-lg bg-[#FBCFE8] border-2 border-black shadow-[2px_2px_0px_0px_#000] space-y-2">
+                  <div className="flex items-center justify-between text-[10px] text-black font-bold uppercase">
                     <span>{t('ocr.evidenceAttached')}</span>
                     <span>JPEG/SVG</span>
                   </div>
-                  <div className="rounded-lg overflow-hidden border border-[#243443] max-h-32 bg-slate-900 flex items-center justify-center">
+                  <div className="rounded-lg overflow-hidden border-2 border-black max-h-32 bg-white flex items-center justify-center p-1">
                     <img
                       src={evidenceScreenshot}
                       alt="Scam Evidence Attachment"
@@ -466,14 +466,14 @@ export const SeedStage: React.FC<SeedStageProps> = ({
             </div>
           </div>
 
-          <div className="pt-3 border-t border-[#243443] flex items-center justify-between">
-            <span className="text-[11px] text-[#8EA1B2]">Status: Ingested & Live Synchronized</span>
+          <div className="pt-3 border-t-2 border-black flex items-center justify-between font-mono">
+            <span className="text-[11px] text-black/80 font-bold">Status: Live Synchronized</span>
             <button
               onClick={onAdvanceToNext}
-              className="bg-[#111F2C] hover:bg-[#162636] border border-[#38BDF8]/60 hover:border-[#38BDF8] text-white px-4 py-2 rounded-lg text-xs font-mono-code font-semibold flex items-center gap-2 transition-all cursor-pointer"
+              className="neo-btn-sec px-4 py-2 text-xs flex items-center gap-2"
             >
               <span>Analyze Address Hops</span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#38BDF8]" />
+              <ArrowRight className="w-3.5 h-3.5 text-black" />
             </button>
           </div>
         </div>

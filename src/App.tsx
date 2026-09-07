@@ -99,7 +99,7 @@ export function App() {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#071018] text-[#E7EEF5]">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#94D3AC] text-black p-0 md:p-3 md:gap-3 font-mono">
       {/* Navigation Sidebar */}
       <Sidebar
         activeTab={activeTab}
@@ -109,8 +109,8 @@ export function App() {
         pendingAlertsCount={referrals.length}
       />
 
-      {/* Main Investigation Workspace Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+      {/* Main Investigation Workspace Area Canvas */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0 bg-[#FDFBF7] md:border-2 md:border-black md:rounded-2xl md:shadow-[4px_4px_0px_0px_#000]">
         {/* Top Disclaimer Banner */}
         <DemoDisclaimerBanner />
 
@@ -126,22 +126,22 @@ export function App() {
           />
 
           {/* Mobile menu trigger bar */}
-          <div className="md:hidden bg-[#0D1721] border-b border-[#243443] px-4 py-2 flex items-center justify-between">
+          <div className="md:hidden bg-[#FBBF24] border-b-2 border-black px-4 py-2 flex items-center justify-between text-black font-mono font-bold">
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
-              className="flex items-center gap-2 text-xs font-mono-code text-[#8EA1B2] hover:text-white p-1 rounded hover:bg-[#111F2C]"
+              className="flex items-center gap-2 text-xs font-mono font-bold text-black p-1 rounded-md border border-black bg-white shadow-[1px_1px_0px_0px_#000]"
             >
-              <Menu className="w-4 h-4 text-[#38BDF8]" />
+              <Menu className="w-4 h-4 text-black" />
               <span>NAVIGATION MENU</span>
             </button>
-            <span className="text-xs font-mono-code text-[#38BDF8] font-bold">
+            <span className="text-xs font-mono font-bold text-black bg-white border border-black px-2 py-0.5 rounded shadow-[1px_1px_0px_0px_#000]">
               {activeTab.toUpperCase()}
             </span>
           </div>
         </div>
 
-        {/* Viewport Content */}
-        <div className="flex-1 overflow-y-auto bg-[#071018]">
+        {/* Viewport Content Canvas */}
+        <div className="flex-1 overflow-y-auto bg-[#FDFBF7]">
           {activeTab === 'track' && (
             <PublicTrackPage
               casesList={casesList}
