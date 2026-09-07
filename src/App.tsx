@@ -12,6 +12,7 @@ import { ExchangeAttributionPage } from './components/attribution/ExchangeAttrib
 import { ComplianceAlertsPage } from './components/alerts/ComplianceAlertsPage';
 import { ReportsPage } from './components/reports/ReportsPage';
 import { SettingsPage } from './components/settings/SettingsPage';
+import { PublicTrackPage } from './components/public/PublicTrackPage';
 import { NavigationTab, MockCase, ComplianceReferral } from './types';
 import { MOCK_CASES, INITIAL_COMPLIANCE_REFERRALS } from './data/mockCases';
 import { initRegistry } from './data/nationalRegistryStore';
@@ -141,6 +142,13 @@ export function App() {
 
         {/* Viewport Content */}
         <div className="flex-1 overflow-y-auto bg-[#071018]">
+          {activeTab === 'track' && (
+            <PublicTrackPage
+              casesList={casesList}
+              onNavigateToOfficerSpace={() => setActiveTab('investigation')}
+            />
+          )}
+
           {activeTab === 'triage' && (
             <TriageQueuePage
               onSelectCase={handleSelectCase}

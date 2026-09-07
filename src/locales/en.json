@@ -1,5 +1,6 @@
 {
   "nav": {
+    "track": "Track Complaint",
     "triage": "Triage Queue",
     "investigation": "Investigation",
     "cases": "Case Files",
@@ -102,5 +103,28 @@
     "escalateToCyberCell": "Escalate to Cyber Cell",
     "monitor": "Monitor",
     "lowPriority": "Low Priority"
+  },
+  "track": {
+    "portalTitle": "National Cybercrime Complaint Status Portal",
+    "portalSubtitle": "Track the real-time investigation status of your cryptocurrency fraud complaint using your official reference number.",
+    "inputLabel": "Enter Complaint Reference Number",
+    "placeholder": "e.g., TG-2026-8841 or TG-2026-9042",
+    "checkButton": "Check Complaint Status",
+    "privacyNotice": "🔒 Privacy Protected: Your personal details and suspect wallet addresses are confidential and not displayed publicly.",
+    "resultTitle": "Complaint Information & Status",
+    "referenceNumber": "Reference Number",
+    "dateReported": "Date Reported",
+    "currentStatus": "Current Investigation Status",
+    "reassuringSummaryTitle": "Investigation Progress Summary",
+    "whatHappensNext": "What Happens Next",
+    "step1": "Your complaint details and suspect indicators are continuously analyzed against financial networks.",
+    "step2": "Participating crypto exchange compliance desks and law enforcement cells receive automated coordination flags.",
+    "step3": "If funds reach a regulated exchange, an asset preservation request is initiated under emergency protocols.",
+    "helplineTitle": "Need Immediate Help or Further Support?",
+    "helplineSubtitle": "Contact the National Cyber Crime Helpline for 24x7 guidance or update your complaint on the official portal.",
+    "callHelpline": "Call Cyber Helpline 1930",
+    "officialPortal": "Visit NCRP Portal (cybercrime.gov.in)",
+    "notFound": "Complaint Reference Not Found",
+    "notFoundDesc": "We could not find an active complaint matching this reference number. Please verify the reference format (e.g., TG-2026-8841) or call the helpline at 1930."
   }
 }
