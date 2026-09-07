@@ -198,8 +198,6 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
           ref={containerRef}
           className="flex-1 h-full relative cursor-grab active:cursor-grabbing overflow-hidden"
           onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
           onWheel={handleWheel}
         >
           {/* Subtle SOC background grid */}
