@@ -38,7 +38,8 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
   onNavigateToInvestigation,
   onCasesUpdated
 }) => {
-  const [complaints, setComplaints] = useState<TriageComplaint[]>([]);
+  // Initialize state directly from store to avoid set-state-in-effect double renders
+  const [complaints, setComplaints] = useState<TriageComplaint[]>(() => getTriageQueue());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   // Filters & Search
@@ -79,12 +80,6 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
       stationDistrict: 'District Cyber Cell'
     }
   ]);
-
-  // Load queue on mount
-  useEffect(() => {
-    const list = getTriageQueue();
-    setComplaints(list);
-  }, []);
 
   const showNotice = (msg: string) => {
     setNotification(msg);
@@ -325,6 +320,17 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
     }
   };
 
+  const renderSortIndicator = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="w-3 h-3 text-black/50" />;
+    }
+    return (
+      <span className="text-[9px] font-bold bg-black text-white px-1 py-0.2 rounded font-mono shadow-[1px_1px_0px_0px_#000]">
+        {sortAsc ? '▲ ASC' : '▼ DESC'}
+      </span>
+    );
+  };
+
   const getActionBadgeClass = (action: TriageAction) => {
     switch (action) {
       case 'Escalate to Cyber Cell':
@@ -519,7 +525,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                     className="flex items-center gap-1 font-bold text-black hover:underline cursor-pointer"
                   >
                     <span>Threat Score</span>
-                    <ArrowUpDown className="w-3 h-3" />
+                    {renderSortIndicator('riskScore')}
                   </button>
                 </th>
                 <th className="px-3 py-3">Complainant & Station</th>
@@ -530,7 +536,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                     className="flex items-center gap-1 font-bold text-black hover:underline cursor-pointer"
                   >
                     <span>Reported Value</span>
-                    <ArrowUpDown className="w-3 h-3" />
+                    {renderSortIndicator('amount')}
                   </button>
                 </th>
                 <th className="px-3 py-3">
@@ -539,7 +545,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                     className="flex items-center gap-1 font-bold text-black hover:underline cursor-pointer"
                   >
                     <span>Reported</span>
-                    <ArrowUpDown className="w-3 h-3" />
+                    {renderSortIndicator('daysAgo')}
                   </button>
                 </th>
                 <th className="px-3 py-3">
@@ -549,7 +555,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
                   >
                     <Radar className="w-3 h-3 text-black" />
                     <span>Pattern Hits</span>
-                    <ArrowUpDown className="w-3 h-3" />
+                    {renderSortIndicator('patternMatchCount')}
                   </button>
                 </th>
                 <th className="px-3 py-3">Recommended Action</th>
