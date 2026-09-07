@@ -90,10 +90,20 @@ export const InvestigationPage: React.FC<InvestigationPageProps> = ({
     address: string,
     blockchain: Blockchain,
     source: InvestigationSource,
-    severity: RiskLevel
+    severity: RiskLevel,
+    evidenceScreenshot?: string,
+    extractedOcrText?: string
   ) => {
     // Fetch live on-chain data for the real wallet address
     const newCase = await fetchLiveBlockchainCase(address, blockchain, source, severity);
+    if (evidenceScreenshot) {
+      newCase.evidenceScreenshot = evidenceScreenshot;
+      newCase.seedDetails.evidenceScreenshot = evidenceScreenshot;
+    }
+    if (extractedOcrText) {
+      newCase.extractedOcrText = extractedOcrText;
+      newCase.seedDetails.extractedOcrText = extractedOcrText;
+    }
     onUpdateCase(newCase);
 
     // Register this address in the national pattern match registry

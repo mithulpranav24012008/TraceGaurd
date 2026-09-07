@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Search, ArrowRight, Sparkles, Copy, Check, Database, Zap, Globe, RefreshCw } from 'lucide-react';
+import { Search, ArrowRight, Sparkles, Copy, Check, Database, Zap, Globe, RefreshCw, Upload, Image as ImageIcon, FileSearch, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
 import { Blockchain, InvestigationSource, RiskLevel, MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
 import { RiskBadge } from '../common/RiskBadge';
+import { useLanguage } from '../../context/LanguageContext';
+import { processScreenshotOcr, SAMPLE_SCAM_SCREENSHOTS, ExtractedAddressResult } from '../../utils/ocrAddressExtractor';
 
 interface SeedStageProps {
   currentCase: MockCase;
@@ -10,7 +12,9 @@ interface SeedStageProps {
     address: string,
     blockchain: Blockchain,
     source: InvestigationSource,
-    severity: RiskLevel
+    severity: RiskLevel,
+    evidenceScreenshot?: string,
+    extractedOcrText?: string
   ) => Promise<void> | void;
   onSelectPreloadedCase: (caseItem: MockCase) => void;
   onAdvanceToNext: () => void;
@@ -22,6 +26,7 @@ export const SeedStage: React.FC<SeedStageProps> = ({
   onSelectPreloadedCase,
   onAdvanceToNext
 }) => {
+  const { t } = useLanguage();
   const [addressInput, setAddressInput] = useState(currentCase.seedDetails.address);
   const [blockchain, setBlockchain] = useState<Blockchain>(currentCase.blockchain);
   const [source, setSource] = useState<InvestigationSource>(currentCase.source);
@@ -30,16 +35,54 @@ export const SeedStage: React.FC<SeedStageProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<'live' | 'demo'>('live');
 
+  // OCR Screenshot State
+  const [evidenceScreenshot, setEvidenceScreenshot] = useState<string | undefined>(
+    currentCase.seedDetails.evidenceScreenshot
+  );
+  const [extractedOcrText, setExtractedOcrText] = useState<string | undefined>(
+    currentCase.seedDetails.extractedOcrText
+  );
+  const [detectedAddresses, setDetectedAddresses] = useState<ExtractedAddressResult[]>([]);
+  const [isScanningOcr, setIsScanningOcr] = useState(false);
+  const [showRawText, setShowRawText] = useState(false);
+
   const blockchains: Blockchain[] = ['Ethereum', 'Bitcoin', 'BNB Smart Chain', 'Polygon'];
   const sources: InvestigationSource[] = ['Victim Report', 'Bank Referral', 'Exchange Referral', 'Law Enforcement'];
   const severities: RiskLevel[] = ['Low', 'Medium', 'High', 'Critical'];
+
+  const handleOcrFileSelect = async (fileOrUrl: File | string) => {
+    setIsScanningOcr(true);
+    try {
+      const res = await processScreenshotOcr(fileOrUrl);
+      setEvidenceScreenshot(res.imagePreviewUrl);
+      setExtractedOcrText(res.extractedText);
+      setDetectedAddresses(res.detectedAddresses);
+
+      if (res.detectedAddresses.length > 0) {
+        const top = res.detectedAddresses[0];
+        setAddressInput(top.address);
+        setBlockchain(top.chain);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsScanningOcr(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addressInput.trim()) return;
     setIsLoading(true);
     try {
-      await onStartInvestigation(addressInput.trim(), blockchain, source, severity);
+      await onStartInvestigation(
+        addressInput.trim(),
+        blockchain,
+        source,
+        severity,
+        evidenceScreenshot,
+        extractedOcrText
+      );
     } finally {
       setIsLoading(false);
     }
@@ -137,6 +180,113 @@ export const SeedStage: React.FC<SeedStageProps> = ({
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* OCR Screenshot Upload Section */}
+            <div className="p-3.5 rounded-lg bg-[#071018] border border-[#243443] space-y-3 font-mono-code">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-white flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-[#38BDF8]" />
+                  <span>{t('ocr.uploadTitle')}</span>
+                </label>
+                <span className="text-[10px] text-[#38BDF8] bg-[#38BDF8]/10 px-2 py-0.5 rounded border border-[#38BDF8]/30">
+                  AUTO-REGEX DETECT
+                </span>
+              </div>
+
+              {/* Upload Dropzone / File Selector */}
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <label className="flex-1 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-dashed border-[#243443] hover:border-[#38BDF8] bg-[#0D1721] hover:bg-[#111F2C] text-xs text-[#8EA1B2] hover:text-white cursor-pointer transition-all">
+                  <Upload className="w-4 h-4 text-[#38BDF8]" />
+                  <span>{t('ocr.dragDrop')}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        handleOcrFileSelect(e.target.files[0]);
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+
+              {/* Demo Sample Chat Screenshots for Instant Testing */}
+              <div className="space-y-1.5 pt-1 border-t border-[#243443]/60">
+                <div className="text-[10px] text-[#8EA1B2]">{t('ocr.demoPresetPrompt')}</div>
+                <div className="flex flex-wrap gap-2">
+                  {SAMPLE_SCAM_SCREENSHOTS.map((sample) => (
+                    <button
+                      key={sample.id}
+                      type="button"
+                      onClick={() => handleOcrFileSelect(sample.dataUrl)}
+                      className="px-2.5 py-1 rounded text-[11px] bg-[#111F2C] hover:bg-[#162636] text-[#38BDF8] border border-[#243443] hover:border-[#38BDF8] transition-colors cursor-pointer flex items-center gap-1.5"
+                    >
+                      <FileSearch className="w-3 h-3" />
+                      <span>{sample.title.split(' ')[0]} {sample.title.split(' ')[1]}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Scanning Spinner */}
+              {isScanningOcr && (
+                <div className="flex items-center gap-2 text-xs text-[#38BDF8] py-1 animate-pulse">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span>{t('ocr.processing')}</span>
+                </div>
+              )}
+
+              {/* Detected Addresses Suggestion Chips */}
+              {detectedAddresses.length > 0 && (
+                <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 space-y-2">
+                  <div className="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
+                    <CheckCircle className="w-3.5 h-3.5" />
+                    <span>{t('ocr.detectedTitle')}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {detectedAddresses.map((res, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => {
+                          setAddressInput(res.address);
+                          setBlockchain(res.chain);
+                        }}
+                        className={`px-2.5 py-1 rounded text-xs font-mono-code font-bold border transition-all cursor-pointer ${
+                          addressInput === res.address
+                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-xs'
+                            : 'bg-[#0D1721] text-[#E7EEF5] border-[#243443] hover:border-[#38BDF8]'
+                        }`}
+                      >
+                        <span>{res.address}</span>
+                        <span className="ml-1 text-[10px] opacity-75">({res.chain})</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Collapsible Raw OCR Text Inspector */}
+              {extractedOcrText && (
+                <div className="border-t border-[#243443]/60 pt-2 space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowRawText(!showRawText)}
+                    className="flex items-center justify-between w-full text-[11px] text-[#8EA1B2] hover:text-white cursor-pointer"
+                  >
+                    <span>{t('ocr.rawTextTitle')}</span>
+                    {showRawText ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  </button>
+
+                  {showRawText && (
+                    <pre className="p-2.5 rounded bg-[#071018] border border-[#243443] text-[10px] text-slate-300 overflow-x-auto whitespace-pre-wrap font-mono max-h-32">
+                      {extractedOcrText}
+                    </pre>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div>
               <label htmlFor="suspect-wallet-input" className="block text-xs font-medium text-[#E7EEF5] mb-1.5 font-mono-code">
                 Suspect Wallet Address (EVM / BTC / Solana)
@@ -162,9 +312,8 @@ export const SeedStage: React.FC<SeedStageProps> = ({
                   </button>
                 )}
               </div>
-              <p className="text-[11px] text-[#8EA1B2] mt-1.5 font-mono-code flex items-center gap-1.5">
-                <Globe className="w-3 h-3 text-[#38BDF8]" />
-                Try any real EVM (0x...) or Bitcoin (1... / 3... / bc1...) mainnet address.
+              <p className="text-[11px] text-amber-400/90 mt-1.5 font-mono-code flex items-center gap-1.5">
+                <span>{t('ocr.confirmNotice')}</span>
               </p>
             </div>
 
@@ -297,6 +446,23 @@ export const SeedStage: React.FC<SeedStageProps> = ({
                   <div className="text-orange-400 font-semibold mt-0.5">{currentCase.seedDetails.totalOutflow}</div>
                 </div>
               </div>
+
+              {/* Evidence Attachment Thumbnail */}
+              {evidenceScreenshot && (
+                <div className="p-3 rounded-lg bg-[#071018] border border-sky-500/30 space-y-2">
+                  <div className="flex items-center justify-between text-[10px] text-[#38BDF8] font-bold uppercase">
+                    <span>{t('ocr.evidenceAttached')}</span>
+                    <span>JPEG/SVG</span>
+                  </div>
+                  <div className="rounded-lg overflow-hidden border border-[#243443] max-h-32 bg-slate-900 flex items-center justify-center">
+                    <img
+                      src={evidenceScreenshot}
+                      alt="Scam Evidence Attachment"
+                      className="max-h-32 object-contain"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

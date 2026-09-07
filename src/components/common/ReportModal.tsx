@@ -317,6 +317,33 @@ analytical testing only. No real financial institution was contacted or notified
             </div>
           </div>
 
+          {/* Section 5: Attached Evidence (Screenshot) */}
+          {(caseData.evidenceScreenshot || caseData.seedDetails.evidenceScreenshot) && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#38BDF8] font-mono-code border-b border-[#243443] pb-1">
+                5. Attached Evidence & OCR Transcript
+              </h3>
+              <div className="p-3 rounded-lg bg-[#071018] border border-[#243443] space-y-2">
+                <div className="text-[11px] font-semibold text-white">Scam Chat / Payment Screenshot Attachment:</div>
+                <div className="rounded-lg overflow-hidden border border-[#243443] max-h-48 bg-slate-900 flex items-center justify-center p-2">
+                  <img
+                    src={caseData.evidenceScreenshot || caseData.seedDetails.evidenceScreenshot}
+                    alt="Evidence Screenshot"
+                    className="max-h-44 object-contain"
+                  />
+                </div>
+                {(caseData.extractedOcrText || caseData.seedDetails.extractedOcrText) && (
+                  <div className="space-y-1 pt-2 border-t border-[#243443]/60 font-mono-code text-[10px] text-slate-300">
+                    <div className="text-[#8EA1B2]">Extracted OCR Text Log:</div>
+                    <pre className="p-2 rounded bg-[#0D1721] overflow-x-auto whitespace-pre-wrap max-h-24">
+                      {caseData.extractedOcrText || caseData.seedDetails.extractedOcrText}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Legal / Prototype Disclaimer Box */}
           <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex items-start gap-2.5">
             <ShieldAlert className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" />

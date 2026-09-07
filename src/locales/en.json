@@ -142,5 +142,15 @@
     "statusAccepted": "Accepted by Specialist Team",
     "statusReturned": "Returned for More Info",
     "updateStatus": "Update Escalation Status"
+  },
+  "ocr": {
+    "uploadTitle": "Upload Scam Chat / Payment Screenshot (OCR)",
+    "dragDrop": "Upload or drag screenshot image (PNG / JPG / SVG)",
+    "demoPresetPrompt": "Or test instant OCR extraction using sample scam chat screenshots:",
+    "processing": "Scanning image for cryptocurrency wallet addresses...",
+    "detectedTitle": "Detected Wallet Addresses (Click chip to select):",
+    "rawTextTitle": "Raw Extracted OCR Text Inspection",
+    "evidenceAttached": "Screenshot Attached as Case Evidence",
+    "confirmNotice": "⚠️ Review & Confirm: Always verify the extracted address before running trace."
   }
 }

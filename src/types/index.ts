@@ -91,6 +91,8 @@ export interface SeedAddressDetails {
   totalOutflow: string;
   currentBalance: string;
   reportedBy: InvestigationSource;
+  evidenceScreenshot?: string;
+  extractedOcrText?: string;
 }
 
 export interface AddressClusterData {
@@ -178,6 +180,8 @@ export interface MockCase {
   highRiskReasons: string[];
   status: 'Investigating' | 'Attributed' | 'Alerted';
   escalationStatus?: EscalationStatus;
+  evidenceScreenshot?: string;
+  extractedOcrText?: string;
 }
 
 export type TriageAction = 'Escalate to Cyber Cell' | 'Monitor' | 'Low Priority';
