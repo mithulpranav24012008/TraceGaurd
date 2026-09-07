@@ -34,6 +34,12 @@ export interface GraphNode {
   clusterGroup?: string;
   label?: string;
   entityName?: string;
+  recentTransactions?: Array<{
+    id?: string;
+    hash?: string;
+    amount?: string;
+    timestamp?: string;
+  }>;
 }
 
 export interface GraphEdge {
@@ -181,7 +187,9 @@ export interface MockCase {
   status: 'Investigating' | 'Attributed' | 'Alerted';
   escalationStatus?: EscalationStatus;
   evidenceScreenshot?: string;
+  evidenceScreenshots?: string[];
   extractedOcrText?: string;
+  plainLanguageExplanation?: string;
 }
 
 export type TriageAction = 'Escalate to Cyber Cell' | 'Monitor' | 'Low Priority';

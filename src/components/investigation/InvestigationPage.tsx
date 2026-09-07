@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { InvestigationStepper } from './InvestigationStepper';
 import { SeedStage } from './SeedStage';
 import { ClusterStage } from './ClusterStage';
@@ -56,22 +56,28 @@ export const InvestigationPage: React.FC<InvestigationPageProps> = ({
   const baseDelay = settings.stageDelay || 1000;
 
   // Stage delay & message mapping for auto-simulation scaled by settings
-  const loadingSequence: Record<number, { message: string; duration: number }> = {
-    1: { message: 'Collecting transaction data...', duration: Math.round(baseDelay * 0.9) },
-    2: { message: 'Building address cluster...', duration: Math.round(baseDelay * 1.1) },
-    3: { message: 'Tracing transaction hops...', duration: Math.round(baseDelay * 1.3) },
-    4: { message: 'Analyzing risk signals...', duration: Math.round(baseDelay * 0.9) },
-    5: { message: 'Resolving exchange attribution...', duration: Math.round(baseDelay * 1.1) },
-    6: { message: 'Finalizing investigation dossier...', duration: Math.round(baseDelay * 0.9) }
-  };
+  const loadingSequence: Record<number, { message: string; duration: number }> = useMemo(
+    () => ({
+      1: { message: 'Collecting transaction data...', duration: Math.round(baseDelay * 0.9) },
+      2: { message: 'Building address cluster...', duration: Math.round(baseDelay * 1.1) },
+      3: { message: 'Tracing transaction hops...', duration: Math.round(baseDelay * 1.3) },
+      4: { message: 'Analyzing risk signals...', duration: Math.round(baseDelay * 0.9) },
+      5: { message: 'Resolving exchange attribution...', duration: Math.round(baseDelay * 1.1) },
+      6: { message: 'Finalizing investigation dossier...', duration: Math.round(baseDelay * 0.9) }
+    }),
+    [baseDelay]
+  );
 
-  const advanceStage = (targetStage?: number) => {
-    const next = targetStage !== undefined ? targetStage : currentStage + 1;
-    if (next <= 7) {
-      setCurrentStage(next);
-      setMaxReachedStage((prev) => Math.max(prev, next));
-    }
-  };
+  const advanceStage = useCallback(
+    (targetStage?: number) => {
+      const next = targetStage !== undefined ? targetStage : currentStage + 1;
+      if (next <= 7) {
+        setCurrentStage(next);
+        setMaxReachedStage((prev) => Math.max(prev, next));
+      }
+    },
+    [currentStage, propsStage, onStageChange]
+  );
 
   // Auto-play progression effect
   useEffect(() => {
@@ -97,7 +103,7 @@ export const InvestigationPage: React.FC<InvestigationPageProps> = ({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [isAutoPlaying, currentStage]);
+  }, [isAutoPlaying, currentStage, advanceStage, loadingSequence]);
 
   const handleStartCustomInvestigation = async (
     address: string,

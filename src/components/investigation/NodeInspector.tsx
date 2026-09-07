@@ -178,16 +178,12 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose }) =
           <div className="space-y-2">
             <div className="text-[10px] text-[#8EA1B2] uppercase flex items-center justify-between">
               <span>Behavioral Flags & Indicators</span>
-              <span className="text-[#38BDF8]">{flags.length} Detected</span>
+              <span className="text-[#38BDF8]">{node.flags?.length || 0} Detected</span>
             </div>
 
-            {flags.length === 0 ? (
-              <div className="p-2 rounded-lg bg-[#071018] border border-[#243443] text-[11px] text-[#8EA1B2]">
-                No explicit risk flags associated with this address.
-              </div>
-            ) : (
+            {node.flags && node.flags.length > 0 ? (
               <div className="space-y-1.5">
-                {flags.map((flag, idx) => (
+                {node.flags?.map((flag, idx) => (
                   <div
                     key={idx}
                     className="p-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-[11px] font-sans flex items-start gap-2"
@@ -195,7 +191,45 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose }) =
                     <ShieldAlert className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />
                     <span>{flag}</span>
                   </div>
-                ))}
+                )) || (
+                  <div className="p-2 rounded-lg bg-[#071018] border border-[#243443] text-[11px] text-[#8EA1B2]">
+                    No flags recorded
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-2 rounded-lg bg-[#071018] border border-[#243443] text-[11px] text-[#8EA1B2]">
+                No flags recorded
+              </div>
+            )}
+          </div>
+
+          {/* Recent Transactions List */}
+          <div className="space-y-2">
+            <div className="text-[10px] text-[#8EA1B2] uppercase flex items-center justify-between">
+              <span>Recent Transactions</span>
+              <span className="text-[#38BDF8]">{node.recentTransactions?.length || 0} Recorded</span>
+            </div>
+
+            {node.recentTransactions && node.recentTransactions.length > 0 ? (
+              <div className="space-y-1.5">
+                {node.recentTransactions?.map((tx, idx) => (
+                  <div
+                    key={tx.id || tx.hash || idx}
+                    className="p-2 rounded-lg bg-[#071018] border border-[#243443] text-[11px] font-mono flex items-center justify-between"
+                  >
+                    <span className="text-[#38BDF8]">{tx.hash ? truncateAddress(tx.hash) : `Tx #${idx + 1}`}</span>
+                    <span className="text-emerald-400 font-bold">{tx.amount || '$0.00'}</span>
+                  </div>
+                )) || (
+                  <div className="p-2 rounded-lg bg-[#071018] border border-[#243443] text-[11px] text-[#8EA1B2]">
+                    No recent transactions recorded
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-2 rounded-lg bg-[#071018] border border-[#243443] text-[11px] text-[#8EA1B2]">
+                No recent transactions recorded
               </div>
             )}
           </div>
