@@ -53,10 +53,17 @@ export function getRiskColorClass(level: RiskLevel): {
   }
 }
 
-export function getRiskLevelFromScore(score: number): RiskLevel {
-  if (score >= 80) return 'Critical';
-  if (score >= 65) return 'High';
-  if (score >= 40) return 'Medium';
+export function getRiskLevelFromScore(
+  score: number,
+  thresholds?: { criticalThreshold?: number; highThreshold?: number; mediumThreshold?: number }
+): RiskLevel {
+  const critical = thresholds?.criticalThreshold ?? 80;
+  const high = thresholds?.highThreshold ?? 65;
+  const medium = thresholds?.mediumThreshold ?? 40;
+
+  if (score >= critical) return 'Critical';
+  if (score >= high) return 'High';
+  if (score >= medium) return 'Medium';
   return 'Low';
 }
 

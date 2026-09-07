@@ -11,6 +11,7 @@ import { MockCase, Blockchain, InvestigationSource, RiskLevel, ComplianceReferra
 import { generateSimulatedCaseForAddress } from '../../data/mockCases';
 import { addReport } from '../../data/nationalRegistryStore';
 import { fetchLiveBlockchainCase } from '../../services/blockchainService';
+import { useSettings } from '../../context/SettingsContext';
 
 interface InvestigationPageProps {
   currentCase: MockCase;
@@ -29,6 +30,7 @@ export const InvestigationPage: React.FC<InvestigationPageProps> = ({
   onSelectCase,
   onAlertGenerated
 }) => {
+  const { settings } = useSettings();
   const [internalStage, setInternalStage] = useState<number>(propsStage || 1);
   const currentStage = propsStage !== undefined ? propsStage : internalStage;
   const setCurrentStage = (stage: number) => {
@@ -51,14 +53,16 @@ export const InvestigationPage: React.FC<InvestigationPageProps> = ({
     { id: 7, name: 'Alert', label: 'Compliance Referral' }
   ];
 
-  // Stage delay & message mapping for auto-simulation
+  const baseDelay = settings.stageDelay || 1000;
+
+  // Stage delay & message mapping for auto-simulation scaled by settings
   const loadingSequence: Record<number, { message: string; duration: number }> = {
-    1: { message: 'Collecting transaction data...', duration: 900 },
-    2: { message: 'Building address cluster...', duration: 1100 },
-    3: { message: 'Tracing transaction hops...', duration: 1300 },
-    4: { message: 'Analyzing risk signals...', duration: 900 },
-    5: { message: 'Resolving exchange attribution...', duration: 1100 },
-    6: { message: 'Finalizing investigation dossier...', duration: 900 }
+    1: { message: 'Collecting transaction data...', duration: Math.round(baseDelay * 0.9) },
+    2: { message: 'Building address cluster...', duration: Math.round(baseDelay * 1.1) },
+    3: { message: 'Tracing transaction hops...', duration: Math.round(baseDelay * 1.3) },
+    4: { message: 'Analyzing risk signals...', duration: Math.round(baseDelay * 0.9) },
+    5: { message: 'Resolving exchange attribution...', duration: Math.round(baseDelay * 1.1) },
+    6: { message: 'Finalizing investigation dossier...', duration: Math.round(baseDelay * 0.9) }
   };
 
   const advanceStage = (targetStage?: number) => {

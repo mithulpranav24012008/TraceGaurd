@@ -44,7 +44,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           <button
             key={category}
             onClick={() => onSelectFilter(category)}
-            className={`px-2.5 py-1 rounded text-xs font-mono-code transition-all cursor-pointer ${
+            className={`px-2.5 py-1 rounded text-xs font-mono-code focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:outline-none transition-all cursor-pointer ${
               selectedFilter === category
                 ? 'bg-[#38BDF8] text-slate-950 font-bold shadow-sm'
                 : 'bg-[#071018] text-[#8EA1B2] hover:text-white border border-[#243443] hover:border-[#8EA1B2]/60'
@@ -60,7 +60,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
         {/* Flow Animation Toggle */}
         <button
           onClick={onToggleAnimateFlow}
-          className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono-code transition-colors border cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono-code focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:outline-none transition-colors border cursor-pointer ${
             isAnimatingFlow
               ? 'bg-[#38BDF8]/15 border-[#38BDF8] text-[#38BDF8]'
               : 'bg-[#071018] border-[#243443] text-[#8EA1B2] hover:text-white'
@@ -84,7 +84,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
         <div className="flex items-center rounded-lg bg-[#071018] border border-[#243443] p-0.5">
           <button
             onClick={onZoomOut}
-            className="p-1 text-[#8EA1B2] hover:text-white hover:bg-[#111F2C] rounded transition-colors cursor-pointer"
+            className="p-1 text-[#8EA1B2] hover:text-white hover:bg-[#111F2C] focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:outline-none rounded transition-colors cursor-pointer"
             title="Zoom Out"
             aria-label="Zoom out"
           >
@@ -95,7 +95,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           </span>
           <button
             onClick={onZoomIn}
-            className="p-1 text-[#8EA1B2] hover:text-white hover:bg-[#111F2C] rounded transition-colors cursor-pointer"
+            className="p-1 text-[#8EA1B2] hover:text-white hover:bg-[#111F2C] focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:outline-none rounded transition-colors cursor-pointer"
             title="Zoom In"
             aria-label="Zoom in"
           >
@@ -106,7 +106,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
         {/* Reset View */}
         <button
           onClick={onResetZoom}
-          className="p-1.5 text-[#8EA1B2] hover:text-white bg-[#071018] border border-[#243443] hover:border-[#8EA1B2] rounded-lg transition-colors cursor-pointer"
+          className="p-1.5 text-[#8EA1B2] hover:text-white bg-[#071018] border border-[#243443] hover:border-[#8EA1B2] focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:outline-none rounded-lg transition-colors cursor-pointer"
           title="Reset Graph Position & Zoom"
           aria-label="Reset zoom"
         >

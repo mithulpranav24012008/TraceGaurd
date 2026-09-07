@@ -17,6 +17,7 @@ import { GraphControls, GraphFilterCategory } from './GraphControls';
 import { NodeInspector } from './NodeInspector';
 import { TransactionTimeline } from './TransactionTimeline';
 import { truncateAddress } from '../../utils/formatters';
+import { useSettings } from '../../context/SettingsContext';
 
 interface TransactionGraphProps {
   caseData: MockCase;
@@ -29,6 +30,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
   onAdvanceToNext,
   showContinueButton = true
 }) => {
+  const { settings } = useSettings();
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null);
@@ -43,6 +45,8 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const animFrameRef = useRef<number | null>(null);
 
+  const shouldAnimateFlow = isAnimatingFlow && settings.animateParticles && !settings.reducedMotion;
+
   // Set default selected node to suspect seed or victim on caseData load
   useEffect(() => {
     if (caseData && caseData.nodes && caseData.nodes.length > 0) {
@@ -52,7 +56,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
 
   // Clean animation loop using requestAnimationFrame with guaranteed cleanup
   useEffect(() => {
-    if (!isAnimatingFlow) {
+    if (!shouldAnimateFlow) {
       if (animFrameRef.current !== null) {
         cancelAnimationFrame(animFrameRef.current);
         animFrameRef.current = null;
@@ -77,7 +81,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
         animFrameRef.current = null;
       }
     };
-  }, [isAnimatingFlow]);
+  }, [shouldAnimateFlow]);
 
   // Pan Mouse Down
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -412,7 +416,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
                       />
 
                       {/* Animated Flow Particles with dashoffset */}
-                      {isAnimatingFlow && edgeVisible && (
+                      {shouldAnimateFlow && edgeVisible && (
                         <path
                           d={pathData}
                           fill="none"

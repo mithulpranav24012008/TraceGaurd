@@ -187,3 +187,30 @@
 .animate-flow-dash {
   animation: flowDash 1s linear infinite;
 }
+
+/* Accessibility Modes */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+.high-contrast {
+  font-weight: 600;
+}
+
+.high-contrast .neo-card,
+.high-contrast .neo-card-yellow,
+.high-contrast .neo-card-pink,
+.high-contrast .neo-card-mint {
+  border-width: 3px !important;
+  box-shadow: 5px 5px 0px 0px #000000 !important;
+}
+
+.high-contrast button,
+.high-contrast input,
+.high-contrast select {
+  border-width: 2px !important;
+}
+
