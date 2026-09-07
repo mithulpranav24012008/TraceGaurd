@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Clock, AlertTriangle, ChevronDown, Check, RefreshCw } from 'lucide-react';
+import { Shield, Clock, AlertTriangle, ChevronDown, Check, RefreshCw, Globe2 } from 'lucide-react';
 import { MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface HeaderProps {
   currentCase: MockCase;
@@ -18,6 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [timeString, setTimeString] = useState<string>('');
   const [isCaseDropdownOpen, setIsCaseDropdownOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     const updateTime = () => {
@@ -37,19 +39,44 @@ export const Header: React.FC<HeaderProps> = ({
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-lg font-semibold text-white tracking-tight flex items-center gap-2">
-              <span>Blockchain Fraud Investigation</span>
+              <span>{t('header.title')}</span>
             </h1>
             <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono-code font-medium bg-[#111F2C] border border-[#243443] text-[#38BDF8]">
-              v2.4-FORENSIC
+              {t('header.version')}
             </span>
           </div>
           <p className="text-xs text-[#8EA1B2] mt-0.5">
-            Trace suspicious cryptocurrency flows from reported wallet addresses across peel chains, mixers, and exchanges.
+            {t('header.subtitle')}
           </p>
         </div>
       </div>
 
       <div className="flex items-center flex-wrap gap-2.5 sm:gap-3">
+        {/* Language Selector Toggle Pill */}
+        <div className="flex items-center bg-[#071018] p-1 rounded-lg border border-[#243443] font-mono-code text-xs">
+          <Globe2 className="w-3.5 h-3.5 text-[#38BDF8] ml-1.5 mr-1" />
+          <button
+            onClick={() => setLanguage('en')}
+            className={`px-2 py-0.5 rounded text-[11px] font-bold transition-colors cursor-pointer ${
+              language === 'en'
+                ? 'bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/40'
+                : 'text-[#8EA1B2] hover:text-white'
+            }`}
+          >
+            English
+          </button>
+          <button
+            onClick={() => setLanguage('hi')}
+            className={`px-2 py-0.5 rounded text-[11px] font-bold transition-colors cursor-pointer ${
+              language === 'hi'
+                ? 'bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/40'
+                : 'text-[#8EA1B2] hover:text-white'
+            }`}
+          >
+            हिन्दी
+          </button>
+        </div>
+
         {/* Case Selector Dropdown */}
         <div className="relative">
           <button
@@ -58,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
             aria-expanded={isCaseDropdownOpen}
             aria-haspopup="listbox"
           >
-            <span className="text-[#8EA1B2]">CASE:</span>
+            <span className="text-[#8EA1B2]">{t('header.case')}</span>
             <span className="font-semibold text-[#38BDF8]">{currentCase.id}</span>
             <ChevronDown className="w-3.5 h-3.5 text-[#8EA1B2]" />
           </button>
@@ -123,13 +150,13 @@ export const Header: React.FC<HeaderProps> = ({
           className="flex items-center gap-1.5 bg-[#111F2C] hover:bg-[#162636] border border-[#243443] hover:border-[#8EA1B2] text-xs px-2.5 py-1.5 rounded-lg text-[#8EA1B2] hover:text-white transition-colors cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Reset</span>
+          <span className="hidden sm:inline">{t('header.reset')}</span>
         </button>
 
         {/* Environment Badge */}
         <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono-code font-medium">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>LIVE GATEWAYS ACTIVE</span>
+          <span>{t('header.liveGateways')}</span>
         </div>
       </div>
     </header>

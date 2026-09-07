@@ -16,6 +16,7 @@ import {
   X
 } from 'lucide-react';
 import { NavigationTab } from '../../types';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface SidebarProps {
   activeTab: NavigationTab;
@@ -32,17 +33,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCloseMobile,
   pendingAlertsCount = 2
 }) => {
+  const { t } = useLanguage();
+
   const navItems = [
-    { id: 'triage', label: 'Triage Queue', icon: Inbox },
-    { id: 'investigation', label: 'Investigation', icon: Search },
-    { id: 'cases', label: 'Case Files', icon: FolderSearch },
-    { id: 'graph', label: 'Transaction Graph', icon: Network },
-    { id: 'risk', label: 'Risk Intelligence', icon: ShieldAlert },
-    { id: 'pattern', label: 'Pattern Intelligence', icon: Radar },
-    { id: 'attribution', label: 'Exchange Attribution', icon: Building2 },
-    { id: 'alerts', label: 'Compliance Alerts', icon: Bell, badge: pendingAlertsCount },
-    { id: 'reports', label: 'Reports', icon: FileText },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'triage', label: t('nav.triage'), icon: Inbox },
+    { id: 'investigation', label: t('nav.investigation'), icon: Search },
+    { id: 'cases', label: t('nav.cases'), icon: FolderSearch },
+    { id: 'graph', label: t('nav.graph'), icon: Network },
+    { id: 'risk', label: t('nav.risk'), icon: ShieldAlert },
+    { id: 'pattern', label: t('nav.pattern'), icon: Radar },
+    { id: 'attribution', label: t('nav.attribution'), icon: Building2 },
+    { id: 'alerts', label: t('nav.alerts'), icon: Bell, badge: pendingAlertsCount },
+    { id: 'reports', label: t('nav.reports'), icon: FileText },
+    { id: 'settings', label: t('nav.settings'), icon: Settings }
   ] as const;
 
   const systemStatus = [

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Settings, Shield, Sliders, Monitor, RefreshCw, Check, Globe, Building2, Lock, Zap, Server } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface SettingsState {
   demoMode: boolean;
@@ -18,6 +19,7 @@ interface SettingsState {
 }
 
 export const SettingsPage: React.FC = () => {
+  const { language, setLanguage, t } = useLanguage();
   const [settings, setSettings] = useState<SettingsState>({
     demoMode: false,
     reducedMotion: false,
@@ -377,6 +379,51 @@ export const SettingsPage: React.FC = () => {
                 <option value={1000}>1,000ms (Standard SOC)</option>
                 <option value={1500}>1,500ms (Deliberate)</option>
               </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Section: Language & Localization Preferences */}
+        <div className="p-5 rounded-xl bg-[#0D1721] border border-[#243443] space-y-4">
+          <div className="border-b border-[#243443] pb-3">
+            <h2 className="text-xs font-bold uppercase tracking-wider font-mono-code text-white flex items-center gap-2">
+              <Globe className="w-4 h-4 text-[#38BDF8]" />
+              <span>{t('settings.languageSection')}</span>
+            </h2>
+            <p className="text-[11px] text-[#8EA1B2] mt-0.5 font-sans">
+              {t('settings.languageHelp')}
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 rounded-lg bg-[#071018] border border-[#243443]">
+            <div>
+              <div className="text-white font-semibold text-xs font-mono-code">{t('settings.selectLanguage')}</div>
+              <div className="text-[11px] text-[#8EA1B2] font-sans mt-0.5">
+                Active Locale: <span className="text-[#38BDF8] font-mono-code font-bold">{language === 'hi' ? 'हिन्दी (Hindi)' : 'English (en)'}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 font-mono-code text-xs">
+              <button
+                onClick={() => setLanguage('en')}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
+                  language === 'en'
+                    ? 'bg-[#38BDF8]/20 text-[#38BDF8] border-[#38BDF8]/40 shadow-sm'
+                    : 'bg-[#111F2C] text-[#8EA1B2] border-[#243443] hover:text-white'
+                }`}
+              >
+                English (en)
+              </button>
+              <button
+                onClick={() => setLanguage('hi')}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
+                  language === 'hi'
+                    ? 'bg-[#38BDF8]/20 text-[#38BDF8] border-[#38BDF8]/40 shadow-sm'
+                    : 'bg-[#111F2C] text-[#8EA1B2] border-[#243443] hover:text-white'
+                }`}
+              >
+                हिन्दी (hi)
+              </button>
             </div>
           </div>
         </div>
