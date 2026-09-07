@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Search, ArrowRight, Sparkles, Copy, Check, Database, Zap, Globe, RefreshCw, Upload, Image as ImageIcon, FileSearch, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
+import { Search, ArrowRight, Sparkles, Copy, Check, Database, Zap, RefreshCw, Upload, Image as ImageIcon, FileSearch, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
 import { Blockchain, InvestigationSource, RiskLevel, MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
 import { RiskBadge } from '../common/RiskBadge';
-import { useLanguage } from '../../context/LanguageContext';
+import { useLanguage } from '../../context/useLanguage';
 import { processScreenshotOcr, SAMPLE_SCAM_SCREENSHOTS, ExtractedAddressResult } from '../../utils/ocrAddressExtractor';
 
 interface SeedStageProps {

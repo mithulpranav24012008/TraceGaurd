@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, ArrowRight, ShieldAlert, ArrowUpRight } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { GraphEdge, RiskTimelineEvent } from '../../types';
 
 interface TransactionTimelineProps {

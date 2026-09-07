@@ -4,7 +4,7 @@ import { MockCase, ComplianceReferral } from '../../types';
 import { RiskBadge } from './RiskBadge';
 import { RiskExplanationBox } from './RiskExplanationBox';
 import { CyberCellHandoffModal } from './CyberCellHandoffModal';
-import { useLanguage } from '../../context/LanguageContext';
+import { useLanguage } from '../../context/useLanguage';
 
 interface ReportModalProps {
   caseData: MockCase;

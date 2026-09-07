@@ -11,13 +11,11 @@ import {
   Bell,
   FileText,
   Settings,
-  ShieldCheck,
   Activity,
-  Menu,
   X
 } from 'lucide-react';
 import { NavigationTab } from '../../types';
-import { useLanguage } from '../../context/LanguageContext';
+import { useLanguage } from '../../context/useLanguage';
 
 interface SidebarProps {
   activeTab: NavigationTab;

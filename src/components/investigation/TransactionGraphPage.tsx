@@ -1,5 +1,5 @@
 import React from 'react';
-import { Network, Search, ArrowRight } from 'lucide-react';
+import { Network, ArrowRight } from 'lucide-react';
 import { MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
 import { TransactionGraph } from './TransactionGraph';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, Search, CheckCircle2, AlertTriangle, ShieldCheck, ExternalLink, Filter } from 'lucide-react';
+import { Building2, Search, CheckCircle2 } from 'lucide-react';
 import { MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
 

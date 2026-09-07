@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { FileText, Download, Printer, ExternalLink, ShieldCheck, ChevronRight, FileCode, ArrowUpRight } from 'lucide-react';
+import { FileText, FileCode } from 'lucide-react';
 import { MOCK_CASES } from '../../data/mockCases';
-import { MockCase, EscalationStatus } from '../../types';
+import { MockCase } from '../../types';
 import { ReportModal } from '../common/ReportModal';
 import { CyberCellHandoffModal } from '../common/CyberCellHandoffModal';
 import { RiskBadge } from '../common/RiskBadge';
-import { truncateAddress } from '../../utils/formatters';
 
 interface ReportsPageProps {
   casesList?: MockCase[];
@@ -18,19 +17,6 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({
 }) => {
   const [selectedCase, setSelectedCase] = useState<MockCase | null>(null);
   const [handoffCase, setHandoffCase] = useState<MockCase | null>(null);
-
-  const getEscalationBadge = (status?: EscalationStatus) => {
-    switch (status) {
-      case 'Escalated':
-        return 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30';
-      case 'Accepted by Specialist Team':
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
-      case 'Returned for More Info':
-        return 'bg-amber-500/10 text-amber-300 border-amber-500/30';
-      default:
-        return 'bg-slate-800 text-slate-400 border-slate-700';
-    }
-  };
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6 select-none font-mono text-black">

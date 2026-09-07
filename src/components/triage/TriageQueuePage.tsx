@@ -1,26 +1,21 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Inbox,
   Search,
   Upload,
   Plus,
-  ShieldAlert,
   ArrowUpDown,
   CheckCircle2,
-  AlertTriangle,
   Send,
   FileSpreadsheet,
   X,
   Radar,
-  MapPin,
-  Clock,
-  Filter,
   Trash2,
   Check,
   Copy,
   ChevronRight
 } from 'lucide-react';
-import { TriageComplaint, Blockchain, RiskLevel, TriageAction, MockCase } from '../../types';
+import { TriageComplaint, Blockchain, MockCase } from '../../types';
 import { getTriageQueue, addTriageComplaints, escalateComplaints, parseCsvText } from '../../data/triageQueueStore';
 import { RiskBadge } from '../common/RiskBadge';
 import { truncateAddress } from '../../utils/formatters';
@@ -331,17 +326,7 @@ export const TriageQueuePage: React.FC<TriageQueuePageProps> = ({
     );
   };
 
-  const getActionBadgeClass = (action: TriageAction) => {
-    switch (action) {
-      case 'Escalate to Cyber Cell':
-        return 'bg-red-500/15 text-red-400 border-red-500/40';
-      case 'Monitor':
-        return 'bg-amber-500/15 text-amber-400 border-amber-500/40';
-      case 'Low Priority':
-      default:
-        return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40';
-    }
-  };
+
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6 select-none font-mono text-black">

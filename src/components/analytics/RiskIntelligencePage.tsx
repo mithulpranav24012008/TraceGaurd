@@ -6,8 +6,7 @@ import {
   Building2,
   TrendingUp,
   AlertTriangle,
-  Layers,
-  ArrowUpRight
+  Layers
 } from 'lucide-react';
 import {
   AreaChart,
@@ -43,30 +42,7 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
     setSelectedCaseId(caseId);
   }, [caseId]);
 
-  // Check if a explicit caseId was provided but not found
-  const explicitMatchFound = caseId
-    ? casesList.some(
-        (c) =>
-          c.id === caseId ||
-          c.seedDetails?.address?.toLowerCase() === caseId.toLowerCase()
-      )
-    : true;
-
-  if (caseId && !explicitMatchFound) {
-    return (
-      <div className="p-12 max-w-4xl mx-auto my-12 text-center bg-[#0D1721] border border-[#243443] rounded-xl space-y-4 font-mono text-xs text-[#8EA1B2] shadow-2xl">
-        <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto" />
-        <h2 className="text-base font-bold text-white uppercase tracking-wider">No Risk Telemetry Found</h2>
-        <p>
-          No active case record matched case ID or target address: <strong className="text-[#38BDF8]">{caseId}</strong>
-        </p>
-        <p className="text-[11px] text-[#8EA1B2]">
-          Please select a valid case from the case repository or investigation tab.
-        </p>
-      </div>
-    );
-  }
-
+  // Derive effectiveCases and all chart data before any conditional return to satisfy Rules of Hooks
   const effectiveCases = useMemo(() => {
     if (!selectedCaseId || selectedCaseId === 'ALL') return casesList;
     const match = casesList.filter(
@@ -103,6 +79,30 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
 
     return buckets;
   }, [effectiveCases]);
+
+  // Check if a explicit caseId was provided but not found
+  const explicitMatchFound = caseId
+    ? casesList.some(
+        (c) =>
+          c.id === caseId ||
+          c.seedDetails?.address?.toLowerCase() === caseId.toLowerCase()
+      )
+    : true;
+
+  if (caseId && !explicitMatchFound) {
+    return (
+      <div className="p-12 max-w-4xl mx-auto my-12 text-center bg-[#0D1721] border border-[#243443] rounded-xl space-y-4 font-mono text-xs text-[#8EA1B2] shadow-2xl">
+        <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto" />
+        <h2 className="text-base font-bold text-white uppercase tracking-wider">No Risk Telemetry Found</h2>
+        <p>
+          No active case record matched case ID or target address: <strong className="text-[#38BDF8]">{caseId}</strong>
+        </p>
+        <p className="text-[11px] text-[#8EA1B2]">
+          Please select a valid case from the case repository or investigation tab.
+        </p>
+      </div>
+    );
+  }
 
   // Dynamic Chart Data: Cases by Blockchain
   const blockchainData = useMemo(() => {
@@ -151,7 +151,7 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
 
   // Dynamic Exposure Matrix
   const exposureMatrix = useMemo(() => {
-    const getCatStats = (predicate: (c: MockCase) => boolean, defaultCategory: string) => {
+    const getCatStats = (predicate: (c: MockCase) => boolean) => {
       const matching = effectiveCases.filter(predicate);
       const count = matching.length;
       const avgRisk = count > 0
@@ -161,23 +161,19 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
     };
 
     const mixerStats = getCatStats(
-      (c) => (c.riskComponents?.['Mixer Exposure'] ?? 0) > 0 || c.nodes?.some((n) => n.type === 'mixer'),
-      'Mixers'
+      (c) => (c.riskComponents?.['Mixer Exposure'] ?? 0) > 0 || c.nodes?.some((n) => n.type === 'mixer')
     );
 
     const bridgeStats = getCatStats(
-      (c) => (c.riskComponents?.['Bridge Exposure'] ?? 0) > 0 || c.nodes?.some((n) => n.type === 'bridge'),
-      'Bridges'
+      (c) => (c.riskComponents?.['Bridge Exposure'] ?? 0) > 0 || c.nodes?.some((n) => n.type === 'bridge')
     );
 
     const velocityStats = getCatStats(
-      (c) => (c.riskComponents?.['Velocity'] ?? 0) > 40 || c.nodes?.some((n) => n.type === 'peel_chain'),
-      'Peel Chains'
+      (c) => (c.riskComponents?.['Velocity'] ?? 0) > 40 || c.nodes?.some((n) => n.type === 'peel_chain')
     );
 
     const cexStats = getCatStats(
-      (c) => (c.riskComponents?.['Exchange Proximity'] ?? 0) > 40 || !!c.attribution,
-      'Exchange Endpoints'
+      (c) => (c.riskComponents?.['Exchange Proximity'] ?? 0) > 40 || !!c.attribution
     );
 
     return [

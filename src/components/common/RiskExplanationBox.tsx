@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Copy, Check, MessageSquare, Globe2 } from 'lucide-react';
+import { BookOpen, Copy, Check, MessageSquare } from 'lucide-react';
 import { RiskLevel, RiskComponents, ExchangeAttribution, PatternMatchResult } from '../../types';
 import { generateRiskExplanation } from '../../utils/explanationGenerator';
 
@@ -19,8 +19,7 @@ export const RiskExplanationBox: React.FC<RiskExplanationBoxProps> = ({
   riskComponents,
   highRiskReasons,
   patternMatch,
-  attribution,
-  compact = false
+  attribution
 }) => {
   const [lang, setLang] = useState<'en' | 'hi'>('en');
   const [copiedVictim, setCopiedVictim] = useState(false);

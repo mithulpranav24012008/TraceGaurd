@@ -1,23 +1,11 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import {
-  ShieldAlert,
-  ArrowRight,
-  Sparkles,
-  Info,
-  Maximize2,
-  Lock,
-  Layers,
-  Repeat,
-  Building2,
-  Crosshair,
-  Wallet
-} from 'lucide-react';
-import { GraphNode, GraphEdge, NodeType, MockCase } from '../../types';
+import { ArrowRight } from 'lucide-react';
+import { GraphNode, GraphEdge, MockCase } from '../../types';
 import { GraphControls, GraphFilterCategory } from './GraphControls';
 import { NodeInspector } from './NodeInspector';
 import { TransactionTimeline } from './TransactionTimeline';
 import { truncateAddress } from '../../utils/formatters';
-import { useSettings } from '../../context/SettingsContext';
+import { useSettings } from '../../context/useSettings';
 
 interface TransactionGraphProps {
   caseData: MockCase;
@@ -507,7 +495,6 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
               <g className="nodes-layer">
                 {caseData.nodes.map((node) => {
                   const isSelected = selectedNode?.id === node.id;
-                  const isHovered = hoveredNode?.id === node.id;
                   const nodeVisible = isNodeVisible(node);
                   const visual = getNodeVisuals(node);
 

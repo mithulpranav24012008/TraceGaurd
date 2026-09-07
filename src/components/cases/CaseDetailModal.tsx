@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ImageOff, FileText, ShieldAlert } from 'lucide-react';
+import { X, ImageOff } from 'lucide-react';
 import { MockCase } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
 

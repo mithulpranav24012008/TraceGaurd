@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Search, ShieldAlert, FileText, Copy, Check, ExternalLink, Filter } from 'lucide-react';
+import { Bell, Search, FileText, Copy, Check } from 'lucide-react';
 import { ComplianceReferral, MockCase } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
 import { ReportModal } from '../common/ReportModal';

@@ -1,9 +1,8 @@
 import React from 'react';
-import { FileText, ArrowRight, ShieldAlert, CheckCircle2, DollarSign, GitFork, Building2, AlertTriangle } from 'lucide-react';
+import { ArrowRight, ShieldAlert, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { MockCase } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
 import { RiskExplanationBox } from '../common/RiskExplanationBox';
-import { truncateAddress } from '../../utils/formatters';
 
 interface SummaryStageProps {
   currentCase: MockCase;

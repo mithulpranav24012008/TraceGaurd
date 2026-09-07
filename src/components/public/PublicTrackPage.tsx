@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, ShieldCheck, PhoneCall, ExternalLink, FileText, CheckCircle2, AlertTriangle, ArrowRight, Lock } from 'lucide-react';
-import { useLanguage } from '../../context/LanguageContext';
+import { useLanguage } from '../../context/useLanguage';
 import { MockCase } from '../../types';
 
 interface PublicTrackPageProps {

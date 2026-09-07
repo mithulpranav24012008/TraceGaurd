@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Search, Filter, FolderSearch, ArrowUpRight, ShieldAlert, CheckCircle2, ChevronRight, FileCode } from 'lucide-react';
-import { MockCase, RiskLevel, EscalationStatus } from '../../types';
+import { Search, FolderSearch, ArrowUpRight, ChevronRight, FileCode } from 'lucide-react';
+import { MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
 import { RiskBadge } from '../common/RiskBadge';
 import { CyberCellHandoffModal } from '../common/CyberCellHandoffModal';
@@ -54,19 +54,6 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
   const handleOpenCase = (c: MockCase) => {
     onSelectCase(c);
     onNavigateToInvestigation();
-  };
-
-  const getEscalationBadge = (status?: EscalationStatus) => {
-    switch (status) {
-      case 'Escalated':
-        return 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30';
-      case 'Accepted by Specialist Team':
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
-      case 'Returned for More Info':
-        return 'bg-amber-500/10 text-amber-300 border-amber-500/30';
-      default:
-        return 'bg-slate-800 text-slate-400 border-slate-700';
-    }
   };
 
   return (

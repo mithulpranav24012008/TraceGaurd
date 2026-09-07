@@ -1,7 +1,7 @@
 import React from 'react';
 import { RiskLevel } from '../../types';
 import { getRiskColorClass, getRiskLevelFromScore } from '../../utils/formatters';
-import { useSettings } from '../../context/SettingsContext';
+import { useSettings } from '../../context/useSettings';
 
 interface RiskBadgeProps {
   level?: RiskLevel;

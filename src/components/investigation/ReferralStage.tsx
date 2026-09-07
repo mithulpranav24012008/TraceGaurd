@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, FileText, Download, RotateCcw, ShieldAlert, CheckCircle, Copy, Check, Clock } from 'lucide-react';
+import { Send, FileText, RotateCcw, CheckCircle, Copy, Check, Clock } from 'lucide-react';
 import { MockCase, ComplianceReferral } from '../../types';
 import { ReportModal } from '../common/ReportModal';
 import { RiskBadge } from '../common/RiskBadge';

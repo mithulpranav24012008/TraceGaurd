@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { X, ShieldAlert, Download, Copy, Check, FileCode, FileText, ArrowUpRight, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { X, ShieldAlert, Download, Copy, Check, FileCode, FileText, ArrowUpRight } from 'lucide-react';
 import { MockCase, EscalationStatus } from '../../types';
-import { useLanguage } from '../../context/LanguageContext';
+import { useLanguage } from '../../context/useLanguage';
 import { getPatternMatch } from '../../data/nationalRegistryStore';
 
 interface CyberCellHandoffModalProps {

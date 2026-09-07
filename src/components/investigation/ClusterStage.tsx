@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Network, CheckCircle2, ArrowRight, ShieldAlert, Layers, ExternalLink } from 'lucide-react';
+import { Network, CheckCircle2, ArrowRight, ShieldAlert, Layers } from 'lucide-react';
 import { MockCase } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
 import { truncateAddress } from '../../utils/formatters';

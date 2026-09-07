@@ -59,7 +59,7 @@ export const PublicStatusPage: React.FC<PublicStatusPageProps> = ({ caseData, on
         </div>
       </div>
     );
-  } catch (err) {
+  } catch {
     renderedContent = (
       <div className="max-w-md mx-auto p-6 rounded-xl bg-red-100 border-2 border-black text-center space-y-3 font-mono">
         <AlertTriangle className="w-8 h-8 text-red-600 mx-auto" />

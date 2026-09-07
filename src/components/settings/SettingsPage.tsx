@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Settings, Shield, Sliders, Monitor, RefreshCw, Check, Globe, Building2, Lock, Zap, Eye } from 'lucide-react';
-import { useLanguage } from '../../context/LanguageContext';
-import { useSettings } from '../../context/SettingsContext';
+import { Settings, Sliders, Monitor, RefreshCw, Check, Globe, Building2, Lock, Zap, Eye } from 'lucide-react';
+import { useLanguage } from '../../context/useLanguage';
+import { useSettings } from '../../context/useSettings';
 
 export const SettingsPage: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();

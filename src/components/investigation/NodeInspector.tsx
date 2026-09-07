@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, ExternalLink, ShieldAlert, ArrowUpRight, ArrowDownLeft, Copy, Check, Hash, Info } from 'lucide-react';
+import { X, ShieldAlert, ArrowUpRight, ArrowDownLeft, Copy, Check } from 'lucide-react';
 import { GraphNode, NodeType } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
 import { RiskExplanationBox } from '../common/RiskExplanationBox';

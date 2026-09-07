@@ -8,10 +8,9 @@ import { AttributionStage } from './AttributionStage';
 import { SummaryStage } from './SummaryStage';
 import { ReferralStage } from './ReferralStage';
 import { MockCase, Blockchain, InvestigationSource, RiskLevel, ComplianceReferral } from '../../types';
-import { generateSimulatedCaseForAddress } from '../../data/mockCases';
 import { addReport } from '../../data/nationalRegistryStore';
 import { fetchLiveBlockchainCase } from '../../services/blockchainService';
-import { useSettings } from '../../context/SettingsContext';
+import { useSettings } from '../../context/useSettings';
 
 interface InvestigationPageProps {
   currentCase: MockCase;

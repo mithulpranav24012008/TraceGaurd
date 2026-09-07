@@ -1,4 +1,4 @@
-import { Blockchain, InvestigationSource, MockCase, GraphNode, GraphEdge, RiskLevel, RiskComponents, RiskTimelineEvent, ExchangeAttribution } from '../types';
+import { Blockchain, InvestigationSource, MockCase, GraphNode, GraphEdge, RiskLevel } from '../types';
 import { truncateAddress } from '../utils/formatters';
 
 interface BlockscoutTx {
@@ -48,7 +48,6 @@ export async function fetchLiveBlockchainCase(
   userSeverityPreference?: RiskLevel
 ): Promise<MockCase> {
   const cleanAddr = address.trim();
-  const lowerAddr = cleanAddr.toLowerCase();
 
   try {
     if (blockchain === 'Bitcoin') {

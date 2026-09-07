@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, CheckCircle2, AlertTriangle, ArrowRight, ShieldCheck, Database, DollarSign } from 'lucide-react';
+import { Building2, AlertTriangle, ArrowRight, ShieldCheck, Database } from 'lucide-react';
 import { MockCase } from '../../types';
 import { truncateAddress } from '../../utils/formatters';
 

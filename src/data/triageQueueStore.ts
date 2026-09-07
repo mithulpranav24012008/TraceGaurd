@@ -171,8 +171,6 @@ export function parseCsvText(csvText: string): Array<{
   const hasHeader = lines[0].toLowerCase().includes('complainant') || lines[0].toLowerCase().includes('wallet') || lines[0].toLowerCase().includes('address');
   const dataLines = hasHeader ? lines.slice(1) : lines;
 
-  const validChains: Blockchain[] = ['Ethereum', 'Bitcoin', 'BNB Smart Chain', 'Polygon'];
-
   return dataLines.map((line) => {
     const cols = line.split(',').map((c) => c.trim().replace(/^["']|["']$/g, ''));
     const complainantName = cols[0] || 'Anonymous Complainant';

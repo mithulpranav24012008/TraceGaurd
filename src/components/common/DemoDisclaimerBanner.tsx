@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldAlert, Info, X, Zap, CheckCircle2, Globe, Building2, Lock } from 'lucide-react';
+import { Info, X, Zap, CheckCircle2, Globe, Building2, Lock } from 'lucide-react';
 import { SystemGateways } from '../../types';
 
 interface DemoDisclaimerBannerProps {

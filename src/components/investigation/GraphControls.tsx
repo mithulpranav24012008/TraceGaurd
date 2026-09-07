@@ -1,5 +1,5 @@
 import React from 'react';
-import { ZoomIn, ZoomOut, RotateCcw, Play, Pause, Filter, Maximize2 } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Play, Pause, Filter } from 'lucide-react';
 
 export type GraphFilterCategory = 'All' | 'Wallets' | 'Mixers' | 'Bridges' | 'Exchanges' | 'High Risk';
 

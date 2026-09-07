@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Clock, AlertTriangle, ChevronDown, Check, RefreshCw, Globe2 } from 'lucide-react';
+import { Clock, ChevronDown, Check, RefreshCw, Globe2 } from 'lucide-react';
 import { MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
-import { useLanguage } from '../../context/LanguageContext';
+import { useLanguage } from '../../context/useLanguage';
 
 interface HeaderProps {
   currentCase: MockCase;

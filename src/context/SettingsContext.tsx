@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 export interface SettingsState {
   demoMode: boolean;
@@ -34,13 +34,13 @@ export const DEFAULT_SETTINGS: SettingsState = {
   fiuProtocol: 'goAML Central Transmission Gateway v4.2'
 };
 
-interface SettingsContextType {
+export interface SettingsContextType {
   settings: SettingsState;
   updateSettings: (partial: Partial<SettingsState>) => void;
   resetSettings: () => void;
 }
 
-const SettingsContext = createContext<SettingsContextType>({
+export const SettingsContext = createContext<SettingsContextType>({
   settings: DEFAULT_SETTINGS,
   updateSettings: () => {},
   resetSettings: () => {}
@@ -101,5 +101,3 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     </SettingsContext.Provider>
   );
 };
-
-export const useSettings = () => useContext(SettingsContext);
