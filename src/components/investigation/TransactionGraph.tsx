@@ -50,24 +50,37 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
 
   // Pan handlers
   const handleMouseDown = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).tagName !== 'svg' && (e.target as HTMLElement).tagName !== 'rect') {
+    // Ignore node or control button clicks
+    const target = e.target as HTMLElement;
+    if (target.closest('.node-element') || target.closest('button') || target.closest('input')) {
       return;
     }
     setIsDragging(true);
     setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  useEffect(() => {
     if (!isDragging) return;
-    setPan({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y
-    });
-  };
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      setPan({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    };
+
+    const handleGlobalMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    window.addEventListener('mousemove', handleGlobalMouseMove);
+    window.addEventListener('mouseup', handleGlobalMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleGlobalMouseMove);
+      window.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [isDragging, dragStart]);
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
@@ -364,7 +377,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
                   <g
                     key={node.id}
                     transform={`translate(${node.x}, ${node.y})`}
-                    className={`cursor-pointer transition-opacity duration-200 ${
+                    className={`node-element cursor-pointer transition-opacity duration-200 ${
                       isDimmed ? 'opacity-25' : 'opacity-100'
                     }`}
                     onClick={() => {

@@ -5,12 +5,14 @@ import { MOCK_CASES } from '../../data/mockCases';
 
 interface HeaderProps {
   currentCase: MockCase;
+  casesList?: MockCase[];
   onSelectCase: (caseItem: MockCase) => void;
   onResetInvestigation: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   currentCase,
+  casesList = MOCK_CASES,
   onSelectCase,
   onResetInvestigation
 }) => {
@@ -74,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="px-2.5 py-1.5 text-[11px] font-mono-code text-[#8EA1B2] uppercase tracking-wider border-b border-[#243443]/60">
                   Select Forensic Case
                 </div>
-                {MOCK_CASES.map(c => (
+                {casesList.map(c => (
                   <button
                     key={c.id}
                     onClick={() => {

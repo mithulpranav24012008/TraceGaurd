@@ -18,8 +18,33 @@ import { Menu } from 'lucide-react';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<NavigationTab>('investigation');
-  const [currentCase, setCurrentCase] = useState<MockCase>(MOCK_CASES[0]);
-  const [referrals, setReferrals] = useState<ComplianceReferral[]>(INITIAL_COMPLIANCE_REFERRALS);
+
+  // Cases state with localStorage persistence
+  const [casesList, setCasesList] = useState<MockCase[]>(() => {
+    try {
+      const stored = localStorage.getItem('traceguard_cases');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return MOCK_CASES;
+  });
+
+  const [currentCase, setCurrentCase] = useState<MockCase>(casesList[0] || MOCK_CASES[0]);
+
+  // Referrals state with localStorage persistence
+  const [referrals, setReferrals] = useState<ComplianceReferral[]>(() => {
+    try {
+      const stored = localStorage.getItem('traceguard_referrals');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return INITIAL_COMPLIANCE_REFERRALS;
+  });
+
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Initialize the national pattern match registry on first render
@@ -31,8 +56,34 @@ export function App() {
     setCurrentCase(caseItem);
   };
 
+  const handleUpdateCase = (updated: MockCase) => {
+    setCurrentCase(updated);
+    setCasesList((prev) => {
+      const existsIndex = prev.findIndex(
+        (c) => c.id === updated.id || c.seedDetails.address.toLowerCase() === updated.seedDetails.address.toLowerCase()
+      );
+      let nextList: MockCase[];
+      if (existsIndex >= 0) {
+        nextList = [...prev];
+        nextList[existsIndex] = updated;
+      } else {
+        nextList = [updated, ...prev];
+      }
+      try {
+        localStorage.setItem('traceguard_cases', JSON.stringify(nextList));
+      } catch {}
+      return nextList;
+    });
+  };
+
   const handleAlertGenerated = (newReferral: ComplianceReferral) => {
-    setReferrals((prev) => [newReferral, ...prev]);
+    setReferrals((prev) => {
+      const next = [newReferral, ...prev];
+      try {
+        localStorage.setItem('traceguard_referrals', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
   };
 
   return (
@@ -55,6 +106,7 @@ export function App() {
         <div className="relative">
           <Header
             currentCase={currentCase}
+            casesList={casesList}
             onSelectCase={handleSelectCase}
             onResetInvestigation={() => {
               setActiveTab('investigation');
@@ -81,7 +133,7 @@ export function App() {
           {activeTab === 'investigation' && (
             <InvestigationPage
               currentCase={currentCase}
-              onUpdateCase={(updated) => setCurrentCase(updated)}
+              onUpdateCase={handleUpdateCase}
               onSelectCase={handleSelectCase}
               onAlertGenerated={handleAlertGenerated}
             />
@@ -89,6 +141,7 @@ export function App() {
 
           {activeTab === 'cases' && (
             <CaseFilesPage
+              casesList={casesList}
               onSelectCase={handleSelectCase}
               onNavigateToInvestigation={() => setActiveTab('investigation')}
             />

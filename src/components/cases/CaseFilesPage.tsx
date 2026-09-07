@@ -6,11 +6,13 @@ import { RiskBadge } from '../common/RiskBadge';
 import { truncateAddress } from '../../utils/formatters';
 
 interface CaseFilesPageProps {
+  casesList?: MockCase[];
   onSelectCase: (c: MockCase) => void;
   onNavigateToInvestigation: () => void;
 }
 
 export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
+  casesList = MOCK_CASES,
   onSelectCase,
   onNavigateToInvestigation
 }) => {
@@ -18,7 +20,7 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [riskFilter, setRiskFilter] = useState<string>('All');
 
-  const filteredCases = MOCK_CASES.filter((c) => {
+  const filteredCases = casesList.filter((c) => {
     const matchesSearch =
       c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -52,7 +54,7 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
 
         <div className="flex items-center gap-2 text-xs font-mono-code text-[#8EA1B2]">
           <span className="p-2 rounded-lg bg-[#0D1721] border border-[#243443]">
-            Total Cases: <strong className="text-white">{MOCK_CASES.length}</strong>
+            Total Cases: <strong className="text-white">{casesList.length}</strong>
           </span>
           <span className="p-2 rounded-lg bg-[#0D1721] border border-[#243443]">
             Matching: <strong className="text-[#38BDF8]">{filteredCases.length}</strong>

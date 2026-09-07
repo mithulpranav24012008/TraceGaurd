@@ -10,6 +10,7 @@ import { ReferralStage } from './ReferralStage';
 import { MockCase, Blockchain, InvestigationSource, RiskLevel, ComplianceReferral } from '../../types';
 import { generateSimulatedCaseForAddress } from '../../data/mockCases';
 import { addReport } from '../../data/nationalRegistryStore';
+import { fetchLiveBlockchainCase } from '../../services/blockchainService';
 
 interface InvestigationPageProps {
   currentCase: MockCase;
@@ -85,13 +86,14 @@ export const InvestigationPage: React.FC<InvestigationPageProps> = ({
     };
   }, [isAutoPlaying, currentStage]);
 
-  const handleStartCustomInvestigation = (
+  const handleStartCustomInvestigation = async (
     address: string,
     blockchain: Blockchain,
     source: InvestigationSource,
     severity: RiskLevel
   ) => {
-    const newCase = generateSimulatedCaseForAddress(address, blockchain, source, severity);
+    // Fetch live on-chain data for the real wallet address
+    const newCase = await fetchLiveBlockchainCase(address, blockchain, source, severity);
     onUpdateCase(newCase);
 
     // Register this address in the national pattern match registry
