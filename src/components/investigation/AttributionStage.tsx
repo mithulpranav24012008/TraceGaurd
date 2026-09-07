@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Building2, CheckCircle2, AlertTriangle, ArrowRight, ShieldCheck, Database, DollarSign } from 'lucide-react';
 import { MockCase } from '../../types';
+import { truncateAddress } from '../../utils/formatters';
 
 interface AttributionStageProps {
   currentCase: MockCase;
@@ -15,20 +16,27 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
 }) => {
   const attr = currentCase.attribution;
   const evidenceList = attr.evidence || [];
+  const clusterEntities = currentCase.clusterData?.clusterEntities || [];
+
+  const [selectedEntityIndex, setSelectedEntityIndex] = useState<number>(0);
+  const selectedEntity = clusterEntities[selectedEntityIndex] || null;
 
   // Track checked state of each evidence point
   const [checkedEvidence, setCheckedEvidence] = useState<boolean[]>(() =>
     evidenceList.map(() => true)
   );
 
-  // Dynamic confidence calculation: Base 35% + weighted share per verified evidence signal
+  // Compute confidence dynamically based on selected cluster entity's correlationScore
+  const baseEntityConfidence = selectedEntity
+    ? selectedEntity.correlationScore
+    : attr.confidence || 90;
+
   const totalEvidenceCount = evidenceList.length || 1;
-  const targetConfidence = attr.confidence || 90;
-  const baseConfidence = Math.max(25, targetConfidence - 45);
-  const pointWeight = (targetConfidence - baseConfidence) / totalEvidenceCount;
+  const minConfidence = Math.max(20, baseEntityConfidence - 30);
+  const pointWeight = (baseEntityConfidence - minConfidence) / totalEvidenceCount;
 
   const checkedCount = checkedEvidence.filter(Boolean).length;
-  const rawConfidence = baseConfidence + Math.round(checkedCount * pointWeight);
+  const rawConfidence = minConfidence + Math.round(checkedCount * pointWeight);
   const confidenceScore = Math.min(100, Math.max(0, rawConfidence));
 
   const handleToggleEvidence = (index: number) => {
@@ -37,7 +45,7 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
     setCheckedEvidence(nextChecked);
 
     const newCheckedCount = nextChecked.filter(Boolean).length;
-    const newRaw = baseConfidence + Math.round(newCheckedCount * pointWeight);
+    const newRaw = minConfidence + Math.round(newCheckedCount * pointWeight);
     const newClamped = Math.min(100, Math.max(0, newRaw));
 
     if (onUpdateCase) {
@@ -59,7 +67,7 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold text-white tracking-tight">{attr.title}</h2>
             <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono-code text-xs font-bold">
-              {confidenceScore}% Confidence
+              {confidenceScore}% Confidence — {selectedEntity?.alias || attr.exchange}
             </span>
           </div>
           <p className="text-xs text-[#8EA1B2] mt-1">
@@ -76,6 +84,48 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
         </button>
       </div>
 
+      {/* Cluster Entity Selection Bar */}
+      {clusterEntities.length > 0 && (
+        <div className="p-4 rounded-xl bg-[#0D1721] border border-[#243443] space-y-2 font-mono-code">
+          <div className="flex items-center justify-between text-xs text-[#8EA1B2]">
+            <span className="uppercase font-bold text-white flex items-center gap-2">
+              <Database className="w-4 h-4 text-[#38BDF8]" />
+              <span>Select Cluster Target Node to Inspect Attribution:</span>
+            </span>
+            <span className="text-[#38BDF8]">{clusterEntities.length} Cluster Entities</span>
+          </div>
+
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            {clusterEntities.map((entity, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setSelectedEntityIndex(idx)}
+                className={`px-3 py-2 rounded-lg text-xs font-mono-code transition-all cursor-pointer border shrink-0 text-left space-y-0.5 ${
+                  selectedEntityIndex === idx
+                    ? 'bg-[#38BDF8]/15 border-[#38BDF8] text-white shadow-md'
+                    : 'bg-[#071018] border-[#243443] text-[#8EA1B2] hover:text-white hover:border-[#8EA1B2]'
+                }`}
+              >
+                <div className="font-bold flex items-center gap-2">
+                  <span>{entity.alias}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded border ${
+                      entity.correlationScore >= 85
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                        : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                    }`}
+                  >
+                    {entity.correlationScore}% Conf
+                  </span>
+                </div>
+                <div className="text-[10px] text-[#8EA1B2]">{truncateAddress(entity.address, 6, 4)}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Main Intelligence Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Exchange Match Profile Card */}
@@ -87,8 +137,12 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
                   <Building2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">{attr.exchange}</h3>
-                  <div className="text-[11px] text-[#8EA1B2] font-mono-code">{attr.walletType}</div>
+                  <h3 className="text-sm font-bold text-white">
+                    {selectedEntity ? `${attr.exchange} (${selectedEntity.alias})` : attr.exchange}
+                  </h3>
+                  <div className="text-[11px] text-[#8EA1B2] font-mono-code">
+                    {selectedEntity ? `${selectedEntity.reason} — ${attr.walletType}` : attr.walletType}
+                  </div>
                 </div>
               </div>
 
