@@ -23,9 +23,10 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
 
   // Compute adjusted risk score (boosted by pattern match)
   const baseScore = currentCase.riskScore;
-  const adjustedScore = patternMatch
-    ? Math.min(100, baseScore + Math.floor(patternMatch.victimCount * 5))
+  const rawAdjustedScore = patternMatch
+    ? baseScore + Math.floor(patternMatch.victimCount * 5)
     : baseScore;
+  const adjustedScore = Math.min(100, Math.max(0, rawAdjustedScore));
 
   // Build components with live pattern match score injected
   const components = {
@@ -40,10 +41,10 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
   const strokeDashoffset = circumference - (adjustedScore / 100) * circumference;
 
   const getGaugeColor = (val: number) => {
-    if (val >= 80) return '#EF4444';
-    if (val >= 65) return '#F97316';
-    if (val >= 40) return '#F59E0B';
-    return '#10B981';
+    if (val >= 80) return '#EF4444'; // Critical
+    if (val >= 65) return '#F97316'; // High
+    if (val >= 40) return '#F59E0B'; // Medium
+    return '#10B981'; // Low
   };
 
   const formatINR = (amount: number) =>
@@ -147,8 +148,15 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
           </div>
 
           {/* SVG Circular Gauge */}
-          <div className="relative w-44 h-44 flex items-center justify-center my-2">
-            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 110 110">
+          <div
+            className="relative w-44 h-44 flex items-center justify-center my-2"
+            role="progressbar"
+            aria-valuenow={adjustedScore}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Threat score: ${adjustedScore} out of 100 (${displaySeverity} risk)`}
+          >
+            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 110 110" aria-hidden="true">
               {/* Background track circle */}
               <circle
                 cx="55"
@@ -185,7 +193,7 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
           <div className="w-full p-2.5 rounded-lg bg-[#FDFBF7] border-2 border-black shadow-[2px_2px_0px_0px_#000] text-left text-xs font-mono font-bold space-y-1">
             <div className="text-[10px] text-black/70 font-bold">EVALUATION TIER:</div>
             <div className="text-black font-bold flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full border border-black ${adjustedScore >= 80 ? 'bg-red-500' : 'bg-orange-500'}`} />
+              <span className="w-2 h-2 rounded-full border border-black" style={{ backgroundColor: getGaugeColor(adjustedScore) }} />
               <span>{displaySeverity.toUpperCase()} RISK PROFILE</span>
             </div>
             {patternMatch && patternMatch.victimCount > 0 && (
