@@ -28,15 +28,59 @@ import { MOCK_CASES } from '../../data/mockCases';
 
 interface RiskIntelligencePageProps {
   casesList?: MockCase[];
+  caseId?: string;
+  onSelectCase?: (c: MockCase) => void;
 }
 
 export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
-  casesList = MOCK_CASES
+  casesList = MOCK_CASES,
+  caseId,
+  onSelectCase
 }) => {
-  const activeCasesCount = casesList.length;
-  const highRiskCount = casesList.filter((c) => c.severity === 'Critical' || c.severity === 'High').length;
-  const attributedCount = casesList.filter((c) => c.attribution && c.attribution.confidence > 70).length;
-  const totalTracedAmount = casesList.reduce((sum, c) => sum + (c.suspiciousAmount || 0), 0);
+  const [selectedCaseId, setSelectedCaseId] = React.useState<string | undefined>(caseId);
+
+  React.useEffect(() => {
+    setSelectedCaseId(caseId);
+  }, [caseId]);
+
+  // Check if a explicit caseId was provided but not found
+  const explicitMatchFound = caseId
+    ? casesList.some(
+        (c) =>
+          c.id === caseId ||
+          c.seedDetails?.address?.toLowerCase() === caseId.toLowerCase()
+      )
+    : true;
+
+  if (caseId && !explicitMatchFound) {
+    return (
+      <div className="p-12 max-w-4xl mx-auto my-12 text-center bg-[#0D1721] border border-[#243443] rounded-xl space-y-4 font-mono text-xs text-[#8EA1B2] shadow-2xl">
+        <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto" />
+        <h2 className="text-base font-bold text-white uppercase tracking-wider">No Risk Telemetry Found</h2>
+        <p>
+          No active case record matched case ID or target address: <strong className="text-[#38BDF8]">{caseId}</strong>
+        </p>
+        <p className="text-[11px] text-[#8EA1B2]">
+          Please select a valid case from the case repository or investigation tab.
+        </p>
+      </div>
+    );
+  }
+
+  const effectiveCases = useMemo(() => {
+    if (!selectedCaseId || selectedCaseId === 'ALL') return casesList;
+    const match = casesList.filter(
+      (c) =>
+        c.id === selectedCaseId ||
+        c.seedDetails?.address?.toLowerCase() === selectedCaseId.toLowerCase()
+    );
+    return match.length > 0 ? match : casesList;
+  }, [casesList, selectedCaseId]);
+
+  const activeCasesCount = effectiveCases.length;
+  const highRiskCount = effectiveCases.filter((c) => c.severity === 'Critical' || c.severity === 'High').length;
+  const attributedCount = effectiveCases.filter((c) => c.attribution && c.attribution.confidence > 70).length;
+  const totalTracedAmount = effectiveCases.reduce((sum, c) => sum + (c.suspiciousAmount || 0), 0);
 
   // Dynamic Chart Data: Risk Score Distribution (Harmonized Color Scale)
   const riskDistributionData = useMemo(() => {
@@ -48,7 +92,7 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
       { range: '81-100 (Critical)', count: 0, fill: '#EF4444' }
     ];
 
-    casesList.forEach((c) => {
+    effectiveCases.forEach((c) => {
       const score = c.riskScore;
       if (score <= 20) buckets[0].count++;
       else if (score <= 40) buckets[1].count++;
@@ -58,7 +102,7 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
     });
 
     return buckets;
-  }, [casesList]);
+  }, [effectiveCases]);
 
   // Dynamic Chart Data: Cases by Blockchain
   const blockchainData = useMemo(() => {
@@ -71,7 +115,7 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
     };
 
     const counts: Record<string, number> = {};
-    casesList.forEach((c) => {
+    effectiveCases.forEach((c) => {
       const chain = c.blockchain || 'Ethereum';
       counts[chain] = (counts[chain] || 0) + 1;
     });
@@ -90,7 +134,7 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
           { name: 'BNB Smart Chain', value: 5, color: '#FACC15' },
           { name: 'Polygon', value: 4, color: '#A855F7' }
         ];
-  }, [casesList]);
+  }, [effectiveCases]);
 
   // Dynamic Chart Data: Funds Traced Over Time (Last 7 Days)
   const fundsTracedData = useMemo(() => {
@@ -108,7 +152,7 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
   // Dynamic Exposure Matrix
   const exposureMatrix = useMemo(() => {
     const getCatStats = (predicate: (c: MockCase) => boolean, defaultCategory: string) => {
-      const matching = casesList.filter(predicate);
+      const matching = effectiveCases.filter(predicate);
       const count = matching.length;
       const avgRisk = count > 0
         ? Math.round(matching.reduce((acc, curr) => acc + curr.riskScore, 0) / count)
@@ -162,7 +206,7 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
         trend: 'Monitoring'
       }
     ];
-  }, [casesList]);
+  }, [effectiveCases]);
 
   // Summary Metrics
   const summaryCards = [
@@ -198,15 +242,50 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6 select-none font-sans">
-      {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-          <ShieldAlert className="w-5 h-5 text-[#38BDF8]" />
-          <span>Risk Intelligence & Threat Telemetry</span>
-        </h1>
-        <p className="text-xs text-[#8EA1B2] mt-0.5">
-          Aggregated risk heuristics, cross-case velocity metrics, and counterparty exposure analytics.
-        </p>
+      {/* Header & Case Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+            <ShieldAlert className="w-5 h-5 text-[#38BDF8]" />
+            <span>Risk Intelligence & Threat Telemetry</span>
+          </h1>
+          <p className="text-xs text-[#8EA1B2] mt-0.5">
+            Aggregated risk heuristics, cross-case velocity metrics, and counterparty exposure analytics.
+          </p>
+        </div>
+
+        {/* Case selector chips */}
+        <div className="flex items-center gap-2 flex-wrap font-mono-code text-xs">
+          <span className="text-[11px] text-[#8EA1B2]">Filter Case:</span>
+          <button
+            type="button"
+            onClick={() => setSelectedCaseId('ALL')}
+            className={`px-3 py-1 rounded-lg transition-colors cursor-pointer border ${
+              !selectedCaseId || selectedCaseId === 'ALL'
+                ? 'bg-[#38BDF8]/15 border-[#38BDF8] text-[#38BDF8] font-bold'
+                : 'bg-[#0D1721] border-[#243443] text-[#8EA1B2] hover:text-white'
+            }`}
+          >
+            All Workspace Cases
+          </button>
+          {casesList.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => {
+                setSelectedCaseId(c.id);
+                if (onSelectCase) onSelectCase(c);
+              }}
+              className={`px-3 py-1 rounded-lg transition-colors cursor-pointer border ${
+                selectedCaseId === c.id
+                  ? 'bg-[#38BDF8]/15 border-[#38BDF8] text-[#38BDF8] font-bold'
+                  : 'bg-[#0D1721] border-[#243443] text-[#8EA1B2] hover:text-white'
+              }`}
+            >
+              {c.id}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 4 Top Summary KPI Cards */}

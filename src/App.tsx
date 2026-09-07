@@ -201,7 +201,13 @@ export function App() {
             />
           )}
 
-          {activeTab === 'risk' && <RiskIntelligencePage casesList={casesList} />}
+          {activeTab === 'risk' && (
+            <RiskIntelligencePage
+              casesList={casesList}
+              caseId={currentCase?.id}
+              onSelectCase={handleSelectCase}
+            />
+          )}
 
           {activeTab === 'pattern' && <PatternIntelligencePage />}
 
