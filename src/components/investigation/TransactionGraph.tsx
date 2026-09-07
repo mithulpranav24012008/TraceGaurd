@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   ShieldAlert,
   ArrowRight,
@@ -23,12 +23,16 @@ interface TransactionGraphProps {
   caseData: MockCase;
   onAdvanceToNext?: () => void;
   showContinueButton?: boolean;
+  selectedNodeId?: string | null;
+  onSelectNode?: (node: GraphNode | null) => void;
 }
 
 export const TransactionGraph: React.FC<TransactionGraphProps> = ({
   caseData,
   onAdvanceToNext,
-  showContinueButton = true
+  showContinueButton = true,
+  selectedNodeId,
+  onSelectNode
 }) => {
   const { settings } = useSettings();
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
@@ -47,12 +51,52 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
 
   const shouldAnimateFlow = isAnimatingFlow && settings.animateParticles && !settings.reducedMotion;
 
-  // Set default selected node to suspect seed or victim on caseData load
+  // Derived transform string via useMemo to avoid state-in-effect double renders
+  const transformString = useMemo(
+    () => `translate(${pan.x}, ${pan.y}) scale(${zoom})`,
+    [pan.x, pan.y, zoom]
+  );
+
+  // Implement handleSelect to update selection state and trigger parent callback if provided
+  const handleSelect = (nodeId: string | null) => {
+    if (!nodeId) {
+      setSelectedNode(null);
+      if (onSelectNode) onSelectNode(null);
+      return;
+    }
+    const target = caseData.nodes?.find((n) => n.id === nodeId);
+    if (target) {
+      setSelectedNode(target);
+      if (onSelectNode) onSelectNode(target);
+    }
+  };
+
+  // Set default selected node on case change, guarded against re-rendering if selection is already valid
   useEffect(() => {
     if (caseData && caseData.nodes && caseData.nodes.length > 0) {
-      setSelectedNode(caseData.nodes[1] || caseData.nodes[0]);
+      const defaultNode = caseData.nodes[1] || caseData.nodes[0];
+      setSelectedNode((prev) => {
+        if (!prev || !caseData.nodes.some((n) => n.id === prev.id)) {
+          return defaultNode;
+        }
+        return prev;
+      });
     }
-  }, [caseData]);
+  }, [caseData?.id]);
+
+  // Sync external selectedNodeId prop if provided
+  useEffect(() => {
+    if (selectedNodeId !== undefined) {
+      if (selectedNodeId === null) {
+        setSelectedNode(null);
+      } else {
+        const found = caseData.nodes?.find((n) => n.id === selectedNodeId);
+        if (found && found.id !== selectedNode?.id) {
+          setSelectedNode(found);
+        }
+      }
+    }
+  }, [selectedNodeId, caseData?.nodes]);
 
   // Clean animation loop using requestAnimationFrame with guaranteed cleanup
   useEffect(() => {
@@ -341,7 +385,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
 
             {/* Transform Container Group - preserves SVG coordinate space */}
             <g
-              transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}
+              transform={transformString}
               style={{
                 transformOrigin: '0 0',
                 transition: isDragging ? 'none' : 'transform 0.08s ease-out'
@@ -380,7 +424,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedEdgeId(edge.id);
-                        setSelectedNode(targetNode);
+                        handleSelect(targetNode.id);
                       }}
                     >
                       {/* Wider invisible 24px hit-area */}
@@ -474,7 +518,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
                       }`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedNode(node);
+                        handleSelect(node.id);
                       }}
                       onMouseEnter={() => setHoveredNode(node)}
                       onMouseLeave={() => setHoveredNode(null)}
@@ -615,7 +659,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
           <NodeInspector
             key={selectedNode.id}
             node={selectedNode}
-            onClose={() => setSelectedNode(null)}
+            onClose={() => handleSelect(null)}
           />
         )}
       </div>
@@ -629,8 +673,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
           setSelectedEdgeId(edgeId);
           const targetEdge = caseData.edges.find((e) => e.id === edgeId);
           if (targetEdge) {
-            const targetNode = caseData.nodes.find((n) => n.id === targetEdge.target);
-            if (targetNode) setSelectedNode(targetNode);
+            handleSelect(targetEdge.target);
           }
         }}
       />
