@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Inbox,
   Search,
   FolderSearch,
   Network,
@@ -32,6 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   pendingAlertsCount = 2
 }) => {
   const navItems = [
+    { id: 'triage', label: 'Triage Queue', icon: Inbox },
     { id: 'investigation', label: 'Investigation', icon: Search },
     { id: 'cases', label: 'Case Files', icon: FolderSearch },
     { id: 'graph', label: 'Transaction Graph', icon: Network },

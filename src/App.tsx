@@ -3,6 +3,7 @@ import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { DemoDisclaimerBanner } from './components/common/DemoDisclaimerBanner';
 import { InvestigationPage } from './components/investigation/InvestigationPage';
+import { TriageQueuePage } from './components/triage/TriageQueuePage';
 import { CaseFilesPage } from './components/cases/CaseFilesPage';
 import { TransactionGraphPage } from './components/investigation/TransactionGraphPage';
 import { RiskIntelligencePage } from './components/analytics/RiskIntelligencePage';
@@ -86,6 +87,16 @@ export function App() {
     });
   };
 
+  const handleBatchCasesCreated = (newCases: MockCase[]) => {
+    setCasesList((prev) => {
+      const next = [...newCases, ...prev];
+      try {
+        localStorage.setItem('traceguard_cases', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#071018] text-[#E7EEF5]">
       {/* Navigation Sidebar */}
@@ -130,6 +141,14 @@ export function App() {
 
         {/* Viewport Content */}
         <div className="flex-1 overflow-y-auto bg-[#071018]">
+          {activeTab === 'triage' && (
+            <TriageQueuePage
+              onSelectCase={handleSelectCase}
+              onNavigateToInvestigation={() => setActiveTab('investigation')}
+              onCasesUpdated={handleBatchCasesCreated}
+            />
+          )}
+
           {activeTab === 'investigation' && (
             <InvestigationPage
               currentCase={currentCase}

@@ -173,7 +173,27 @@ export interface MockCase {
   status: 'Investigating' | 'Attributed' | 'Alerted';
 }
 
+export type TriageAction = 'Escalate to Cyber Cell' | 'Monitor' | 'Low Priority';
+
+export interface TriageComplaint {
+  id: string;
+  complainantName: string;
+  walletAddress: string;
+  chain: Blockchain;
+  amount: number;
+  amountUsd: number;
+  dateReported: string;
+  stationDistrict: string;
+  riskScore: number;
+  riskLevel: RiskLevel;
+  patternMatchCount: number;
+  patternStates: string[];
+  recommendedAction: TriageAction;
+  status: 'Pending Triage' | 'Escalated' | 'Dismissed';
+}
+
 export type NavigationTab = 
+  | 'triage'
   | 'investigation' 
   | 'cases' 
   | 'graph' 
