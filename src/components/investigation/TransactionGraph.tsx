@@ -609,6 +609,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
         {/* Right-Hand Node Inspector Drawer */}
         {selectedNode && (
           <NodeInspector
+            key={selectedNode.id}
             node={selectedNode}
             onClose={() => setSelectedNode(null)}
           />
