@@ -14,6 +14,8 @@ import { fetchLiveBlockchainCase } from '../../services/blockchainService';
 
 interface InvestigationPageProps {
   currentCase: MockCase;
+  currentStage?: number;
+  onStageChange?: (stage: number) => void;
   onUpdateCase: (updatedCase: MockCase) => void;
   onSelectCase: (caseItem: MockCase) => void;
   onAlertGenerated: (referral: ComplianceReferral) => void;
@@ -21,12 +23,19 @@ interface InvestigationPageProps {
 
 export const InvestigationPage: React.FC<InvestigationPageProps> = ({
   currentCase,
+  currentStage: propsStage,
+  onStageChange,
   onUpdateCase,
   onSelectCase,
   onAlertGenerated
 }) => {
-  const [currentStage, setCurrentStage] = useState<number>(1);
-  const [maxReachedStage, setMaxReachedStage] = useState<number>(1);
+  const [internalStage, setInternalStage] = useState<number>(propsStage || 1);
+  const currentStage = propsStage !== undefined ? propsStage : internalStage;
+  const setCurrentStage = (stage: number) => {
+    setInternalStage(stage);
+    if (onStageChange) onStageChange(stage);
+  };
+  const [maxReachedStage, setMaxReachedStage] = useState<number>(Math.max(1, currentStage));
   const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string | undefined>(undefined);
 

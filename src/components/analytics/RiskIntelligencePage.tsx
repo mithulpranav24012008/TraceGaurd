@@ -23,35 +23,48 @@ import {
   Pie,
   Cell
 } from 'recharts';
+import { MockCase } from '../../types';
+import { MOCK_CASES } from '../../data/mockCases';
 
-export const RiskIntelligencePage: React.FC = () => {
+interface RiskIntelligencePageProps {
+  casesList?: MockCase[];
+}
+
+export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
+  casesList = MOCK_CASES
+}) => {
+  const activeCasesCount = casesList.length;
+  const highRiskCount = casesList.filter((c) => c.severity === 'Critical' || c.severity === 'High').length;
+  const attributedCount = casesList.filter((c) => c.attribution && c.attribution.confidence > 70).length;
+  const totalTracedAmount = casesList.reduce((sum, c) => sum + (c.suspiciousAmount || 0), 0);
+
   // Summary Metrics
   const summaryCards = [
     {
-      label: 'Investigations Today',
-      value: '24',
-      change: '+14% from yesterday',
+      label: 'Total Workspace Cases',
+      value: activeCasesCount.toString(),
+      change: 'Active & archived telemetry',
       icon: Activity,
       color: 'text-[#38BDF8]'
     },
     {
-      label: 'High-Risk Cases',
-      value: '8',
-      change: 'Critical / High alert',
+      label: 'High/Critical Risk Cases',
+      value: highRiskCount.toString(),
+      change: 'Critical / High threat tier',
       icon: ShieldAlert,
       color: 'text-red-400'
     },
     {
       label: 'Exchange Attributions',
-      value: '6',
+      value: attributedCount.toString(),
       change: 'Resolved CEX endpoints',
       icon: Building2,
       color: 'text-emerald-400'
     },
     {
-      label: 'Potential Funds Traced',
-      value: '$1.84M',
-      change: 'Cumulative 30 days',
+      label: 'Traced Case Value',
+      value: `$${(totalTracedAmount / 1000000).toFixed(2)}M`,
+      change: 'Cumulative active cases',
       icon: DollarSign,
       color: 'text-amber-400'
     }

@@ -1,17 +1,19 @@
 import React from 'react';
-import { Network, ChevronDown } from 'lucide-react';
+import { Network, Search, ArrowRight } from 'lucide-react';
 import { MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
 import { TransactionGraph } from './TransactionGraph';
 
 interface TransactionGraphPageProps {
   currentCase: MockCase;
+  casesList?: MockCase[];
   onSelectCase: (c: MockCase) => void;
   onNavigateToInvestigation: () => void;
 }
 
 export const TransactionGraphPage: React.FC<TransactionGraphPageProps> = ({
   currentCase,
+  casesList = MOCK_CASES,
   onSelectCase,
   onNavigateToInvestigation
 }) => {
@@ -29,30 +31,48 @@ export const TransactionGraphPage: React.FC<TransactionGraphPageProps> = ({
           </p>
         </div>
 
-        {/* Case selector chips */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[11px] font-mono-code text-[#8EA1B2]">Select Case:</span>
-          {MOCK_CASES.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => onSelectCase(c)}
-              className={`px-3 py-1 rounded-lg text-xs font-mono-code transition-colors cursor-pointer border ${
-                currentCase.id === c.id
-                  ? 'bg-[#38BDF8]/15 border-[#38BDF8] text-[#38BDF8] font-bold'
-                  : 'bg-[#0D1721] border-[#243443] text-[#8EA1B2] hover:text-white hover:border-[#8EA1B2]'
-              }`}
-            >
-              {c.id}
-            </button>
-          ))}
+        {/* Case selector chips & navigation button */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[11px] font-mono-code text-[#8EA1B2]">Select Case:</span>
+            {casesList.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => onSelectCase(c)}
+                className={`px-3 py-1 rounded-lg text-xs font-mono-code transition-colors cursor-pointer border ${
+                  currentCase?.id === c.id
+                    ? 'bg-[#38BDF8]/15 border-[#38BDF8] text-[#38BDF8] font-bold'
+                    : 'bg-[#0D1721] border-[#243443] text-[#8EA1B2] hover:text-white hover:border-[#8EA1B2]'
+                }`}
+              >
+                {c.id}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={onNavigateToInvestigation}
+            className="bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 px-3 py-1.5 rounded-lg text-xs font-mono-code font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+            title="Open 7-stage investigation pipeline for this case"
+          >
+            <span>Stage Analysis</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
 
       {/* Embedded Transaction Graph */}
-      <TransactionGraph
-        caseData={currentCase}
-        showContinueButton={false}
-      />
+      {currentCase ? (
+        <TransactionGraph
+          caseData={currentCase}
+          showContinueButton={true}
+          onAdvanceToNext={onNavigateToInvestigation}
+        />
+      ) : (
+        <div className="p-12 text-center bg-[#0D1721] border border-[#243443] rounded-xl text-[#8EA1B2] font-mono-code text-xs">
+          No case selected for graph visualization.
+        </div>
+      )}
     </div>
   );
 };

@@ -53,13 +53,18 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({
         </div>
       </div>
 
-      {/* Reports Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {casesList.map((c) => (
-          <div
-            key={c.id}
-            className="neo-card p-5 flex flex-col justify-between space-y-4 font-mono"
-          >
+      {/* Reports Grid / Empty State */}
+      {casesList.length === 0 ? (
+        <div className="neo-card p-12 text-center text-black/70 font-mono font-bold">
+          No forensic dossiers recorded in workspace yet. Add or import cases to compile handoff reports.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {casesList.map((c) => (
+            <div
+              key={c.id}
+              className="neo-card p-5 flex flex-col justify-between space-y-4 font-mono"
+            >
             <div className="space-y-3">
               <div className="flex items-start justify-between border-b-2 border-black pb-3">
                 <div>
@@ -134,6 +139,7 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({
           </div>
         ))}
       </div>
+    )}
 
       {/* Report Modal */}
       {selectedCase && (

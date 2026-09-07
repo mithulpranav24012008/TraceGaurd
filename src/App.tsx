@@ -20,6 +20,7 @@ import { Menu } from 'lucide-react';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<NavigationTab>('investigation');
+  const [currentStage, setCurrentStage] = useState<number>(1);
 
   // Cases state with localStorage persistence
   const [casesList, setCasesList] = useState<MockCase[]>(() => {
@@ -121,6 +122,7 @@ export function App() {
             casesList={casesList}
             onSelectCase={handleSelectCase}
             onResetInvestigation={() => {
+              setCurrentStage(1);
               setActiveTab('investigation');
             }}
           />
@@ -160,6 +162,8 @@ export function App() {
           {activeTab === 'investigation' && (
             <InvestigationPage
               currentCase={currentCase}
+              currentStage={currentStage}
+              onStageChange={setCurrentStage}
               onUpdateCase={handleUpdateCase}
               onSelectCase={handleSelectCase}
               onAlertGenerated={handleAlertGenerated}
@@ -178,16 +182,17 @@ export function App() {
           {activeTab === 'graph' && (
             <TransactionGraphPage
               currentCase={currentCase}
+              casesList={casesList}
               onSelectCase={handleSelectCase}
               onNavigateToInvestigation={() => setActiveTab('investigation')}
             />
           )}
 
-          {activeTab === 'risk' && <RiskIntelligencePage />}
+          {activeTab === 'risk' && <RiskIntelligencePage casesList={casesList} />}
 
           {activeTab === 'pattern' && <PatternIntelligencePage />}
 
-          {activeTab === 'attribution' && <ExchangeAttributionPage />}
+          {activeTab === 'attribution' && <ExchangeAttributionPage casesList={casesList} />}
 
           {activeTab === 'alerts' && (
             <ComplianceAlertsPage referrals={referrals} />
