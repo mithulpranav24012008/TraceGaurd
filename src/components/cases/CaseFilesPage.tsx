@@ -22,7 +22,12 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [riskFilter, setRiskFilter] = useState<string>('All');
+  const [activePillFilter, setActivePillFilter] = useState<'All' | 'High Risk' | 'Under Review' | 'Escalated'>('All');
   const [handoffCase, setHandoffCase] = useState<MockCase | null>(null);
+
+  const handleFilterChange = (pill: 'All' | 'High Risk' | 'Under Review' | 'Escalated') => {
+    setActivePillFilter(pill);
+  };
 
   const filteredCases = casesList.filter((c) => {
     const matchesSearch =
@@ -34,7 +39,16 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
     const matchesStatus = statusFilter === 'All' || c.status === statusFilter;
     const matchesRisk = riskFilter === 'All' || c.severity === riskFilter;
 
-    return matchesSearch && matchesStatus && matchesRisk;
+    let matchesPill = true;
+    if (activePillFilter === 'High Risk') {
+      matchesPill = c.severity === 'High' || c.severity === 'Critical' || c.riskScore >= 70;
+    } else if (activePillFilter === 'Under Review') {
+      matchesPill = c.status === 'Investigating' || !c.escalationStatus || c.escalationStatus === 'Not Escalated';
+    } else if (activePillFilter === 'Escalated') {
+      matchesPill = Boolean(c.escalationStatus && c.escalationStatus !== 'Not Escalated') || c.status === 'Attributed' || c.status === 'Alerted';
+    }
+
+    return matchesSearch && matchesStatus && matchesRisk && matchesPill;
   });
 
   const handleOpenCase = (c: MockCase) => {
@@ -80,49 +94,70 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="neo-card p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
-        {/* Search Input */}
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 text-black absolute left-3 top-2.5" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by case ID, suspect address, exchange, or title..."
-            className="w-full neo-input pl-9"
-          />
+      <div className="neo-card p-4 space-y-3">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-black absolute left-3 top-2.5" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by case ID, suspect address, exchange, or title..."
+              className="w-full neo-input pl-9"
+            />
+          </div>
+
+          {/* Dropdown Filters */}
+          <div className="flex items-center gap-3 font-mono text-xs text-black">
+            <div className="flex items-center gap-1.5">
+              <span className="text-black/70 text-[11px] font-bold">STATUS:</span>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="neo-input py-1 cursor-pointer"
+              >
+                <option value="All">All Statuses</option>
+                <option value="Investigating">Investigating</option>
+                <option value="Attributed">Attributed</option>
+                <option value="Alerted">Alerted</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span className="text-black/70 text-[11px] font-bold">RISK:</span>
+              <select
+                value={riskFilter}
+                onChange={(e) => setRiskFilter(e.target.value)}
+                className="neo-input py-1 cursor-pointer"
+              >
+                <option value="All">All Tiers</option>
+                <option value="Critical">Critical</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        {/* Dropdown Filters */}
-        <div className="flex items-center gap-3 font-mono text-xs text-black">
-          <div className="flex items-center gap-1.5">
-            <span className="text-black/70 text-[11px] font-bold">STATUS:</span>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="neo-input py-1 cursor-pointer"
+        {/* Quick Filter Pills */}
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t-2 border-black font-mono text-xs font-bold">
+          <span className="text-black/80 text-[11px] uppercase mr-1">Quick Filter Pills:</span>
+          {(['All', 'High Risk', 'Under Review', 'Escalated'] as const).map((pill) => (
+            <button
+              key={pill}
+              type="button"
+              onClick={() => handleFilterChange(pill)}
+              className={`px-3 py-1 rounded-md border-2 border-black font-mono font-bold transition-all cursor-pointer ${
+                activePillFilter === pill
+                  ? 'bg-black text-white shadow-[2px_2px_0px_0px_#000]'
+                  : 'bg-white text-black hover:bg-[#FEF9EF] shadow-[1px_1px_0px_0px_#000]'
+              }`}
             >
-              <option value="All">All Statuses</option>
-              <option value="Investigating">Investigating</option>
-              <option value="Attributed">Attributed</option>
-              <option value="Alerted">Alerted</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <span className="text-black/70 text-[11px] font-bold">RISK:</span>
-            <select
-              value={riskFilter}
-              onChange={(e) => setRiskFilter(e.target.value)}
-              className="neo-input py-1 cursor-pointer"
-            >
-              <option value="All">All Tiers</option>
-              <option value="Critical">Critical</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
+              {pill}
+            </button>
+          ))}
         </div>
       </div>
 
