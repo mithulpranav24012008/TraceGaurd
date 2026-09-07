@@ -184,7 +184,20 @@ export function App() {
               currentCase={currentCase}
               casesList={casesList}
               onSelectCase={handleSelectCase}
-              onNavigateToInvestigation={() => setActiveTab('investigation')}
+              onNavigateToInvestigation={(targetId?: string) => {
+                if (targetId) {
+                  const match = casesList.find(
+                    (c) =>
+                      c.id === targetId ||
+                      c.seedDetails?.address?.toLowerCase() === targetId.toLowerCase() ||
+                      c.nodes?.some((n) => n.id === targetId || n.address?.toLowerCase() === targetId.toLowerCase())
+                  );
+                  if (match) {
+                    handleSelectCase(match);
+                  }
+                }
+                setActiveTab('investigation');
+              }}
             />
           )}
 

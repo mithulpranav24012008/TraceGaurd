@@ -8,7 +8,7 @@ interface TransactionGraphPageProps {
   currentCase: MockCase;
   casesList?: MockCase[];
   onSelectCase: (c: MockCase) => void;
-  onNavigateToInvestigation: () => void;
+  onNavigateToInvestigation: (nodeOrCaseId?: string) => void;
 }
 
 export const TransactionGraphPage: React.FC<TransactionGraphPageProps> = ({
@@ -17,6 +17,10 @@ export const TransactionGraphPage: React.FC<TransactionGraphPageProps> = ({
   onSelectCase,
   onNavigateToInvestigation
 }) => {
+  const handleLaunchInvestigation = (targetId?: string) => {
+    onNavigateToInvestigation(targetId || currentCase?.id);
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-4 select-none">
       {/* Header and Case Switcher */}
@@ -51,7 +55,7 @@ export const TransactionGraphPage: React.FC<TransactionGraphPageProps> = ({
           </div>
 
           <button
-            onClick={onNavigateToInvestigation}
+            onClick={() => handleLaunchInvestigation(currentCase?.id)}
             className="bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 px-3 py-1.5 rounded-lg text-xs font-mono-code font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
             title="Open 7-stage investigation pipeline for this case"
           >
@@ -66,7 +70,8 @@ export const TransactionGraphPage: React.FC<TransactionGraphPageProps> = ({
         <TransactionGraph
           caseData={currentCase}
           showContinueButton={true}
-          onAdvanceToNext={onNavigateToInvestigation}
+          onAdvanceToNext={() => handleLaunchInvestigation(currentCase.id)}
+          onNavigateToInvestigation={handleLaunchInvestigation}
         />
       ) : (
         <div className="p-12 text-center bg-[#0D1721] border border-[#243443] rounded-xl text-[#8EA1B2] font-mono-code text-xs">

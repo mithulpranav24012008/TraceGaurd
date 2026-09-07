@@ -8,9 +8,10 @@ import { getRiskLevelFromScore, truncateAddress } from '../../utils/formatters';
 interface NodeInspectorProps {
   node: GraphNode | null;
   onClose: () => void;
+  onNavigateToInvestigation?: (nodeId?: string) => void;
 }
 
-export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose }) => {
+export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onNavigateToInvestigation }) => {
   const [copied, setCopied] = useState(false);
 
   // Reset copied state whenever target node changes
@@ -255,10 +256,21 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose }) =
           )}
         </div>
 
-        {/* Inspector Footer */}
-        <div className="p-3 border-t border-[#243443] bg-[#071018] text-[10px] text-[#8EA1B2] flex items-center justify-between">
-          <span>STATUS: SIMULATED NODE</span>
-          <span className="text-[#38BDF8]">TRACEGUARD SOC</span>
+        {/* Inspector Footer & Action */}
+        <div className="p-3 border-t border-[#243443] bg-[#071018] space-y-2">
+          {onNavigateToInvestigation && (
+            <button
+              onClick={() => onNavigateToInvestigation(node.address || node.id)}
+              className="w-full bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 font-bold py-2 px-3 rounded-lg text-xs font-mono-code flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
+            >
+              <span>Launch 7-Stage Workflow</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
+          )}
+          <div className="flex items-center justify-between text-[10px] text-[#8EA1B2]">
+            <span>STATUS: SIMULATED NODE</span>
+            <span className="text-[#38BDF8]">TRACEGUARD SOC</span>
+          </div>
         </div>
       </div>
     </>

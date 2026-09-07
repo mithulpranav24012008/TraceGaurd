@@ -25,6 +25,7 @@ interface TransactionGraphProps {
   showContinueButton?: boolean;
   selectedNodeId?: string | null;
   onSelectNode?: (node: GraphNode | null) => void;
+  onNavigateToInvestigation?: (nodeId?: string) => void;
 }
 
 export const TransactionGraph: React.FC<TransactionGraphProps> = ({
@@ -32,7 +33,8 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
   onAdvanceToNext,
   showContinueButton = true,
   selectedNodeId,
-  onSelectNode
+  onSelectNode,
+  onNavigateToInvestigation
 }) => {
   const { settings } = useSettings();
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
@@ -660,6 +662,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
             key={selectedNode.id}
             node={selectedNode}
             onClose={() => handleSelect(null)}
+            onNavigateToInvestigation={onNavigateToInvestigation}
           />
         )}
       </div>
