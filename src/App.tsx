@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { DemoDisclaimerBanner } from './components/common/DemoDisclaimerBanner';
@@ -6,12 +6,14 @@ import { InvestigationPage } from './components/investigation/InvestigationPage'
 import { CaseFilesPage } from './components/cases/CaseFilesPage';
 import { TransactionGraphPage } from './components/investigation/TransactionGraphPage';
 import { RiskIntelligencePage } from './components/analytics/RiskIntelligencePage';
+import { PatternIntelligencePage } from './components/analytics/PatternIntelligencePage';
 import { ExchangeAttributionPage } from './components/attribution/ExchangeAttributionPage';
 import { ComplianceAlertsPage } from './components/alerts/ComplianceAlertsPage';
 import { ReportsPage } from './components/reports/ReportsPage';
 import { SettingsPage } from './components/settings/SettingsPage';
 import { NavigationTab, MockCase, ComplianceReferral } from './types';
 import { MOCK_CASES, INITIAL_COMPLIANCE_REFERRALS } from './data/mockCases';
+import { initRegistry } from './data/nationalRegistryStore';
 import { Menu } from 'lucide-react';
 
 export function App() {
@@ -19,6 +21,11 @@ export function App() {
   const [currentCase, setCurrentCase] = useState<MockCase>(MOCK_CASES[0]);
   const [referrals, setReferrals] = useState<ComplianceReferral[]>(INITIAL_COMPLIANCE_REFERRALS);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Initialize the national pattern match registry on first render
+  useEffect(() => {
+    initRegistry();
+  }, []);
 
   const handleSelectCase = (caseItem: MockCase) => {
     setCurrentCase(caseItem);
@@ -96,6 +103,8 @@ export function App() {
           )}
 
           {activeTab === 'risk' && <RiskIntelligencePage />}
+
+          {activeTab === 'pattern' && <PatternIntelligencePage />}
 
           {activeTab === 'attribution' && <ExchangeAttributionPage />}
 

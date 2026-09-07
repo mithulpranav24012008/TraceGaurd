@@ -323,7 +323,8 @@ export const MOCK_CASES: MockCase[] = [
       'Bridge Exposure': 84,
       'Address Clustering': 81,
       'Velocity': 76,
-      'Exchange Proximity': 95
+      'Exchange Proximity': 95,
+      'National Pattern Match': 0
     },
     timeline: [
       { time: '09:14', event: 'Phishing drain from Victim Vault', risk: 38, hop: 1, detail: 'Victim signed rogue permit contract' },
@@ -620,7 +621,8 @@ export const MOCK_CASES: MockCase[] = [
       'Bridge Exposure': 12,
       'Address Clustering': 88,
       'Velocity': 68,
-      'Exchange Proximity': 89
+      'Exchange Proximity': 89,
+      'National Pattern Match': 0
     },
     timeline: [
       { time: '14:22', event: 'Extortion fee transferred from victim corporate vault', risk: 44, hop: 1, detail: 'Initial ransom demand payment' },
@@ -806,7 +808,8 @@ export const MOCK_CASES: MockCase[] = [
       'Bridge Exposure': 0,
       'Address Clustering': 52,
       'Velocity': 82,
-      'Exchange Proximity': 78
+      'Exchange Proximity': 78,
+      'National Pattern Match': 0
     },
     timeline: [
       { time: '10:14', event: 'Victim tricked into sending BNB to fake trading platform', risk: 35, hop: 1, detail: 'Initial scam transfer' },
@@ -991,7 +994,8 @@ export const MOCK_CASES: MockCase[] = [
       'Bridge Exposure': 94,
       'Address Clustering': 68,
       'Velocity': 90,
-      'Exchange Proximity': 10
+      'Exchange Proximity': 10,
+      'National Pattern Match': 0
     },
     timeline: [
       { time: '03:15', event: 'Reentrancy exploit executed on lending vault', risk: 65, hop: 1, detail: 'Drain of protocol reserves' },
@@ -1223,7 +1227,8 @@ export function generateSimulatedCaseForAddress(address: string, blockchain: 'Et
       'Bridge Exposure': 60,
       'Address Clustering': 78,
       'Velocity': 84,
-      'Exchange Proximity': 88
+      'Exchange Proximity': 88,
+      'National Pattern Match': 0
     },
     timeline: [
       { time: '08:02', event: 'Initial fraudulent transfer received', risk: 42, hop: 1, detail: 'Drain from reporting victim' },

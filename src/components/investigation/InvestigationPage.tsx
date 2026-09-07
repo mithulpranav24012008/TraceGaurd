@@ -9,6 +9,7 @@ import { SummaryStage } from './SummaryStage';
 import { ReferralStage } from './ReferralStage';
 import { MockCase, Blockchain, InvestigationSource, RiskLevel, ComplianceReferral } from '../../types';
 import { generateSimulatedCaseForAddress } from '../../data/mockCases';
+import { addReport } from '../../data/nationalRegistryStore';
 
 interface InvestigationPageProps {
   currentCase: MockCase;
@@ -92,6 +93,21 @@ export const InvestigationPage: React.FC<InvestigationPageProps> = ({
   ) => {
     const newCase = generateSimulatedCaseForAddress(address, blockchain, source, severity);
     onUpdateCase(newCase);
+
+    // Register this address in the national pattern match registry
+    const sampleStates = ['Maharashtra', 'Delhi', 'Karnataka', 'Tamil Nadu', 'Uttar Pradesh', 'Gujarat', 'Telangana'];
+    const sampleCities = ['Mumbai', 'New Delhi', 'Bengaluru', 'Chennai', 'Lucknow', 'Ahmedabad', 'Hyderabad'];
+    const idx = Math.floor(Math.random() * sampleStates.length);
+    addReport({
+      walletAddress: address,
+      chain: blockchain,
+      dateReported: new Date().toISOString().split('T')[0],
+      reportingState: sampleStates[idx],
+      reportingCity: sampleCities[idx],
+      caseId: newCase.id,
+      complaintAmount: newCase.suspiciousAmount * 83 // rough USD to INR
+    });
+
     setCurrentStage(2);
     setMaxReachedStage(2);
   };

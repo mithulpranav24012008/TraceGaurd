@@ -1,7 +1,8 @@
-import React from 'react';
-import { ShieldAlert, ArrowRight, Activity, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { ShieldAlert, ArrowRight, Activity, TrendingUp, AlertTriangle, Radar, MapPin, Users } from 'lucide-react';
 import { MockCase } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
+import { getPatternMatch, getPatternMatchScore } from '../../data/nationalRegistryStore';
 
 interface RiskStageProps {
   currentCase: MockCase;
@@ -9,13 +10,33 @@ interface RiskStageProps {
 }
 
 export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNext }) => {
-  const score = currentCase.riskScore;
-  const components = currentCase.riskComponents;
+  // Run national pattern match lookup BEFORE rendering risk data
+  const patternMatch = useMemo(
+    () => getPatternMatch(currentCase.seedDetails.address),
+    [currentCase.seedDetails.address]
+  );
+  const patternScore = useMemo(
+    () => getPatternMatchScore(currentCase.seedDetails.address),
+    [currentCase.seedDetails.address]
+  );
+
+  // Compute adjusted risk score (boosted by pattern match)
+  const baseScore = currentCase.riskScore;
+  const adjustedScore = patternMatch
+    ? Math.min(100, baseScore + Math.floor(patternMatch.victimCount * 5))
+    : baseScore;
+
+  // Build components with live pattern match score injected
+  const components = {
+    ...currentCase.riskComponents,
+    'National Pattern Match': patternScore
+  };
+
   const timeline = currentCase.timeline;
 
   // Gauge calculation
   const circumference = 2 * Math.PI * 45; // radius = 45
-  const strokeDashoffset = circumference - (score / 100) * circumference;
+  const strokeDashoffset = circumference - (adjustedScore / 100) * circumference;
 
   const getGaugeColor = (val: number) => {
     if (val >= 80) return '#EF4444';
@@ -24,6 +45,18 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
     return '#10B981';
   };
 
+  const formatINR = (amount: number) =>
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+
+  const getSeverityFromScore = (score: number) => {
+    if (score >= 80) return 'Critical';
+    if (score >= 65) return 'High';
+    if (score >= 40) return 'Medium';
+    return 'Low' as const;
+  };
+
+  const displaySeverity = patternMatch ? getSeverityFromScore(adjustedScore) : currentCase.severity;
+
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Top Banner */}
@@ -31,7 +64,7 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold text-white tracking-tight">Stage 4: Risk Intelligence Assessment</h2>
-            <RiskBadge level={currentCase.severity} score={score} size="sm" showPulse />
+            <RiskBadge level={displaySeverity} score={adjustedScore} size="sm" showPulse />
           </div>
           <p className="text-xs text-[#8EA1B2] mt-1">
             Simulated multi-factor heuristic threat score assessing privacy tool interaction, velocity, and CEX proximity.
@@ -46,6 +79,59 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
+
+      {/* ═══ NATIONAL PATTERN MATCH BANNER ═══ */}
+      {patternMatch && patternMatch.victimCount > 0 && (
+        <div className="p-4 rounded-xl bg-red-500/8 border-2 border-red-500/40 space-y-3 animate-in">
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-red-500/15 border border-red-500/30 shrink-0">
+              <Radar className="w-5 h-5 text-red-400" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-sm font-bold text-red-400 font-mono-code uppercase tracking-wider">
+                  🔴 National Pattern Match Detected
+                </h3>
+                <span className="px-2 py-0.5 rounded bg-red-500/15 border border-red-500/30 text-[10px] font-mono-code text-red-400 font-bold">
+                  CROSS-CASE INTELLIGENCE
+                </span>
+              </div>
+              <p className="text-sm text-white mt-2 leading-relaxed">
+                This wallet has been reported by{' '}
+                <span className="font-bold text-red-400">{patternMatch.victimCount} victims</span>{' '}
+                across{' '}
+                <span className="font-bold text-amber-400">{patternMatch.states.join(', ')}</span>{' '}
+                since{' '}
+                <span className="font-bold text-[#38BDF8]">{patternMatch.earliestDate}</span>,
+                totaling{' '}
+                <span className="font-bold text-red-400">{formatINR(patternMatch.totalAmount)}</span>{' '}
+                in reported losses.
+              </p>
+              <p className="text-[11px] text-[#8EA1B2] mt-1.5">
+                Cross-case aggregation powered by TraceGuard's national registry — connecting victims across
+                state boundaries to expose organized fraud networks that single-case tools miss.
+              </p>
+            </div>
+          </div>
+
+          {/* State breakdown chips */}
+          <div className="flex flex-wrap gap-2 pl-12">
+            {patternMatch.matchingReports.map((r, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#0D1721] border border-[#243443] text-[11px] font-mono-code"
+              >
+                <MapPin className="w-3 h-3 text-amber-400" />
+                <span className="text-[#8EA1B2]">{r.reportingCity}, {r.reportingState}</span>
+                <span className="text-[#586C7E]">•</span>
+                <span className="text-white">{r.dateReported}</span>
+                <span className="text-[#586C7E]">•</span>
+                <span className="text-red-400 font-semibold">{formatINR(r.complaintAmount)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Grid: Circular Risk Meter + Component Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -76,7 +162,7 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
                 cx="55"
                 cy="55"
                 r="45"
-                stroke={getGaugeColor(score)}
+                stroke={getGaugeColor(adjustedScore)}
                 strokeWidth="10"
                 strokeDasharray={circumference}
                 strokeDashoffset={strokeDashoffset}
@@ -88,9 +174,9 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
 
             {/* Inner text score */}
             <div className="absolute flex flex-col items-center justify-center font-mono-code">
-              <span className="text-4xl font-black text-white">{score}</span>
+              <span className="text-4xl font-black text-white">{adjustedScore}</span>
               <span className="text-[10px] text-[#8EA1B2] font-semibold tracking-wider uppercase mt-0.5">
-                {currentCase.severity} RISK
+                {displaySeverity} RISK
               </span>
             </div>
           </div>
@@ -98,9 +184,15 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
           <div className="w-full p-2.5 rounded-lg bg-[#071018] border border-[#243443] text-left text-xs font-mono-code space-y-1">
             <div className="text-[10px] text-[#8EA1B2]">EVALUATION TIER:</div>
             <div className="text-white font-bold flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${score >= 80 ? 'bg-red-500' : 'bg-orange-500'}`} />
-              <span>{currentCase.severity.toUpperCase()} RISK PROFILE</span>
+              <span className={`w-2 h-2 rounded-full ${adjustedScore >= 80 ? 'bg-red-500' : 'bg-orange-500'}`} />
+              <span>{displaySeverity.toUpperCase()} RISK PROFILE</span>
             </div>
+            {patternMatch && patternMatch.victimCount > 0 && (
+              <div className="text-[10px] text-red-400 font-sans pt-1 flex items-center gap-1">
+                <Users className="w-3 h-3" />
+                Score boosted by +{Math.floor(patternMatch.victimCount * 5)} from national pattern match
+              </div>
+            )}
             <div className="text-[10px] text-[#8EA1B2] font-sans pt-1">
               Triggered automated compliance referral flag.
             </div>
@@ -119,11 +211,22 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
 
           <div className="space-y-3.5">
             {Object.entries(components).map(([name, val]) => {
-              const color = getGaugeColor(val);
+              const color = name === 'National Pattern Match'
+                ? (val > 0 ? '#EF4444' : '#243443')
+                : getGaugeColor(val);
+              const isPatternRow = name === 'National Pattern Match';
               return (
-                <div key={name} className="space-y-1.5">
+                <div key={name} className={`space-y-1.5 ${isPatternRow && val > 0 ? 'p-2.5 -mx-2.5 rounded-lg bg-red-500/5 border border-red-500/20' : ''}`}>
                   <div className="flex items-center justify-between text-xs font-mono-code">
-                    <span className="text-[#E7EEF5]">{name}</span>
+                    <span className={`flex items-center gap-1.5 ${isPatternRow && val > 0 ? 'text-red-400 font-bold' : 'text-[#E7EEF5]'}`}>
+                      {isPatternRow && <Radar className="w-3.5 h-3.5" />}
+                      {name}
+                      {isPatternRow && val > 0 && (
+                        <span className="text-[9px] bg-red-500/15 border border-red-500/30 px-1.5 py-0.5 rounded text-red-400 ml-1">
+                          CROSS-CASE
+                        </span>
+                      )}
+                    </span>
                     <span className="font-bold text-white">{val} / 100</span>
                   </div>
                   {/* Progress bar */}

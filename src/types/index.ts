@@ -64,6 +64,7 @@ export interface RiskComponents {
   'Address Clustering': number;
   'Velocity': number;
   'Exchange Proximity': number;
+  'National Pattern Match': number;
 }
 
 export interface ExchangeAttribution {
@@ -127,6 +128,29 @@ export interface ComplianceReferral {
   notes?: string;
 }
 
+/** A single report entry in the national wallet address registry */
+export interface NationalRegistryEntry {
+  walletAddress: string;
+  chain: Blockchain;
+  dateReported: string;
+  reportingState: string;
+  reportingCity: string;
+  caseId: string;
+  complaintAmount: number;
+}
+
+/** Aggregated result from looking up an address in the national registry */
+export interface PatternMatchResult {
+  walletAddress: string;
+  victimCount: number;
+  states: string[];
+  cities: string[];
+  earliestDate: string;
+  latestDate: string;
+  totalAmount: number;
+  matchingReports: NationalRegistryEntry[];
+}
+
 export interface MockCase {
   id: string;
   title: string;
@@ -154,6 +178,7 @@ export type NavigationTab =
   | 'cases' 
   | 'graph' 
   | 'risk' 
+  | 'pattern'
   | 'attribution' 
   | 'alerts' 
   | 'reports' 
