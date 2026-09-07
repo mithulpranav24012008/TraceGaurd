@@ -14,6 +14,28 @@ export const SummaryStage: React.FC<SummaryStageProps> = ({
   currentCase,
   onAdvanceToNext
 }) => {
+  // Compute key dossier metrics dynamically from active case data
+  const totalVolumeUSD =
+    currentCase.suspiciousAmount > 0
+      ? currentCase.suspiciousAmount
+      : currentCase.edges.reduce((sum, e) => {
+          const num = parseFloat(e.usdValue?.replace(/[^0-9.]/g, '') || '0');
+          return sum + (isNaN(num) ? 0 : num);
+        }, 0);
+
+  const uniqueWalletCount = new Set(currentCase.nodes?.map((n) => n.address) || []).size || currentCase.nodes?.length || 0;
+  const totalTxnsAnalyzed =
+    currentCase.nodes?.reduce((sum, n) => sum + (n.transactions || 0), 0) ||
+    currentCase.seedDetails?.transactions ||
+    0;
+  const maxTraceHops =
+    currentCase.edges?.length > 0
+      ? Math.max(...currentCase.edges.map((e) => e.hop || 1), currentCase.edges.length)
+      : 0;
+  const highRiskNodesCount = (currentCase.nodes || []).filter(
+    (n) => n.risk >= 70 || n.type === 'mixer' || n.type === 'bridge' || n.type === 'high_risk'
+  ).length;
+
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Stage Header */}
@@ -50,14 +72,14 @@ export const SummaryStage: React.FC<SummaryStageProps> = ({
             </div>
             <div className="text-xs text-[#8EA1B2] font-mono-code flex items-center gap-2">
               <span>SEED:</span>
-              <span className="text-white">{currentCase.seedDetails.address}</span>
+              <span className="text-white">{currentCase.seedDetails?.address || 'N/A'}</span>
             </div>
           </div>
 
           <div className="text-right shrink-0">
-            <div className="text-[10px] uppercase font-mono-code text-[#8EA1B2]">Suspicious Funds Traced</div>
+            <div className="text-[10px] uppercase font-mono-code text-[#8EA1B2]">Total Volume Traced</div>
             <div className="text-xl font-bold font-mono-code text-emerald-400">
-              ${currentCase.suspiciousAmount.toLocaleString()} USD
+              ${totalVolumeUSD.toLocaleString()} USD
             </div>
           </div>
         </div>
@@ -65,33 +87,33 @@ export const SummaryStage: React.FC<SummaryStageProps> = ({
         {/* 6 Key Dossier Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 font-mono-code">
           <div className="p-3 rounded-lg bg-[#071018] border border-[#243443]">
-            <div className="text-[10px] text-[#8EA1B2]">CLUSTERED WALLETS</div>
-            <div className="text-base font-bold text-white mt-1">{currentCase.clusterData.relatedAddressesCount}</div>
+            <div className="text-[10px] text-[#8EA1B2]">CONNECTED WALLETS</div>
+            <div className="text-base font-bold text-white mt-1">{uniqueWalletCount} wallets</div>
           </div>
 
           <div className="p-3 rounded-lg bg-[#071018] border border-[#243443]">
             <div className="text-[10px] text-[#8EA1B2]">TXNS ANALYZED</div>
-            <div className="text-base font-bold text-white mt-1">{currentCase.seedDetails.transactions} txns</div>
+            <div className="text-base font-bold text-white mt-1">{totalTxnsAnalyzed} txns</div>
           </div>
 
           <div className="p-3 rounded-lg bg-[#071018] border border-[#243443]">
             <div className="text-[10px] text-[#8EA1B2]">TRACE DEPTH</div>
-            <div className="text-base font-bold text-white mt-1">{currentCase.edges.length} hops</div>
+            <div className="text-base font-bold text-white mt-1">{maxTraceHops} hops</div>
           </div>
 
           <div className="p-3 rounded-lg bg-[#071018] border border-[#243443]">
-            <div className="text-[10px] text-[#8EA1B2]">THREAT SCORE</div>
-            <div className="text-base font-bold text-red-400 mt-1">{currentCase.riskScore}/100</div>
+            <div className="text-[10px] text-[#8EA1B2]">HIGH RISK NODES</div>
+            <div className="text-base font-bold text-red-400 mt-1">{highRiskNodesCount} flagged</div>
           </div>
 
           <div className="p-3 rounded-lg bg-[#071018] border border-[#243443]">
             <div className="text-[10px] text-[#8EA1B2]">ATTRIBUTED CEX</div>
-            <div className="text-xs font-bold text-white mt-1 truncate">{currentCase.attribution.exchange}</div>
+            <div className="text-xs font-bold text-white mt-1 truncate">{currentCase.attribution?.exchange || 'Unattributed'}</div>
           </div>
 
           <div className="p-3 rounded-lg bg-[#071018] border border-[#243443]">
             <div className="text-[10px] text-[#8EA1B2]">CONFIDENCE</div>
-            <div className="text-base font-bold text-emerald-400 mt-1">{currentCase.attribution.confidence}%</div>
+            <div className="text-base font-bold text-emerald-400 mt-1">{currentCase.attribution?.confidence || 0}%</div>
           </div>
         </div>
 
