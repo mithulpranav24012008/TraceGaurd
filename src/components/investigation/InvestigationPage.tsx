@@ -204,6 +204,7 @@ export const InvestigationPage: React.FC<InvestigationPageProps> = ({
           <AttributionStage
             currentCase={currentCase}
             onAdvanceToNext={() => advanceStage(6)}
+            onUpdateCase={onUpdateCase}
           />
         )}
 

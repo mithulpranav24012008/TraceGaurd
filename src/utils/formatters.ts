@@ -59,3 +59,36 @@ export function getRiskLevelFromScore(score: number): RiskLevel {
   if (score >= 40) return 'Medium';
   return 'Low';
 }
+
+export function generateUniqueFiuReference(existingReferrals?: { referenceNumber: string }[]): string {
+  const usedCodes = new Set<string>();
+
+  if (existingReferrals) {
+    existingReferrals.forEach((r) => {
+      if (r.referenceNumber) usedCodes.add(r.referenceNumber);
+    });
+  }
+
+  try {
+    const stored = localStorage.getItem('traceguard_referrals');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) {
+        parsed.forEach((r: any) => {
+          if (r && r.referenceNumber) usedCodes.add(r.referenceNumber);
+        });
+      }
+    }
+  } catch {}
+
+  let code = '';
+  let attempts = 0;
+  do {
+    const num = Math.floor(1000 + Math.random() * 9000);
+    code = `FIU-DEMO-2026-${String(num).padStart(4, '0')}`;
+    attempts++;
+  } while (usedCodes.has(code) && attempts < 1000);
+
+  return code;
+}
+

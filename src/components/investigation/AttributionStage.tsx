@@ -1,17 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Building2, CheckCircle2, AlertTriangle, ArrowRight, ShieldCheck, Database, DollarSign } from 'lucide-react';
 import { MockCase } from '../../types';
 
 interface AttributionStageProps {
   currentCase: MockCase;
   onAdvanceToNext: () => void;
+  onUpdateCase?: (updated: MockCase) => void;
 }
 
 export const AttributionStage: React.FC<AttributionStageProps> = ({
   currentCase,
-  onAdvanceToNext
+  onAdvanceToNext,
+  onUpdateCase
 }) => {
   const attr = currentCase.attribution;
+  const evidenceList = attr.evidence || [];
+
+  // Track checked state of each evidence point
+  const [checkedEvidence, setCheckedEvidence] = useState<boolean[]>(() =>
+    evidenceList.map(() => true)
+  );
+
+  // Dynamic confidence calculation: Base 35% + weighted share per verified evidence signal
+  const totalEvidenceCount = evidenceList.length || 1;
+  const targetConfidence = attr.confidence || 90;
+  const baseConfidence = Math.max(25, targetConfidence - 45);
+  const pointWeight = (targetConfidence - baseConfidence) / totalEvidenceCount;
+
+  const checkedCount = checkedEvidence.filter(Boolean).length;
+  const rawConfidence = baseConfidence + Math.round(checkedCount * pointWeight);
+  const confidenceScore = Math.min(100, Math.max(0, rawConfidence));
+
+  const handleToggleEvidence = (index: number) => {
+    const nextChecked = [...checkedEvidence];
+    nextChecked[index] = !nextChecked[index];
+    setCheckedEvidence(nextChecked);
+
+    const newCheckedCount = nextChecked.filter(Boolean).length;
+    const newRaw = baseConfidence + Math.round(newCheckedCount * pointWeight);
+    const newClamped = Math.min(100, Math.max(0, newRaw));
+
+    if (onUpdateCase) {
+      onUpdateCase({
+        ...currentCase,
+        attribution: {
+          ...currentCase.attribution,
+          confidence: newClamped
+        }
+      });
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -21,7 +59,7 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold text-white tracking-tight">{attr.title}</h2>
             <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono-code text-xs font-bold">
-              {attr.confidence}% Confidence
+              {confidenceScore}% Confidence
             </span>
           </div>
           <p className="text-xs text-[#8EA1B2] mt-1">
@@ -55,7 +93,7 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
               </div>
 
               <div className="text-right font-mono-code">
-                <div className="text-xs font-bold text-emerald-400">{attr.confidence}% MATCH</div>
+                <div className="text-xs font-bold text-emerald-400">{confidenceScore}% MATCH</div>
                 <div className="text-[10px] text-[#8EA1B2]">HEURISTIC v3.4</div>
               </div>
             </div>
@@ -106,23 +144,36 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
               <ShieldCheck className="w-4 h-4 text-[#38BDF8]" />
               <span>Corroborating Attribution Evidence</span>
             </h3>
-            <span className="text-[10px] font-mono-code text-[#38BDF8]">{attr.evidence.length} Points Verified</span>
+            <span className="text-[10px] font-mono-code text-[#38BDF8]">{checkedCount} of {evidenceList.length} Signals Verified</span>
           </div>
 
           <div className="space-y-3 text-xs">
-            {attr.evidence.map((item, idx) => (
-              <div
+            {evidenceList.map((item, idx) => (
+              <label
                 key={idx}
-                className="p-3 rounded-lg bg-[#071018] border border-[#243443] flex items-start gap-3"
+                className={`p-3 rounded-lg border transition-all flex items-start gap-3 cursor-pointer ${
+                  checkedEvidence[idx]
+                    ? 'bg-[#071018] border-[#243443] hover:border-[#38BDF8]/50'
+                    : 'bg-[#071018]/50 border-[#243443]/40 opacity-60'
+                }`}
               >
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <div>
-                  <div className="text-white font-medium">{item}</div>
+                <input
+                  type="checkbox"
+                  checked={checkedEvidence[idx]}
+                  onChange={() => handleToggleEvidence(idx)}
+                  className="mt-0.5 rounded border-[#243443] text-[#38BDF8] focus:ring-[#38BDF8] cursor-pointer"
+                />
+                <div className="flex-1">
+                  <div className={`font-medium ${checkedEvidence[idx] ? 'text-white' : 'text-[#8EA1B2] line-through'}`}>
+                    {item}
+                  </div>
                   <div className="text-[11px] text-[#8EA1B2] mt-0.5 font-mono-code">
-                    Signal Verified: Confidence +{Math.round(attr.confidence / attr.evidence.length)}%
+                    {checkedEvidence[idx]
+                      ? `Signal Active: +${Math.round(pointWeight)}% confidence contribution`
+                      : 'Signal Excluded: Confidence reduced'}
                   </div>
                 </div>
-              </div>
+              </label>
             ))}
           </div>
 

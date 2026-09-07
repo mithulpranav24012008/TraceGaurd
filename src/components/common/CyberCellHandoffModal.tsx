@@ -139,6 +139,65 @@ ${caseData.highRiskReasons.map(r => `* ${r}`).join('\n')}
     URL.revokeObjectURL(url);
   };
 
+  const handleDownloadMarkdown = () => {
+    const mdContent = `# TRACEGUARD FIRST-RESPONSE TRIAGE & HANDOFF BRIEFING
+
+> [!IMPORTANT]
+> **NOTICE: SPECIALIST FORENSIC HANDOFF PACKAGE**  
+> This package is formatted for handoff to specialist forensic teams and platforms (e.g., Cyber Cell units) for deep transaction tracing and bank/UPI-level attribution. TraceGuard serves as a first-response triage layer.
+
+---
+
+### Case Overview
+- **Case Identifier:** \`${caseData.id}\` — ${caseData.title}
+- **Generated At:** \`${new Date().toISOString()}\`
+- **Blockchain:** ${caseData.blockchain}
+- **Severity Level:** **${caseData.severity}** (Score: **${caseData.riskScore}**/100)
+- **Escalation Status:** **${currentStatus}**
+
+---
+
+### Primary Target Wallet
+- **Address:** \`${caseData.seedDetails.address}\`
+- **Transactions Count:** ${caseData.seedDetails.transactions}
+- **Total Inflow:** \`${caseData.seedDetails.totalInflow}\`
+- **Total Outflow:** \`${caseData.seedDetails.totalOutflow}\`
+
+---
+
+### National Pattern Registry Matches
+- **Victim Reports Count:** ${victimCount}
+- **States Involved:** ${states.join(', ') || 'N/A'}
+- **Reported Losses:** ₹${totalAmount.toLocaleString('en-IN')}
+
+---
+
+### Attributed CEX Endpoint
+- **Exchange Entity:** **${caseData.attribution.exchange}**
+- **Wallet Type:** ${caseData.attribution.walletType}
+- **Confidence Rating:** **${caseData.attribution.confidence}%**
+- **Jurisdiction:** ${caseData.attribution.jurisdiction || 'International'}
+
+---
+
+### Heuristic Risk Breakdown
+${Object.entries(caseData.riskComponents).map(([key, val]) => `- **${key}:** \`${val}/100\``).join('\n')}
+
+#### Key Risk Triggers
+${caseData.highRiskReasons.map((r) => `- **${r}**`).join('\n')}
+`;
+
+    const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `TG-HANDOFF-${caseData.id}.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handleStatusChange = (newStatus: EscalationStatus) => {
     setCurrentStatus(newStatus);
     if (onUpdateEscalationStatus) {
@@ -293,11 +352,19 @@ ${caseData.highRiskReasons.map(r => `* ${r}`).join('\n')}
             </button>
 
             <button
+              onClick={handleDownloadMarkdown}
+              className="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-[#071018] border border-[#243443] hover:border-[#38BDF8] text-[#8EA1B2] hover:text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <Download className="w-4 h-4 text-[#38BDF8]" />
+              <span>Markdown (.md)</span>
+            </button>
+
+            <button
               onClick={handleDownloadTextDossier}
               className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
             >
               <Download className="w-4 h-4" />
-              <span>{t('handoff.downloadPdf')}</span>
+              <span>Text Dossier</span>
             </button>
           </div>
         </div>

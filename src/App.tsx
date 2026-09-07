@@ -195,7 +195,7 @@ export function App() {
           {activeTab === 'attribution' && <ExchangeAttributionPage casesList={casesList} />}
 
           {activeTab === 'alerts' && (
-            <ComplianceAlertsPage referrals={referrals} />
+            <ComplianceAlertsPage referrals={referrals} casesList={casesList} />
           )}
 
           {activeTab === 'reports' && (

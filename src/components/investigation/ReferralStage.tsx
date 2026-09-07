@@ -3,6 +3,7 @@ import { Send, FileText, Download, RotateCcw, ShieldAlert, CheckCircle, Copy, Ch
 import { MockCase, ComplianceReferral } from '../../types';
 import { ReportModal } from '../common/ReportModal';
 import { RiskBadge } from '../common/RiskBadge';
+import { generateUniqueFiuReference } from '../../utils/formatters';
 
 interface ReferralStageProps {
   currentCase: MockCase;
@@ -25,11 +26,11 @@ export const ReferralStage: React.FC<ReferralStageProps> = ({
     setTimeout(() => {
       const now = new Date();
       const timeStr = now.toISOString().replace('T', ' ').substring(0, 16) + ' UTC';
-      const randomCode = Math.floor(1000 + Math.random() * 9000);
+      const refNumber = generateUniqueFiuReference();
       const newRef: ComplianceReferral = {
         id: `REF-${Date.now()}`,
         caseId: currentCase.id,
-        referenceNumber: `FIU-DEMO-2026-${randomCode}`,
+        referenceNumber: refNumber,
         suspectAddress: currentCase.seedDetails.address,
         blockchain: currentCase.blockchain,
         riskScore: currentCase.riskScore,

@@ -7,9 +7,13 @@ import { getCaseById } from '../../data/mockCases';
 
 interface ComplianceAlertsPageProps {
   referrals: ComplianceReferral[];
+  casesList?: MockCase[];
 }
 
-export const ComplianceAlertsPage: React.FC<ComplianceAlertsPageProps> = ({ referrals }) => {
+export const ComplianceAlertsPage: React.FC<ComplianceAlertsPageProps> = ({
+  referrals,
+  casesList = []
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCaseForReport, setSelectedCaseForReport] = useState<MockCase | null>(null);
   const [selectedReferralForReport, setSelectedReferralForReport] = useState<ComplianceReferral | null>(null);
@@ -30,7 +34,7 @@ export const ComplianceAlertsPage: React.FC<ComplianceAlertsPageProps> = ({ refe
   };
 
   const handleOpenReport = (ref: ComplianceReferral) => {
-    const matchedCase = getCaseById(ref.caseId);
+    const matchedCase = casesList.find((c) => c.id === ref.caseId) || getCaseById(ref.caseId);
     setSelectedCaseForReport(matchedCase);
     setSelectedReferralForReport(ref);
   };
