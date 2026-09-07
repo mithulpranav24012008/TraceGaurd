@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, ExternalLink, ShieldAlert, ArrowUpRight, ArrowDownLeft, Copy, Check, Hash, Info } from 'lucide-react';
 import { GraphNode, NodeType } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
+import { RiskExplanationBox } from '../common/RiskExplanationBox';
 import { getRiskLevelFromScore, truncateAddress } from '../../utils/formatters';
 
 interface NodeInspectorProps {
@@ -143,6 +144,23 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose }) =
             ))}
           </div>
         </div>
+
+        {/* Plain Language Threat Explanation */}
+        <RiskExplanationBox
+          riskScore={node.risk}
+          severity={riskLevel}
+          riskComponents={{
+            'Transaction Behavior': node.risk,
+            'Mixer Exposure': node.type === 'mixer' ? 95 : 0,
+            'Bridge Exposure': node.type === 'bridge' ? 90 : 0,
+            'Address Clustering': node.type === 'clustered_wallet' ? 80 : 40,
+            'Velocity': node.transactions > 20 ? 85 : 40,
+            'Exchange Proximity': node.type === 'exchange' ? 95 : 30,
+            'National Pattern Match': 0
+          }}
+          highRiskReasons={node.flags}
+          compact
+        />
 
         {/* Entity Association */}
         {node.entityName && (

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { ShieldAlert, ArrowRight, Activity, TrendingUp, AlertTriangle, Radar, MapPin, Users } from 'lucide-react';
 import { MockCase } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
+import { RiskExplanationBox } from '../common/RiskExplanationBox';
 import { getPatternMatch, getPatternMatchScore } from '../../data/nationalRegistryStore';
 
 interface RiskStageProps {
@@ -252,6 +253,16 @@ export const RiskStage: React.FC<RiskStageProps> = ({ currentCase, onAdvanceToNe
           </div>
         </div>
       </div>
+
+      {/* ═══ WHAT THIS MEANS — PLAIN LANGUAGE NARRATIVE ═══ */}
+      <RiskExplanationBox
+        riskScore={adjustedScore}
+        severity={displaySeverity}
+        riskComponents={components}
+        highRiskReasons={currentCase.highRiskReasons}
+        patternMatch={patternMatch}
+        attribution={currentCase.attribution}
+      />
 
       {/* Risk Escalation Timeline */}
       <div className="bg-[#0D1721] border border-[#243443] rounded-xl p-5 space-y-4">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Printer, Download, Copy, Check, FileText, ShieldAlert } from 'lucide-react';
 import { MockCase, ComplianceReferral } from '../../types';
 import { RiskBadge } from './RiskBadge';
+import { RiskExplanationBox } from './RiskExplanationBox';
 
 interface ReportModalProps {
   caseData: MockCase;
@@ -225,6 +226,15 @@ analytical testing only. No real financial institution was contacted or notified
                 ))}
               </ul>
             </div>
+
+            {/* Plain-Language Threat Narrative */}
+            <RiskExplanationBox
+              riskScore={caseData.riskScore}
+              severity={caseData.severity}
+              riskComponents={caseData.riskComponents}
+              highRiskReasons={caseData.highRiskReasons}
+              attribution={caseData.attribution}
+            />
           </div>
 
           {/* Section 3: Clustered Entities */}

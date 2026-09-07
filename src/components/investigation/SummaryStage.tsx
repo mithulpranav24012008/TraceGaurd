@@ -2,6 +2,7 @@ import React from 'react';
 import { FileText, ArrowRight, ShieldAlert, CheckCircle2, DollarSign, GitFork, Building2, AlertTriangle } from 'lucide-react';
 import { MockCase } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
+import { RiskExplanationBox } from '../common/RiskExplanationBox';
 import { truncateAddress } from '../../utils/formatters';
 
 interface SummaryStageProps {
@@ -113,6 +114,15 @@ export const SummaryStage: React.FC<SummaryStageProps> = ({
             ))}
           </div>
         </div>
+
+        {/* What This Means — Plain-Language Narrative */}
+        <RiskExplanationBox
+          riskScore={currentCase.riskScore}
+          severity={currentCase.severity}
+          riskComponents={currentCase.riskComponents}
+          highRiskReasons={currentCase.highRiskReasons}
+          attribution={currentCase.attribution}
+        />
 
         {/* Final Disposition & Next Step */}
         <div className="p-4 rounded-lg bg-[#111F2C] border border-[#243443] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs font-mono-code">
