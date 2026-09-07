@@ -158,3 +158,13 @@ export type NavigationTab =
   | 'alerts' 
   | 'reports' 
   | 'settings';
+
+export interface SystemGateways {
+  realBlockchainAccess: boolean;
+  externalExchangeApi: boolean;
+  realFiuTransmission: boolean;
+  rpcEndpoint?: string;
+  exchangeApiEndpoint?: string;
+  fiuProtocol?: string;
+}
+

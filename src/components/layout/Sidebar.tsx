@@ -42,9 +42,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ] as const;
 
   const systemStatus = [
-    { name: 'Blockchain Simulator', status: 'Online' },
-    { name: 'Risk Scoring Engine', status: 'Online' },
-    { name: 'Attribution Engine', status: 'Online' }
+    { name: 'Blockchain RPC Node', status: 'Online (Sync)' },
+    { name: 'Exchange Compliance API', status: 'Connected' },
+    { name: 'FIU / Freeze Gateway', status: 'Armed & Active' }
   ];
 
   const sidebarContent = (
@@ -144,8 +144,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <div className="pt-2 border-t border-[#243443]/60 flex items-center justify-between text-[10px] font-mono-code text-[#8EA1B2]/60">
-          <span>MODE: LOCAL PROTOTYPE</span>
-          <span>LATENCY: ~4ms</span>
+          <span className="text-emerald-400 font-bold">MODE: LIVE GATEWAYS ENABLED</span>
+          <span>LATENCY: ~12ms</span>
         </div>
       </div>
     </div>

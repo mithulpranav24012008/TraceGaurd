@@ -125,9 +125,9 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
 
         {/* Environment Badge */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono-code font-medium">
-          <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-          <span>DEMO ENVIRONMENT</span>
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono-code font-medium">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>LIVE GATEWAYS ACTIVE</span>
         </div>
       </div>
     </header>

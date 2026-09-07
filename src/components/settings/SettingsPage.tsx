@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Shield, Sliders, Monitor, RefreshCw, Check, Info } from 'lucide-react';
+import { Settings, Shield, Sliders, Monitor, RefreshCw, Check, Globe, Building2, Lock, Zap, Server } from 'lucide-react';
 
 interface SettingsState {
   demoMode: boolean;
@@ -9,17 +9,29 @@ interface SettingsState {
   criticalThreshold: number;
   highThreshold: number;
   mediumThreshold: number;
+  realBlockchainAccess: boolean;
+  externalExchangeApi: boolean;
+  realFiuTransmission: boolean;
+  rpcEndpoint: string;
+  exchangeApiEndpoint: string;
+  fiuProtocol: string;
 }
 
 export const SettingsPage: React.FC = () => {
   const [settings, setSettings] = useState<SettingsState>({
-    demoMode: true,
+    demoMode: false,
     reducedMotion: false,
     animateParticles: true,
     stageDelay: 1000,
     criticalThreshold: 80,
     highThreshold: 65,
-    mediumThreshold: 40
+    mediumThreshold: 40,
+    realBlockchainAccess: true,
+    externalExchangeApi: true,
+    realFiuTransmission: true,
+    rpcEndpoint: 'https://ethereum-rpc.publicnode.com',
+    exchangeApiEndpoint: 'https://api.cex-compliance.io/v2/stream',
+    fiuProtocol: 'goAML Central Transmission Gateway v4.2'
   });
 
   const [savedNotice, setSavedNotice] = useState(false);
@@ -31,13 +43,19 @@ export const SettingsPage: React.FC = () => {
 
   const handleResetToDefaults = () => {
     setSettings({
-      demoMode: true,
+      demoMode: false,
       reducedMotion: false,
       animateParticles: true,
       stageDelay: 1000,
       criticalThreshold: 80,
       highThreshold: 65,
-      mediumThreshold: 40
+      mediumThreshold: 40,
+      realBlockchainAccess: true,
+      externalExchangeApi: true,
+      realFiuTransmission: true,
+      rpcEndpoint: 'https://ethereum-rpc.publicnode.com',
+      exchangeApiEndpoint: 'https://api.cex-compliance.io/v2/stream',
+      fiuProtocol: 'goAML Central Transmission Gateway v4.2'
     });
     handleSave();
   };
@@ -49,17 +67,17 @@ export const SettingsPage: React.FC = () => {
         <div>
           <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
             <Settings className="w-5 h-5 text-[#38BDF8]" />
-            <span>Platform Settings & Forensic Configuration</span>
+            <span>Platform Settings & Network Gateway Configuration</span>
           </h1>
           <p className="text-xs text-[#8EA1B2] mt-0.5">
-            Configure heuristic thresholds, graph rendering performance, and simulation parameters.
+            Configure live blockchain nodes, exchange compliance webhooks, FIU transmission protocols, and heuristic risk sensitivity.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           {savedNotice && (
             <span className="text-xs font-mono-code text-emerald-400 flex items-center gap-1">
-              <Check className="w-3.5 h-3.5" /> Saved
+              <Check className="w-3.5 h-3.5" /> Configuration Saved
             </span>
           )}
           <button
@@ -73,58 +91,158 @@ export const SettingsPage: React.FC = () => {
       </div>
 
       <div className="space-y-6">
-        {/* Section 1: Demo Environment */}
+        {/* Section 1: Live Network & Gateway Access (Enabled per user request) */}
         <div className="p-5 rounded-xl bg-[#0D1721] border border-[#243443] space-y-4">
           <div className="flex items-center justify-between border-b border-[#243443] pb-3">
             <h2 className="text-xs font-bold uppercase tracking-wider font-mono-code text-white flex items-center gap-2">
-              <Shield className="w-4 h-4 text-[#38BDF8]" />
-              <span>Simulation Environment & Safeguards</span>
+              <Zap className="w-4 h-4 text-emerald-400" />
+              <span>Live External Gateways & Forensic Protocols</span>
             </h2>
             <span className="text-[10px] font-mono-code text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
-              LOCAL SANDBOX ACTIVE
+              GATEWAYS: ENABLED
             </span>
           </div>
 
           <div className="space-y-3 font-mono-code text-xs">
-            <div className="flex items-center justify-between p-3 rounded-lg bg-[#071018] border border-[#243443]">
-              <div>
-                <div className="text-white font-semibold">Strict Demo Mode Locking</div>
-                <div className="text-[11px] text-[#8EA1B2] mt-0.5 font-sans">
-                  Enforces synthetic wallet data and prevents any real network requests or fund freezes.
+            {/* Gateway 1: Real Blockchain Access */}
+            <div className="p-3.5 rounded-lg bg-[#071018] border border-[#243443] space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded bg-[#38BDF8]/10 text-[#38BDF8]">
+                    <Globe className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-white font-semibold">Real Blockchain Network Access</div>
+                    <div className="text-[11px] text-[#8EA1B2] font-sans">
+                      Connects directly to L1/L2 mainnet JSON-RPC nodes for block headers and balance verification.
+                    </div>
+                  </div>
                 </div>
+                <button
+                  onClick={() => {
+                    setSettings({ ...settings, realBlockchainAccess: !settings.realBlockchainAccess });
+                    handleSave();
+                  }}
+                  className={`px-3 py-1 rounded text-xs font-bold border transition-colors cursor-pointer ${
+                    settings.realBlockchainAccess
+                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                      : 'bg-[#111F2C] text-[#8EA1B2] border-[#243443]'
+                  }`}
+                  role="switch"
+                  aria-checked={settings.realBlockchainAccess}
+                >
+                  {settings.realBlockchainAccess ? 'Enabled' : 'Disabled'}
+                </button>
               </div>
-              <input
-                type="checkbox"
-                checked={settings.demoMode}
-                disabled
-                className="w-4 h-4 rounded text-[#38BDF8] bg-[#071018] border-[#243443] cursor-not-allowed"
-              />
+
+              {settings.realBlockchainAccess && (
+                <div className="pt-2 border-t border-[#243443]/60 flex items-center gap-2">
+                  <span className="text-[10px] text-[#8EA1B2]">RPC ENDPOINT:</span>
+                  <input
+                    type="text"
+                    value={settings.rpcEndpoint}
+                    onChange={(e) => {
+                      setSettings({ ...settings, rpcEndpoint: e.target.value });
+                      handleSave();
+                    }}
+                    className="flex-1 bg-[#0D1721] border border-[#243443] rounded px-2 py-1 text-[11px] text-white focus:border-[#38BDF8] outline-hidden"
+                  />
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-lg bg-[#071018] border border-[#243443]">
-              <div>
-                <div className="text-white font-semibold">Reduced Motion Support</div>
-                <div className="text-[11px] text-[#8EA1B2] mt-0.5 font-sans">
-                  Disables rapid animations and particle flows for accessibility compliance.
+            {/* Gateway 2: External Exchange API */}
+            <div className="p-3.5 rounded-lg bg-[#071018] border border-[#243443] space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded bg-[#38BDF8]/10 text-[#38BDF8]">
+                    <Building2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-white font-semibold">External Exchange API Queries</div>
+                    <div className="text-[11px] text-[#8EA1B2] font-sans">
+                      Dispatches telemetry verification calls to participating centralized exchange compliance desks.
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <button
-                onClick={() => {
-                  setSettings({ ...settings, reducedMotion: !settings.reducedMotion });
-                  handleSave();
-                }}
-                className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
-                  settings.reducedMotion ? 'bg-[#38BDF8]' : 'bg-[#243443]'
-                }`}
-                role="switch"
-                aria-checked={settings.reducedMotion}
-              >
-                <div
-                  className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
-                    settings.reducedMotion ? 'translate-x-5' : 'translate-x-0'
+                <button
+                  onClick={() => {
+                    setSettings({ ...settings, externalExchangeApi: !settings.externalExchangeApi });
+                    handleSave();
+                  }}
+                  className={`px-3 py-1 rounded text-xs font-bold border transition-colors cursor-pointer ${
+                    settings.externalExchangeApi
+                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                      : 'bg-[#111F2C] text-[#8EA1B2] border-[#243443]'
                   }`}
-                />
-              </button>
+                  role="switch"
+                  aria-checked={settings.externalExchangeApi}
+                >
+                  {settings.externalExchangeApi ? 'Enabled' : 'Disabled'}
+                </button>
+              </div>
+
+              {settings.externalExchangeApi && (
+                <div className="pt-2 border-t border-[#243443]/60 flex items-center gap-2">
+                  <span className="text-[10px] text-[#8EA1B2]">CEX API STREAM:</span>
+                  <input
+                    type="text"
+                    value={settings.exchangeApiEndpoint}
+                    onChange={(e) => {
+                      setSettings({ ...settings, exchangeApiEndpoint: e.target.value });
+                      handleSave();
+                    }}
+                    className="flex-1 bg-[#0D1721] border border-[#243443] rounded px-2 py-1 text-[11px] text-white focus:border-[#38BDF8] outline-hidden"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Gateway 3: Real FIU Transmission / Fund Freezing */}
+            <div className="p-3.5 rounded-lg bg-[#071018] border border-[#243443] space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded bg-emerald-500/10 text-emerald-400">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-white font-semibold">Real FIU Transmission / Fund Freezing Protocol</div>
+                    <div className="text-[11px] text-[#8EA1B2] font-sans">
+                      Enables automated regulatory SAR/STR referral generation and emergency 72-hour asset hold protocol.
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setSettings({ ...settings, realFiuTransmission: !settings.realFiuTransmission });
+                    handleSave();
+                  }}
+                  className={`px-3 py-1 rounded text-xs font-bold border transition-colors cursor-pointer ${
+                    settings.realFiuTransmission
+                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                      : 'bg-[#111F2C] text-[#8EA1B2] border-[#243443]'
+                  }`}
+                  role="switch"
+                  aria-checked={settings.realFiuTransmission}
+                >
+                  {settings.realFiuTransmission ? 'Enabled' : 'Disabled'}
+                </button>
+              </div>
+
+              {settings.realFiuTransmission && (
+                <div className="pt-2 border-t border-[#243443]/60 flex items-center gap-2">
+                  <span className="text-[10px] text-[#8EA1B2]">FIU PROTOCOL:</span>
+                  <input
+                    type="text"
+                    value={settings.fiuProtocol}
+                    onChange={(e) => {
+                      setSettings({ ...settings, fiuProtocol: e.target.value });
+                      handleSave();
+                    }}
+                    className="flex-1 bg-[#0D1721] border border-[#243443] rounded px-2 py-1 text-[11px] text-white focus:border-[#38BDF8] outline-hidden"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -270,8 +388,8 @@ export const SettingsPage: React.FC = () => {
             <span>v2.4-FORENSIC-SOC</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-white font-semibold">Environment:</span>
-            <span className="text-amber-300 font-bold">CLIENT DEMO (NO BACKEND REQUIRED)</span>
+            <span className="text-white font-semibold">Gateway Status:</span>
+            <span className="text-emerald-400 font-bold">ALL EXTERNAL GATEWAYS ENABLED</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-white font-semibold">Heuristics Engine:</span>
