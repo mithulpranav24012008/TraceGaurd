@@ -37,28 +37,68 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isAnimatingFlow, setIsAnimatingFlow] = useState<boolean>(true);
+  const [flowDashOffset, setFlowDashOffset] = useState<number>(0);
   const [selectedFilter, setSelectedFilter] = useState<GraphFilterCategory>('All');
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const animFrameRef = useRef<number | null>(null);
 
-  // Set default selected node to suspect seed or victim
+  // Set default selected node to suspect seed or victim on caseData load
   useEffect(() => {
-    if (caseData.nodes.length > 1) {
+    if (caseData && caseData.nodes && caseData.nodes.length > 0) {
       setSelectedNode(caseData.nodes[1] || caseData.nodes[0]);
     }
   }, [caseData]);
 
-  // Pan handlers
+  // Clean animation loop using requestAnimationFrame with guaranteed cleanup
+  useEffect(() => {
+    if (!isAnimatingFlow) {
+      if (animFrameRef.current !== null) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
+      }
+      return;
+    }
+
+    let lastTime = performance.now();
+    const animate = (now: number) => {
+      if (now - lastTime > 30) {
+        setFlowDashOffset((prev) => (prev + 1) % 20);
+        lastTime = now;
+      }
+      animFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animFrameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animFrameRef.current !== null) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
+      }
+    };
+  }, [isAnimatingFlow]);
+
+  // Pan Mouse Down
   const handleMouseDown = (e: React.MouseEvent) => {
-    // Ignore node or control button clicks
     const target = e.target as HTMLElement;
-    if (target.closest('.node-element') || target.closest('button') || target.closest('input')) {
+    if (target.closest('button') || target.closest('input')) {
       return;
     }
     setIsDragging(true);
     setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
   };
 
+  // Pan Touch Start
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setIsDragging(true);
+      setDragStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
+    }
+  };
+
+  // Global Drag Event Listeners (mouse + touch) with automatic release on release outside SVG
   useEffect(() => {
     if (!isDragging) return;
 
@@ -69,28 +109,61 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
       });
     };
 
-    const handleGlobalMouseUp = () => {
+    const handleGlobalTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        setPan({
+          x: touch.clientX - dragStart.x,
+          y: touch.clientY - dragStart.y
+        });
+      }
+    };
+
+    const handleGlobalEnd = () => {
       setIsDragging(false);
     };
 
     window.addEventListener('mousemove', handleGlobalMouseMove);
-    window.addEventListener('mouseup', handleGlobalMouseUp);
+    window.addEventListener('mouseup', handleGlobalEnd);
+    window.addEventListener('touchmove', handleGlobalTouchMove);
+    window.addEventListener('touchend', handleGlobalEnd);
+    window.addEventListener('touchcancel', handleGlobalEnd);
 
     return () => {
       window.removeEventListener('mousemove', handleGlobalMouseMove);
-      window.removeEventListener('mouseup', handleGlobalMouseUp);
+      window.removeEventListener('mouseup', handleGlobalEnd);
+      window.removeEventListener('touchmove', handleGlobalTouchMove);
+      window.removeEventListener('touchend', handleGlobalEnd);
+      window.removeEventListener('touchcancel', handleGlobalEnd);
     };
   }, [isDragging, dragStart]);
 
+  // Cursor-Relative Zoom Math
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
-    setZoom((prev) => Math.min(Math.max(prev * zoomFactor, 0.5), 2.5));
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const cursorX = e.clientX - rect.left;
+    const cursorY = e.clientY - rect.top;
+
+    const zoomFactor = e.deltaY < 0 ? 1.12 : 0.88;
+
+    setZoom((prevZoom) => {
+      const newZoom = Math.min(Math.max(prevZoom * zoomFactor, 0.4), 3.0);
+      const zoomRatio = newZoom / prevZoom;
+
+      setPan((prevPan) => ({
+        x: cursorX - (cursorX - prevPan.x) * zoomRatio,
+        y: cursorY - (cursorY - prevPan.y) * zoomRatio
+      }));
+
+      return newZoom;
+    });
   };
 
-  // Zoom controls
-  const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.15, 2.5));
-  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 0.15, 0.5));
+  // Zoom Control Helpers
+  const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.15, 3.0));
+  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 0.15, 0.4));
   const handleResetZoom = () => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
@@ -99,15 +172,25 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
   // Node filtering helper
   const isNodeVisible = (node: GraphNode): boolean => {
     if (selectedFilter === 'All') return true;
-    if (selectedFilter === 'Wallets') return node.type === 'wallet' || node.type === 'clustered_wallet' || node.type === 'suspect';
-    if (selectedFilter === 'Mixers') return node.type === 'mixer';
+    if (selectedFilter === 'Wallets')
+      return node.type === 'wallet' || node.type === 'clustered_wallet' || node.type === 'suspect' || node.type === 'victim';
+    if (selectedFilter === 'Mixers') return node.type === 'mixer' || node.type === 'peel_chain';
     if (selectedFilter === 'Bridges') return node.type === 'bridge';
     if (selectedFilter === 'Exchanges') return node.type === 'exchange';
     if (selectedFilter === 'High Risk') return node.risk >= 70;
     return true;
   };
 
-  // Get color and styling for node category
+  // Edge filtering helper
+  const isEdgeVisible = (edge: GraphEdge): boolean => {
+    if (selectedFilter === 'All') return true;
+    const sourceNode = caseData.nodes.find((n) => n.id === edge.source);
+    const targetNode = caseData.nodes.find((n) => n.id === edge.target);
+    if (!sourceNode || !targetNode) return false;
+    return isNodeVisible(sourceNode) || isNodeVisible(targetNode);
+  };
+
+  // Visual styling mapping per node category
   const getNodeVisuals = (node: GraphNode) => {
     switch (node.type) {
       case 'victim':
@@ -198,6 +281,7 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
           ref={containerRef}
           className="flex-1 h-full relative cursor-grab active:cursor-grabbing overflow-hidden"
           onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
           onWheel={handleWheel}
         >
           {/* Subtle SOC background grid */}
@@ -209,16 +293,8 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
             }}
           />
 
-          {/* SVG Elements */}
-          <svg
-            className="w-full h-full"
-            style={{
-              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-              transformOrigin: 'center center',
-              transition: isDragging ? 'none' : 'transform 0.15s ease-out'
-            }}
-            viewBox="0 0 1000 450"
-          >
+          {/* SVG Elements with hardware-accelerated inner <g> wrapper */}
+          <svg className="w-full h-full" viewBox="0 0 1000 450">
             <defs>
               {/* Arrow markers for edges */}
               <marker
@@ -252,236 +328,259 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
                 <polygon points="0 0, 8 3, 0 6" fill="#EF4444" />
               </marker>
 
-              {/* Edge glow filters */}
+              {/* Edge glow filter */}
               <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
                 <feGaussianBlur stdDeviation="3" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
             </defs>
 
-            {/* Render Edges */}
-            <g className="edges-layer">
-              {caseData.edges.map((edge) => {
-                const sourceNode = caseData.nodes.find((n) => n.id === edge.source);
-                const targetNode = caseData.nodes.find((n) => n.id === edge.target);
+            {/* Transform Container Group - preserves SVG coordinate space */}
+            <g
+              transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}
+              style={{
+                transformOrigin: '0 0',
+                transition: isDragging ? 'none' : 'transform 0.08s ease-out'
+              }}
+            >
+              {/* Render Edges */}
+              <g className="edges-layer">
+                {caseData.edges.map((edge) => {
+                  const sourceNode = caseData.nodes.find((n) => n.id === edge.source);
+                  const targetNode = caseData.nodes.find((n) => n.id === edge.target);
 
-                if (!sourceNode || !targetNode) return null;
+                  if (!sourceNode || !targetNode) return null;
 
-                const isEdgeActive = selectedEdgeId === edge.id;
-                const isConnectedToSelectedNode =
-                  selectedNode &&
-                  (selectedNode.id === edge.source || selectedNode.id === edge.target);
+                  const isEdgeActive = selectedEdgeId === edge.id;
+                  const isConnectedToSelectedNode =
+                    selectedNode &&
+                    (selectedNode.id === edge.source || selectedNode.id === edge.target);
+                  const edgeVisible = isEdgeVisible(edge);
 
-                // Calculate bezier control points for curved dynamic links
-                const dx = targetNode.x - sourceNode.x;
-                const dy = targetNode.y - sourceNode.y;
-                const cx1 = sourceNode.x + dx * 0.45;
-                const cy1 = sourceNode.y + (dy !== 0 ? dy * 0.1 : -20);
-                const cx2 = sourceNode.x + dx * 0.55;
-                const cy2 = targetNode.y + (dy !== 0 ? -dy * 0.1 : 20);
+                  // Calculate bezier control points for curved dynamic links
+                  const dx = targetNode.x - sourceNode.x;
+                  const dy = targetNode.y - sourceNode.y;
+                  const cx1 = sourceNode.x + dx * 0.45;
+                  const cy1 = sourceNode.y + (dy !== 0 ? dy * 0.1 : -20);
+                  const cx2 = sourceNode.x + dx * 0.55;
+                  const cy2 = targetNode.y + (dy !== 0 ? -dy * 0.1 : 20);
 
-                const pathData = `M ${sourceNode.x} ${sourceNode.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${targetNode.x} ${targetNode.y}`;
+                  const pathData = `M ${sourceNode.x} ${sourceNode.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${targetNode.x} ${targetNode.y}`;
 
-                return (
-                  <g
-                    key={edge.id}
-                    className="cursor-pointer group"
-                    onClick={() => {
-                      setSelectedEdgeId(edge.id);
-                      setSelectedNode(targetNode);
-                    }}
-                  >
-                    {/* Wider invisible hit-area */}
-                    <path
-                      d={pathData}
-                      fill="none"
-                      stroke="transparent"
-                      strokeWidth="20"
-                    />
-
-                    {/* Base Edge Path */}
-                    <path
-                      d={pathData}
-                      fill="none"
-                      stroke={
-                        isEdgeActive || isConnectedToSelectedNode
-                          ? '#38BDF8'
-                          : edge.isSuspicious
-                          ? '#F87171'
-                          : '#243443'
-                      }
-                      strokeWidth={isEdgeActive ? 3 : 1.8}
-                      strokeDasharray={edge.isSuspicious ? '6 4' : 'none'}
-                      markerEnd={
-                        isEdgeActive
-                          ? 'url(#arrowhead-active)'
-                          : edge.isSuspicious
-                          ? 'url(#arrowhead-suspicious)'
-                          : 'url(#arrowhead-normal)'
-                      }
-                      className="transition-all duration-200"
-                    />
-
-                    {/* Animated Flow Particles */}
-                    {isAnimatingFlow && (
+                  return (
+                    <g
+                      key={edge.id}
+                      className={`cursor-pointer transition-opacity duration-200 ${
+                        edgeVisible ? 'opacity-100 pointer-events-auto' : 'opacity-15 pointer-events-none'
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedEdgeId(edge.id);
+                        setSelectedNode(targetNode);
+                      }}
+                    >
+                      {/* Wider invisible 24px hit-area */}
                       <path
                         d={pathData}
                         fill="none"
-                        stroke="#38BDF8"
-                        strokeWidth={isEdgeActive ? 3 : 2}
-                        strokeDasharray="4 16"
-                        className="animate-flow-dash pointer-events-none"
+                        stroke="transparent"
+                        strokeWidth="24"
+                        className="cursor-pointer"
                       />
-                    )}
 
-                    {/* Edge Value Tag / Label */}
-                    <g transform={`translate(${(sourceNode.x + targetNode.x) / 2}, ${(sourceNode.y + targetNode.y) / 2 - 12})`}>
-                      <rect
-                        x="-38"
-                        y="-8"
-                        width="76"
-                        height="16"
-                        rx="4"
-                        fill="#0D1721"
-                        stroke={isEdgeActive ? '#38BDF8' : '#243443'}
-                        strokeWidth="1"
+                      {/* Base Edge Path */}
+                      <path
+                        d={pathData}
+                        fill="none"
+                        stroke={
+                          isEdgeActive || isConnectedToSelectedNode
+                            ? '#38BDF8'
+                            : edge.isSuspicious
+                            ? '#F87171'
+                            : '#243443'
+                        }
+                        strokeWidth={isEdgeActive ? 3 : 1.8}
+                        strokeDasharray={edge.isSuspicious ? '6 4' : 'none'}
+                        markerEnd={
+                          isEdgeActive
+                            ? 'url(#arrowhead-active)'
+                            : edge.isSuspicious
+                            ? 'url(#arrowhead-suspicious)'
+                            : 'url(#arrowhead-normal)'
+                        }
+                        className="transition-all duration-200"
                       />
-                      <text
-                        x="0"
-                        y="4"
-                        fill={isEdgeActive ? '#38BDF8' : '#E7EEF5'}
-                        fontSize="9"
-                        fontWeight="bold"
-                        fontFamily="ui-monospace, monospace"
-                        textAnchor="middle"
-                      >
-                        {edge.amount}
-                      </text>
+
+                      {/* Animated Flow Particles with dashoffset */}
+                      {isAnimatingFlow && edgeVisible && (
+                        <path
+                          d={pathData}
+                          fill="none"
+                          stroke="#38BDF8"
+                          strokeWidth={isEdgeActive ? 3 : 2}
+                          strokeDasharray="4 16"
+                          strokeDashoffset={-flowDashOffset}
+                          className="pointer-events-none"
+                        />
+                      )}
+
+                      {/* Edge Value Tag / Label */}
+                      <g transform={`translate(${(sourceNode.x + targetNode.x) / 2}, ${(sourceNode.y + targetNode.y) / 2 - 12})`}>
+                        <rect
+                          x="-38"
+                          y="-8"
+                          width="76"
+                          height="16"
+                          rx="4"
+                          fill="#0D1721"
+                          stroke={isEdgeActive ? '#38BDF8' : '#243443'}
+                          strokeWidth="1"
+                        />
+                        <text
+                          x="0"
+                          y="4"
+                          fill={isEdgeActive ? '#38BDF8' : '#E7EEF5'}
+                          fontSize="9"
+                          fontWeight="bold"
+                          fontFamily="ui-monospace, monospace"
+                          textAnchor="middle"
+                        >
+                          {edge.amount}
+                        </text>
+                      </g>
                     </g>
-                  </g>
-                );
-              })}
-            </g>
+                  );
+                })}
+              </g>
 
-            {/* Render Nodes */}
-            <g className="nodes-layer">
-              {caseData.nodes.map((node) => {
-                const isSelected = selectedNode?.id === node.id;
-                const isHovered = hoveredNode?.id === node.id;
-                const isDimmed = !isNodeVisible(node);
-                const visual = getNodeVisuals(node);
+              {/* Render Nodes */}
+              <g className="nodes-layer">
+                {caseData.nodes.map((node) => {
+                  const isSelected = selectedNode?.id === node.id;
+                  const isHovered = hoveredNode?.id === node.id;
+                  const nodeVisible = isNodeVisible(node);
+                  const visual = getNodeVisuals(node);
 
-                return (
-                  <g
-                    key={node.id}
-                    transform={`translate(${node.x}, ${node.y})`}
-                    className={`node-element cursor-pointer transition-opacity duration-200 ${
-                      isDimmed ? 'opacity-25' : 'opacity-100'
-                    }`}
-                    onClick={() => {
-                      setSelectedNode(node);
-                    }}
-                    onMouseEnter={() => setHoveredNode(node)}
-                    onMouseLeave={() => setHoveredNode(null)}
-                  >
-                    {/* Pulse halo if selected or critical */}
-                    {(isSelected || node.risk >= 85) && (
+                  return (
+                    <g
+                      key={node.id}
+                      transform={`translate(${node.x}, ${node.y})`}
+                      className={`node-element cursor-pointer transition-opacity duration-200 ${
+                        nodeVisible ? 'opacity-100 pointer-events-auto' : 'opacity-15 pointer-events-none'
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedNode(node);
+                      }}
+                      onMouseEnter={() => setHoveredNode(node)}
+                      onMouseLeave={() => setHoveredNode(null)}
+                    >
+                      {/* Large invisible 84px hit target for generous click area */}
+                      <circle cx="0" cy="0" r="42" fill="transparent" className="cursor-pointer" />
+
+                      {/* Pulse halo if selected or critical */}
+                      {(isSelected || node.risk >= 85) && (
+                        <circle
+                          cx="0"
+                          cy="0"
+                          r="34"
+                          fill={visual.fill}
+                          fillOpacity="0.15"
+                          className="animate-pulse pointer-events-none"
+                        />
+                      )}
+
+                      {/* Outer border ring */}
                       <circle
                         cx="0"
                         cy="0"
-                        r="34"
-                        fill={visual.fill}
-                        fillOpacity="0.12"
-                        className="animate-pulse"
+                        r={isSelected ? 26 : 22}
+                        fill="#0D1721"
+                        stroke={isSelected ? '#38BDF8' : visual.stroke}
+                        strokeWidth={isSelected ? 2.8 : 1.8}
+                        className="transition-all duration-200 pointer-events-none"
                       />
-                    )}
 
-                    {/* Outer border ring */}
-                    <circle
-                      cx="0"
-                      cy="0"
-                      r={isSelected ? 26 : 22}
-                      fill="#0D1721"
-                      stroke={isSelected ? '#38BDF8' : visual.stroke}
-                      strokeWidth={isSelected ? 2.5 : 1.8}
-                      className="transition-all duration-200"
-                    />
-
-                    {/* Category icon / core circle */}
-                    <circle
-                      cx="0"
-                      cy="0"
-                      r="14"
-                      fill={visual.bg}
-                      stroke={visual.fill}
-                      strokeWidth="1"
-                    />
-
-                    {/* Text initials or mini-icon inside node */}
-                    <text
-                      x="0"
-                      y="4"
-                      fill={visual.textColor}
-                      fontSize="9"
-                      fontFamily="ui-monospace, monospace"
-                      fontWeight="bold"
-                      textAnchor="middle"
-                    >
-                      {visual.badgeText}
-                    </text>
-
-                    {/* Node Name Label */}
-                    <text
-                      x="0"
-                      y="36"
-                      fill="#E7EEF5"
-                      fontSize="11"
-                      fontWeight="bold"
-                      fontFamily="ui-monospace, monospace"
-                      textAnchor="middle"
-                    >
-                      {node.name}
-                    </text>
-
-                    {/* Truncated Address */}
-                    <text
-                      x="0"
-                      y="49"
-                      fill="#8EA1B2"
-                      fontSize="9"
-                      fontFamily="ui-monospace, monospace"
-                      textAnchor="middle"
-                    >
-                      {truncateAddress(node.address, 4, 4)}
-                    </text>
-
-                    {/* Mini Risk Pill */}
-                    <g transform="translate(18, -18)">
-                      <rect
-                        x="-14"
-                        y="-7"
-                        width="28"
-                        height="14"
-                        rx="4"
-                        fill={node.risk > 70 ? '#450A0A' : node.risk > 40 ? '#451A03' : '#064E3B'}
-                        stroke={node.risk > 70 ? '#EF4444' : node.risk > 40 ? '#F59E0B' : '#10B981'}
+                      {/* Category icon / core circle */}
+                      <circle
+                        cx="0"
+                        cy="0"
+                        r="14"
+                        fill={visual.bg}
+                        stroke={visual.fill}
                         strokeWidth="1"
+                        className="pointer-events-none"
                       />
+
+                      {/* Text initials or mini-icon inside node */}
                       <text
                         x="0"
-                        y="3"
-                        fill={node.risk > 70 ? '#FCA5A5' : node.risk > 40 ? '#FDE68A' : '#A7F3D0'}
-                        fontSize="8"
+                        y="4"
+                        fill={visual.textColor}
+                        fontSize="9"
+                        fontFamily="ui-monospace, monospace"
+                        fontWeight="bold"
+                        textAnchor="middle"
+                        className="pointer-events-none"
+                      >
+                        {visual.badgeText}
+                      </text>
+
+                      {/* Node Name Label */}
+                      <text
+                        x="0"
+                        y="36"
+                        fill="#E7EEF5"
+                        fontSize="11"
                         fontWeight="bold"
                         fontFamily="ui-monospace, monospace"
                         textAnchor="middle"
+                        className="pointer-events-none"
                       >
-                        {node.risk}
+                        {node.name}
                       </text>
+
+                      {/* Truncated Address */}
+                      <text
+                        x="0"
+                        y="49"
+                        fill="#8EA1B2"
+                        fontSize="9"
+                        fontFamily="ui-monospace, monospace"
+                        textAnchor="middle"
+                        className="pointer-events-none"
+                      >
+                        {truncateAddress(node.address, 4, 4)}
+                      </text>
+
+                      {/* Mini Risk Pill */}
+                      <g transform="translate(18, -18)" className="pointer-events-none">
+                        <rect
+                          x="-14"
+                          y="-7"
+                          width="28"
+                          height="14"
+                          rx="4"
+                          fill={node.risk > 70 ? '#450A0A' : node.risk > 40 ? '#451A03' : '#064E3B'}
+                          stroke={node.risk > 70 ? '#EF4444' : node.risk > 40 ? '#F59E0B' : '#10B981'}
+                          strokeWidth="1"
+                        />
+                        <text
+                          x="0"
+                          y="3"
+                          fill={node.risk > 70 ? '#FCA5A5' : node.risk > 40 ? '#FDE68A' : '#A7F3D0'}
+                          fontSize="8"
+                          fontWeight="bold"
+                          fontFamily="ui-monospace, monospace"
+                          textAnchor="middle"
+                        >
+                          {node.risk}
+                        </text>
+                      </g>
                     </g>
-                  </g>
-                );
-              })}
+                  );
+                })}
+              </g>
             </g>
           </svg>
 
@@ -490,8 +589,8 @@ export const TransactionGraph: React.FC<TransactionGraphProps> = ({
             <div
               className="absolute pointer-events-none z-20 bg-[#0D1721] border border-[#38BDF8]/60 p-2.5 rounded-lg shadow-xl font-mono-code text-[11px] text-white"
               style={{
-                left: `${hoveredNode.x + pan.x + 30}px`,
-                top: `${hoveredNode.y + pan.y - 40}px`
+                left: `${hoveredNode.x * zoom + pan.x + 30}px`,
+                top: `${hoveredNode.y * zoom + pan.y - 40}px`
               }}
             >
               <div className="font-bold text-[#38BDF8]">{hoveredNode.name}</div>

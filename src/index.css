@@ -175,6 +175,15 @@
   }
 }
 
-.animate-pulse-subtle {
-  animation: pulseSubtle 2.5s infinite ease-in-out;
+@keyframes flowDash {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -20px;
+  }
+}
+
+.animate-flow-dash {
+  animation: flowDash 1s linear infinite;
 }
