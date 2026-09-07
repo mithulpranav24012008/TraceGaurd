@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, FileText, Download, RotateCcw, ShieldAlert, CheckCircle, Copy, Check, Clock } from 'lucide-react';
 import { MockCase, ComplianceReferral } from '../../types';
 import { ReportModal } from '../common/ReportModal';
@@ -21,12 +21,21 @@ export const ReferralStage: React.FC<ReferralStageProps> = ({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [copiedRef, setCopiedRef] = useState(false);
 
+  // Reset generated referral when switching to a different case
+  useEffect(() => {
+    setGeneratedReferral(null);
+  }, [currentCase.id]);
+
   const handleGenerateAlert = () => {
     setIsGenerating(true);
     setTimeout(() => {
       const now = new Date();
       const timeStr = now.toISOString().replace('T', ' ').substring(0, 16) + ' UTC';
       const refNumber = generateUniqueFiuReference();
+      const nodeCount = currentCase.nodes?.length || 0;
+      const edgeCount = currentCase.edges?.length || 0;
+      const patternHitCount = currentCase.clusterData?.relatedAddressesCount || 0;
+
       const newRef: ComplianceReferral = {
         id: `REF-${Date.now()}`,
         caseId: currentCase.id,
@@ -38,11 +47,11 @@ export const ReferralStage: React.FC<ReferralStageProps> = ({
         exchange: currentCase.attribution.exchange,
         confidence: currentCase.attribution.confidence,
         suspiciousAmount: `$${currentCase.suspiciousAmount.toLocaleString()}`,
-        summary: `Live referral: Illicit fund routing detected from ${currentCase.seedDetails.address} on ${currentCase.blockchain} into ${currentCase.attribution.exchange}.`,
+        summary: `Live referral for ${currentCase.id}: Illicit fund routing detected from ${currentCase.seedDetails.address} (${currentCase.blockchain}) into ${currentCase.attribution.exchange}. Graph summary: ${nodeCount} nodes, ${edgeCount} hops, ${patternHitCount} pattern-matched cluster entities. Risk Score: ${currentCase.riskScore}/100.`,
         recipient: 'FIU-IND / Exchange Compliance Desk',
         status: 'ACKNOWLEDGED',
         timestamp: timeStr,
-        notes: 'Transmitted via TraceGuard Live Gateway. Direct 72-hour exchange asset preservation hold request broadcast.'
+        notes: `Transmitted via TraceGuard Live Gateway for case ${currentCase.id}. Direct 72-hour exchange asset preservation hold request broadcast for target address ${currentCase.seedDetails.address}.`
       };
 
       setGeneratedReferral(newRef);
