@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ArrowRight, Sparkles, Copy, Check, Database, Zap, RefreshCw, Upload, Image as ImageIcon, FileSearch, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
+import { Search, ArrowRight, Sparkles, Copy, Check, Database, Zap, RefreshCw, Upload, Image as ImageIcon, FileSearch, ChevronDown, ChevronUp, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Blockchain, InvestigationSource, RiskLevel, MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
 import { RiskBadge } from '../common/RiskBadge';
@@ -44,6 +44,7 @@ export const SeedStage: React.FC<SeedStageProps> = ({
   );
   const [detectedAddresses, setDetectedAddresses] = useState<ExtractedAddressResult[]>([]);
   const [isScanningOcr, setIsScanningOcr] = useState(false);
+  const [hasScannedOcr, setHasScannedOcr] = useState(false);
   const [showRawText, setShowRawText] = useState(false);
 
   const blockchains: Blockchain[] = ['Ethereum', 'Bitcoin', 'BNB Smart Chain', 'Polygon'];
@@ -52,6 +53,7 @@ export const SeedStage: React.FC<SeedStageProps> = ({
 
   const handleOcrFileSelect = async (fileOrUrl: File | string) => {
     setIsScanningOcr(true);
+    setHasScannedOcr(true);
     try {
       const res = await processScreenshotOcr(fileOrUrl);
       setEvidenceScreenshot(res.imagePreviewUrl);
@@ -222,7 +224,7 @@ export const SeedStage: React.FC<SeedStageProps> = ({
                       className="px-2.5 py-1 rounded-md text-[11px] bg-white hover:bg-[#FEF9EF] text-black font-mono font-bold border-2 border-black shadow-[2px_2px_0px_0px_#000] transition-all cursor-pointer flex items-center gap-1.5"
                     >
                       <FileSearch className="w-3 h-3 text-black" />
-                      <span>{sample.title.split(' ')[0]} {sample.title.split(' ')[1]}</span>
+                      <span>Try a sample: {sample.title.split(' ')[0]} ({sample.title.split('(')[1]?.replace(')', '') || 'Sample'})</span>
                     </button>
                   ))}
                 </div>
@@ -233,6 +235,14 @@ export const SeedStage: React.FC<SeedStageProps> = ({
                 <div className="flex items-center gap-2 text-xs text-black font-bold py-1 animate-pulse">
                   <RefreshCw className="w-3.5 h-3.5 animate-spin text-black" />
                   <span>{t('ocr.processing')}</span>
+                </div>
+              )}
+
+              {/* No Addresses Extracted Feedback Banner */}
+              {hasScannedOcr && !isScanningOcr && detectedAddresses.length === 0 && (
+                <div className="p-2.5 rounded-lg bg-amber-100 border-2 border-black text-amber-900 shadow-[2px_2px_0px_0px_#000] text-xs font-mono font-bold flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0" />
+                  <span>No wallet address could be extracted from this image — please enter the address manually below.</span>
                 </div>
               )}
 

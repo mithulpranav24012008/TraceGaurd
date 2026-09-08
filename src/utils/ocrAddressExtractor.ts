@@ -1,3 +1,4 @@
+import { recognize } from 'tesseract.js';
 import { Blockchain } from '../types';
 
 export interface ExtractedAddressResult {
@@ -51,7 +52,6 @@ export function extractAddressesFromText(text: string): ExtractedAddressResult[]
   const btcLegacyMatches = Array.from(text.matchAll(ADDRESS_PATTERNS.BTC_LEGACY));
   for (const match of btcLegacyMatches) {
     const addr = match[1];
-    // Filter out common English words or non-wallet strings
     if (addr.length >= 26 && !seen.has(addr)) {
       seen.add(addr);
       results.push({ address: addr, chain: 'Bitcoin', confidence: 92 });
@@ -62,7 +62,7 @@ export function extractAddressesFromText(text: string): ExtractedAddressResult[]
 }
 
 /**
-  Simulates/performs client-side canvas-assisted text reading over an image
+  Performs real client-side OCR reading over an uploaded image using Tesseract.js
  */
 export async function processScreenshotOcr(fileOrDataUrl: File | string): Promise<OcrProcessingResult> {
   let dataUrl: string;
@@ -78,9 +78,9 @@ export async function processScreenshotOcr(fileOrDataUrl: File | string): Promis
     });
   }
 
-  // Check if sample preset or custom image
   let extractedText = '';
 
+  // Demo sample check for quick preset testing
   if (dataUrl.includes('sample_scam_telegram')) {
     extractedText = `Telegram Chat - Investment Support Team\n` +
       `[14:22] Admin: Sir, send your 500 USDT deposit to the official verification pool wallet below.\n` +
@@ -93,13 +93,22 @@ export async function processScreenshotOcr(fileOrDataUrl: File | string): Promis
       `bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh\n` +
       `Alternate ETH node address: 0x9918273645019283746501928374650192837465`;
   } else {
-    // Canvas-based fallback OCR simulator reading potential embedded strings or text
-    extractedText = `[OCR Text Extraction Result]\n` +
-      `Screen Ingestion Timestamp: ${new Date().toISOString()}\n` +
-      `Scan Status: Text layers identified.\n` +
-      `Extracted Line 1: Scam Payment Receipt - Crypto Transfer\n` +
-      `Extracted Line 2: Recipient Wallet: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045\n` +
-      `Extracted Line 3: Secondary Backup: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh\n`;
+    // Perform real OCR on user-uploaded screenshot using Tesseract.js
+    try {
+      const result = await recognize(dataUrl, 'eng');
+      extractedText = result?.data?.text || '';
+    } catch (err) {
+      console.warn('Tesseract.js OCR processing failed:', err);
+      extractedText = '';
+    }
+
+    const detected = extractAddressesFromText(extractedText);
+
+    if (!extractedText.trim() || detected.length === 0) {
+      extractedText = extractedText.trim()
+        ? `${extractedText.trim()}\n\n[No wallet address could be extracted from this image — please enter the address manually.]`
+        : 'No wallet address could be extracted from this image — please enter the address manually.';
+    }
   }
 
   const detectedAddresses = extractAddressesFromText(extractedText);
@@ -123,7 +132,7 @@ export const SAMPLE_SCAM_SCREENSHOTS = [
   },
   {
     id: 'sample-whatsapp',
-    title: 'WhatsApp Extextion Screenshot (BTC & EVM Multi-Address)',
+    title: 'WhatsApp Extortion Screenshot (BTC & EVM Multi-Address)',
     dataUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" viewBox="0 0 400 240"><rect width="400" height="240" fill="%23022c22"/><rect x="15" y="15" width="370" height="210" rx="10" fill="%23064e3b" stroke="%23047857"/><text x="30" y="45" fill="%2334d399" font-family="sans-serif" font-size="14" font-weight="bold">WhatsApp Fraud Screen (Escrow Extortion)</text><text x="30" y="80" fill="%23e2e8f0" font-family="monospace" font-size="11">Transfer 0.05 BTC to manager escrow:</text><text x="30" y="105" fill="%23fbbf24" font-family="monospace" font-size="11" font-weight="bold">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</text><text x="30" y="135" fill="%2394a3b8" font-family="monospace" font-size="10">Backup ETH: 0x9918273645019283746501928374650192837465</text><text x="30" y="180" fill="%23a7f3d0" font-family="monospace" font-size="10">[MULTIPLE ADDRESSES DETECTED]</text></svg>',
     sampleType: 'sample_scam_whatsapp'
   }
