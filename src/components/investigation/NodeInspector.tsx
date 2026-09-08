@@ -4,6 +4,7 @@ import { GraphNode, NodeType } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
 import { RiskExplanationBox } from '../common/RiskExplanationBox';
 import { getRiskLevelFromScore, truncateAddress } from '../../utils/formatters';
+import { useLanguage } from '../../context/useLanguage';
 
 interface NodeInspectorProps {
   node: GraphNode | null;
@@ -12,6 +13,7 @@ interface NodeInspectorProps {
 }
 
 export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onNavigateToInvestigation }) => {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   // Reset copied state whenever target node changes
@@ -102,7 +104,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onN
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-[#38BDF8] animate-pulse" />
             <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono-code">
-              Forensic Node Inspector
+              {t('nodeInspector.title')}
             </h3>
           </div>
           <button
@@ -120,16 +122,16 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onN
           {/* Node Identity */}
           <div className="space-y-1.5 p-3 rounded-lg bg-[#071018] border border-[#243443]">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-[#8EA1B2] uppercase">Node Category</span>
+              <span className="text-[10px] text-[#8EA1B2] uppercase">{t('nodeInspector.nodeCategory')}</span>
               <RiskBadge level={riskLevel} score={safeRisk} size="sm" />
             </div>
-            <div className="text-sm font-bold text-white font-sans">{node.name || 'Unlabeled Node'}</div>
+            <div className="text-sm font-bold text-white font-sans">{node.name || t('nodeInspector.unlabeledNode')}</div>
             <div className="text-[11px] text-[#38BDF8]">{getNodeTypeLabel(node.type)}</div>
           </div>
 
           {/* Address and Copy */}
           <div className="space-y-1">
-            <label className="text-[10px] text-[#8EA1B2] uppercase">Raw Blockchain Address</label>
+            <label className="text-[10px] text-[#8EA1B2] uppercase">{t('nodeInspector.rawAddress')}</label>
             <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443] flex items-center justify-between gap-2">
               <span className="text-[11px] text-[#E7EEF5] break-all selection:bg-[#38BDF8] selection:text-black">
                 {node.address || '0x0000000000000000000000000000000000000000'}
@@ -149,7 +151,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onN
             <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443]">
               <div className="flex items-center gap-1 text-[10px] text-[#8EA1B2]">
                 <ArrowDownLeft className="w-3 h-3 text-emerald-400" />
-                <span>TOTAL RECEIVED</span>
+                <span>{t('nodeInspector.totalReceived')}</span>
               </div>
               <div className="text-emerald-400 font-bold text-xs mt-1">{safeReceived}</div>
             </div>
@@ -157,18 +159,18 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onN
             <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443]">
               <div className="flex items-center gap-1 text-[10px] text-[#8EA1B2]">
                 <ArrowUpRight className="w-3 h-3 text-orange-400" />
-                <span>TOTAL SENT</span>
+                <span>{t('nodeInspector.totalSent')}</span>
               </div>
               <div className="text-orange-400 font-bold text-xs mt-1">{safeSent}</div>
             </div>
 
             <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443]">
-              <div className="text-[10px] text-[#8EA1B2]">TRANSACTION COUNT</div>
+              <div className="text-[10px] text-[#8EA1B2]">{t('nodeInspector.txCount')}</div>
               <div className="text-white font-bold text-xs mt-1">{safeTxCount} txns</div>
             </div>
 
             <div className="p-2.5 rounded-lg bg-[#071018] border border-[#243443]">
-              <div className="text-[10px] text-[#8EA1B2]">HEURISTIC RISK</div>
+              <div className="text-[10px] text-[#8EA1B2]">{t('nodeInspector.heuristicRisk')}</div>
               <div className={`font-bold text-xs mt-1 ${safeRisk > 70 ? 'text-red-400' : 'text-amber-400'}`}>
                 {safeRisk} / 100
               </div>
@@ -178,8 +180,8 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onN
           {/* Risk Indicators / Behavioral Flags */}
           <div className="space-y-2">
             <div className="text-[10px] text-[#8EA1B2] uppercase flex items-center justify-between">
-              <span>Behavioral Flags & Indicators</span>
-              <span className="text-[#38BDF8]">{node.flags?.length || 0} Detected</span>
+              <span>{t('nodeInspector.behavioralFlags')}</span>
+              <span className="text-[#38BDF8]">{node.flags?.length || 0} {t('nodeInspector.detected')}</span>
             </div>
 
             {node.flags && node.flags.length > 0 ? (
@@ -194,13 +196,13 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onN
                   </div>
                 )) || (
                   <div className="p-2 rounded-lg bg-[#071018] border border-[#243443] text-[11px] text-[#8EA1B2]">
-                    No flags recorded
+                    {t('nodeInspector.noFlags')}
                   </div>
                 )}
               </div>
             ) : (
               <div className="p-2 rounded-lg bg-[#071018] border border-[#243443] text-[11px] text-[#8EA1B2]">
-                No flags recorded
+                {t('nodeInspector.noFlags')}
               </div>
             )}
           </div>
@@ -208,8 +210,8 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onN
           {/* Recent Transactions List */}
           <div className="space-y-2">
             <div className="text-[10px] text-[#8EA1B2] uppercase flex items-center justify-between">
-              <span>Recent Transactions</span>
-              <span className="text-[#38BDF8]">{node.recentTransactions?.length || 0} Recorded</span>
+              <span>{t('nodeInspector.recentTx')}</span>
+              <span className="text-[#38BDF8]">{node.recentTransactions?.length || 0} {t('nodeInspector.recorded')}</span>
             </div>
 
             {node.recentTransactions && node.recentTransactions.length > 0 ? (
@@ -224,13 +226,13 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onN
                   </div>
                 )) || (
                   <div className="p-2 rounded-lg bg-[#071018] border border-[#243443] text-[11px] text-[#8EA1B2]">
-                    No recent transactions recorded
+                    {t('nodeInspector.noRecentTx')}
                   </div>
                 )}
               </div>
             ) : (
               <div className="p-2 rounded-lg bg-[#071018] border border-[#243443] text-[11px] text-[#8EA1B2]">
-                No recent transactions recorded
+                {t('nodeInspector.noRecentTx')}
               </div>
             )}
           </div>
@@ -247,10 +249,10 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onN
           {/* Entity Association */}
           {node.entityName && (
             <div className="p-3 rounded-lg bg-[#111F2C] border border-[#243443] space-y-1">
-              <div className="text-[10px] text-[#8EA1B2] uppercase">Identified Entity / Protocol</div>
+              <div className="text-[10px] text-[#8EA1B2] uppercase">{t('nodeInspector.entityProtocol')}</div>
               <div className="text-white font-bold text-xs font-sans">{node.entityName}</div>
               <div className="text-[10px] text-[#8EA1B2] font-sans">
-                Matches simulated threat signature registry.
+                {t('nodeInspector.entityMatchNotice')}
               </div>
             </div>
           )}
@@ -263,12 +265,12 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onN
               onClick={() => onNavigateToInvestigation(node.address || node.id)}
               className="w-full bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 font-bold py-2 px-3 rounded-lg text-xs font-mono-code flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
             >
-              <span>Launch 7-Stage Workflow</span>
+              <span>{t('nodeInspector.launchWorkflow')}</span>
               <ArrowUpRight className="w-4 h-4" />
             </button>
           )}
           <div className="flex items-center justify-between text-[10px] text-[#8EA1B2]">
-            <span>STATUS: SIMULATED NODE</span>
+            <span>{t('nodeInspector.simulatedNode')}</span>
             <span className="text-[#38BDF8]">TRACEGUARD SOC</span>
           </div>
         </div>

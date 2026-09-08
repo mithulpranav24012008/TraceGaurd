@@ -24,6 +24,7 @@ import {
 } from 'recharts';
 import { MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
+import { useLanguage } from '../../context/useLanguage';
 
 interface RiskIntelligencePageProps {
   casesList?: MockCase[];
@@ -36,6 +37,7 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
   caseId,
   onSelectCase
 }) => {
+  const { t } = useLanguage();
   const [selectedCaseId, setSelectedCaseId] = React.useState<string | undefined>(caseId);
 
   React.useEffect(() => {
@@ -93,12 +95,12 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
     return (
       <div className="p-12 max-w-4xl mx-auto my-12 text-center bg-[#0D1721] border border-[#243443] rounded-xl space-y-4 font-mono text-xs text-[#8EA1B2] shadow-2xl">
         <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto" />
-        <h2 className="text-base font-bold text-white uppercase tracking-wider">No Risk Telemetry Found</h2>
+        <h2 className="text-base font-bold text-white uppercase tracking-wider">{t('risk.noTelemetry')}</h2>
         <p>
-          No active case record matched case ID or target address: <strong className="text-[#38BDF8]">{caseId}</strong>
+          {t('risk.noTelemetryDesc')} <strong className="text-[#38BDF8]">{caseId}</strong>
         </p>
         <p className="text-[11px] text-[#8EA1B2]">
-          Please select a valid case from the case repository or investigation tab.
+          {t('risk.noTelemetryPrompt')}
         </p>
       </div>
     );
@@ -207,30 +209,30 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
   // Summary Metrics
   const summaryCards = [
     {
-      label: 'Total Workspace Cases',
+      label: t('risk.totalWorkspaceCases'),
       value: activeCasesCount.toString(),
-      change: 'Active & archived telemetry',
+      change: t('risk.activeArchived'),
       icon: Activity,
       color: 'text-[#38BDF8]'
     },
     {
-      label: 'High/Critical Risk Cases',
+      label: t('risk.highRiskCases'),
       value: highRiskCount.toString(),
-      change: 'Critical / High threat tier',
+      change: t('risk.requiringEscalation'),
       icon: ShieldAlert,
       color: 'text-red-400'
     },
     {
-      label: 'Exchange Attributions',
+      label: t('risk.overviewTitle'),
       value: attributedCount.toString(),
-      change: 'Resolved CEX endpoints',
+      change: t('risk.acrossAllCases'),
       icon: Building2,
       color: 'text-emerald-400'
     },
     {
-      label: 'Traced Case Value',
+      label: t('risk.totalTracedVolume'),
       value: `$${(totalTracedAmount / 1000000).toFixed(2)}M`,
-      change: 'Cumulative active cases',
+      change: t('risk.estUsdValue'),
       icon: DollarSign,
       color: 'text-amber-400'
     }
@@ -243,10 +245,10 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
         <div>
           <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
             <ShieldAlert className="w-5 h-5 text-[#38BDF8]" />
-            <span>Risk Intelligence & Threat Telemetry</span>
+            <span>{t('risk.overviewTitle')}</span>
           </h1>
           <p className="text-xs text-[#8EA1B2] mt-0.5">
-            Aggregated risk heuristics, cross-case velocity metrics, and counterparty exposure analytics.
+            {t('risk.overviewSubtitle')}
           </p>
         </div>
 
@@ -318,9 +320,9 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
             <div>
               <h2 className="text-xs font-bold uppercase tracking-wider font-mono-code text-white flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[#38BDF8]" />
-                <span>Simulated Funds Traced Over Time</span>
+                <span>{t('risk.fundsTraced')}</span>
               </h2>
-              <p className="text-[11px] text-[#8EA1B2] mt-0.5">Daily traced volume in USD (Simulated week)</p>
+              <p className="text-[11px] text-[#8EA1B2] mt-0.5">{t('risk.fundsTracedSubtitle')}</p>
             </div>
             <span className="text-[10px] font-mono-code text-[#38BDF8] bg-[#38BDF8]/10 px-2 py-0.5 rounded border border-[#38BDF8]/30">
               7-DAY TELEMETRY
@@ -372,9 +374,9 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
         <div className="lg:col-span-4 bg-[#0D1721] border border-[#243443] rounded-xl p-5 flex flex-col justify-between space-y-4">
           <div className="border-b border-[#243443] pb-3">
             <h2 className="text-xs font-bold uppercase tracking-wider font-mono-code text-white">
-              Cases by Blockchain
+              {t('risk.casesByBlockchain')}
             </h2>
-            <p className="text-[11px] text-[#8EA1B2] mt-0.5">Network distribution breakdown</p>
+            <p className="text-[11px] text-[#8EA1B2] mt-0.5">{t('risk.blockchainDistSubtitle')}</p>
           </div>
 
           <div className="h-44 w-full">
@@ -424,9 +426,9 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
         <div className="lg:col-span-6 bg-[#0D1721] border border-[#243443] rounded-xl p-5 space-y-4">
           <div className="border-b border-[#243443] pb-3">
             <h2 className="text-xs font-bold uppercase tracking-wider font-mono-code text-white">
-              Risk Score Distribution (Active Cases)
+              {t('risk.riskDistribution')}
             </h2>
-            <p className="text-[11px] text-[#8EA1B2] mt-0.5">Heuristic score density across all tracked investigations</p>
+            <p className="text-[11px] text-[#8EA1B2] mt-0.5">{t('risk.riskDistributionSubtitle')}</p>
           </div>
 
           <div className="h-56 w-full">
@@ -460,9 +462,9 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({
             <div>
               <h2 className="text-xs font-bold uppercase tracking-wider font-mono-code text-white flex items-center gap-2">
                 <Layers className="w-4 h-4 text-[#38BDF8]" />
-                <span>Obfuscation Infrastructure Exposure Matrix</span>
+                <span>{t('risk.exposureMatrixTitle')}</span>
               </h2>
-              <p className="text-[11px] text-[#8EA1B2] mt-0.5">Frequency of privacy and evasive techniques</p>
+              <p className="text-[11px] text-[#8EA1B2] mt-0.5">{t('risk.exposureMatrixSubtitle')}</p>
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Info, X, Zap, CheckCircle2, Globe, Building2, Lock } from 'lucide-react';
 import { SystemGateways } from '../../types';
+import { useLanguage } from '../../context/useLanguage';
 
 interface DemoDisclaimerBannerProps {
   gateways?: SystemGateways;
@@ -18,6 +19,7 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
   },
   onToggleGateway
 }) => {
+  const { t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
@@ -38,10 +40,10 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
       <button
         onClick={() => setIsDismissed(false)}
         className="fixed bottom-4 right-4 z-40 bg-[#FBBF24] border-2 border-black text-black font-mono font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-[3px_3px_0px_0px_#000] transition-colors cursor-pointer"
-        title="View Gateway Status"
+        title={t('banner.gatewayMonitor')}
       >
         <Zap className="w-3.5 h-3.5 text-black animate-pulse" />
-        <span>GATEWAYS: ENABLED</span>
+        <span>{t('banner.liveGatewaysEnabled')}</span>
       </button>
     );
   }
@@ -52,16 +54,16 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
         <div className="flex items-center gap-2.5 overflow-hidden">
           <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-black text-white font-mono font-bold uppercase tracking-wider text-[10px] shrink-0 border border-black">
             <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
-            LIVE GATEWAYS: ENABLED
+            {t('banner.liveGatewaysEnabled')}
           </span>
           <p className="truncate text-black hidden sm:block">
-            Real Blockchain Access: <strong className="underline">Enabled</strong> • Exchange API Queries: <strong className="underline">Enabled</strong> • FIU Transmission & Fund Freezing: <strong className="underline">Enabled</strong>.
+            {t('banner.realBlockchainAccess')}: <strong className="underline">{t('banner.enabled')}</strong> • {t('banner.exchangeApiQueries')}: <strong className="underline">{t('banner.enabled')}</strong> • {t('banner.fiuTransmission')}: <strong className="underline">{t('banner.enabled')}</strong>.
           </p>
           <button
             onClick={() => setIsExpanded(true)}
             className="text-black underline font-bold shrink-0 text-xs inline-flex items-center gap-1 cursor-pointer ml-1 font-mono"
           >
-            Gateway Monitor <Info className="w-3 h-3" />
+            {t('banner.gatewayMonitor')} <Info className="w-3 h-3" />
           </button>
         </div>
 
@@ -90,8 +92,8 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
                   <Zap className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 id="simulation-protocol-title" className="text-base font-mono font-bold text-black uppercase">Live Network & Gateway Configuration</h3>
-                  <p className="text-xs text-black/70 font-mono">TraceGuard Core Gateway Protocols</p>
+                  <h3 id="simulation-protocol-title" className="text-base font-mono font-bold text-black uppercase">{t('banner.modalTitle')}</h3>
+                  <p className="text-xs text-black/70 font-mono">{t('banner.modalSubtitle')}</p>
                 </div>
               </div>
               <button
@@ -105,7 +107,7 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
 
             <div className="space-y-3 text-xs text-black/80 leading-relaxed border-y-2 border-black py-4 font-mono">
               <p>
-                The following live network communication and regulatory dispatch gateways are configured on this TraceGuard instance:
+                {t('banner.modalDesc')}
               </p>
 
               {/* Status Toggles and indicators */}
@@ -115,7 +117,7 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
                   <div className="flex items-center gap-2">
                     <Globe className="w-3.5 h-3.5 text-black" />
                     <div>
-                      <div className="text-black font-bold">Real Blockchain Network Access</div>
+                      <div className="text-black font-bold">{t('banner.realBlockchainAccess')}</div>
                       <div className="text-[10px] text-black/60">Direct Mainnet RPC & Node Sync</div>
                     </div>
                   </div>
@@ -127,7 +129,7 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
                         : 'bg-red-300 text-black'
                     }`}
                   >
-                    {currentGateways.realBlockchainAccess ? 'Enabled' : 'Disabled'}
+                    {currentGateways.realBlockchainAccess ? t('banner.enabled') : t('banner.disabled')}
                   </button>
                 </div>
 
@@ -136,7 +138,7 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
                   <div className="flex items-center gap-2">
                     <Building2 className="w-3.5 h-3.5 text-black" />
                     <div>
-                      <div className="text-black font-bold">External Exchange API Queries</div>
+                      <div className="text-black font-bold">{t('banner.exchangeApiQueries')}</div>
                       <div className="text-[10px] text-black/60">CEX Compliance & Sweeper Webhooks</div>
                     </div>
                   </div>
@@ -148,7 +150,7 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
                         : 'bg-red-300 text-black'
                     }`}
                   >
-                    {currentGateways.externalExchangeApi ? 'Enabled' : 'Disabled'}
+                    {currentGateways.externalExchangeApi ? t('banner.enabled') : t('banner.disabled')}
                   </button>
                 </div>
 
@@ -157,7 +159,7 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
                   <div className="flex items-center gap-2">
                     <Lock className="w-3.5 h-3.5 text-black" />
                     <div>
-                      <div className="text-black font-bold">Real FIU Transmission / Fund Freezing</div>
+                      <div className="text-black font-bold">{t('banner.fiuTransmission')}</div>
                       <div className="text-[10px] text-black/60">Emergency SAR Dispatch & Asset Hold Protocol</div>
                     </div>
                   </div>
@@ -169,7 +171,7 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
                         : 'bg-red-300 text-black'
                     }`}
                   >
-                    {currentGateways.realFiuTransmission ? 'Enabled' : 'Disabled'}
+                    {currentGateways.realFiuTransmission ? t('banner.enabled') : t('banner.disabled')}
                   </button>
                 </div>
               </div>
@@ -189,7 +191,7 @@ export const DemoDisclaimerBanner: React.FC<DemoDisclaimerBannerProps> = ({
                 onClick={() => setIsExpanded(false)}
                 className="neo-btn px-4 py-2 text-xs"
               >
-                Save & Close
+                {t('banner.saveClose')}
               </button>
             </div>
           </div>

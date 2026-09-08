@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Building2, Search, CheckCircle2 } from 'lucide-react';
 import { MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
+import { useLanguage } from '../../context/useLanguage';
 
 interface ExchangeAttributionPageProps {
   casesList?: MockCase[];
@@ -10,6 +11,7 @@ interface ExchangeAttributionPageProps {
 export const ExchangeAttributionPage: React.FC<ExchangeAttributionPageProps> = ({
   casesList = MOCK_CASES
 }) => {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
 
   const exchangesList = [
@@ -89,10 +91,10 @@ export const ExchangeAttributionPage: React.FC<ExchangeAttributionPageProps> = (
         <div>
           <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
             <Building2 className="w-5 h-5 text-[#38BDF8]" />
-            <span>Exchange Counterparty Attribution Registry</span>
+            <span>{t('exchangeAttribution.title')}</span>
           </h1>
           <p className="text-xs text-[#8EA1B2] mt-0.5">
-            Documented deposit sweeps, custodial wallet clusters, and exchange attribution heuristics.
+            {t('exchangeAttribution.subtitle')}
           </p>
         </div>
 

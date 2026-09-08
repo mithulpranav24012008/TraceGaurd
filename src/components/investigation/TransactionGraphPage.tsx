@@ -3,6 +3,7 @@ import { Network, ArrowRight } from 'lucide-react';
 import { MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
 import { TransactionGraph } from './TransactionGraph';
+import { useLanguage } from '../../context/useLanguage';
 
 interface TransactionGraphPageProps {
   currentCase: MockCase;
@@ -17,6 +18,7 @@ export const TransactionGraphPage: React.FC<TransactionGraphPageProps> = ({
   onSelectCase,
   onNavigateToInvestigation
 }) => {
+  const { t } = useLanguage();
   const handleLaunchInvestigation = (targetId?: string) => {
     onNavigateToInvestigation(targetId || currentCase?.id);
   };
@@ -28,10 +30,10 @@ export const TransactionGraphPage: React.FC<TransactionGraphPageProps> = ({
         <div>
           <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
             <Network className="w-5 h-5 text-[#38BDF8]" />
-            <span>Forensic Transaction Graph Canvas</span>
+            <span>{t('graph.title')}</span>
           </h1>
           <p className="text-xs text-[#8EA1B2] mt-0.5">
-            Full-canvas interactive link analysis, particle flow simulation, and multi-hop node inspection.
+            {t('graph.subtitle')}
           </p>
         </div>
 

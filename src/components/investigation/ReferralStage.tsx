@@ -4,6 +4,7 @@ import { MockCase, ComplianceReferral } from '../../types';
 import { ReportModal } from '../common/ReportModal';
 import { RiskBadge } from '../common/RiskBadge';
 import { generateUniqueFiuReference } from '../../utils/formatters';
+import { useLanguage } from '../../context/useLanguage';
 
 interface ReferralStageProps {
   currentCase: MockCase;
@@ -16,6 +17,7 @@ export const ReferralStage: React.FC<ReferralStageProps> = ({
   onNewInvestigation,
   onAlertGenerated
 }) => {
+  const { t } = useLanguage();
   const [generatedReferral, setGeneratedReferral] = useState<ComplianceReferral | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -75,13 +77,13 @@ export const ReferralStage: React.FC<ReferralStageProps> = ({
       <div className="p-5 rounded-xl bg-[#0D1721] border border-[#243443] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-white tracking-tight">Stage 7: Regulatory Compliance Referral</h2>
+            <h2 className="text-base font-bold text-white tracking-tight">{t('referral.title')}</h2>
             <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono-code text-[11px] font-bold">
               LIVE GATEWAY PROTOCOL
             </span>
           </div>
           <p className="text-xs text-[#8EA1B2] mt-1">
-            Dispatch regulatory suspicious activity referrals (SAR/STR) and emergency asset hold requests to FIUs and Exchange AML desks.
+            {t('referral.subtitle')}
           </p>
         </div>
 

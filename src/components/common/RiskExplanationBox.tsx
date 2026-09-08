@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, Copy, Check, MessageSquare } from 'lucide-react';
 import { RiskLevel, RiskComponents, ExchangeAttribution, PatternMatchResult } from '../../types';
 import { generateRiskExplanation } from '../../utils/explanationGenerator';
+import { useLanguage } from '../../context/useLanguage';
 
 interface RiskExplanationBoxProps {
   riskScore: number;
@@ -21,9 +22,14 @@ export const RiskExplanationBox: React.FC<RiskExplanationBoxProps> = ({
   patternMatch,
   attribution
 }) => {
-  const [lang, setLang] = useState<'en' | 'hi'>('en');
+  const { language: globalLang, t } = useLanguage();
+  const [lang, setLang] = useState<'en' | 'hi'>(globalLang);
   const [copiedVictim, setCopiedVictim] = useState(false);
   const [copiedOfficer, setCopiedOfficer] = useState(false);
+
+  useEffect(() => {
+    setLang(globalLang);
+  }, [globalLang]);
 
   const explanation = generateRiskExplanation({
     riskScore,
@@ -59,9 +65,9 @@ export const RiskExplanationBox: React.FC<RiskExplanationBoxProps> = ({
           </div>
           <div>
             <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
-              <span>What this means</span>
+              <span>{t('explanationBox.whatThisMeans')}</span>
             </h4>
-            <div className="text-[10px] text-black/70 font-mono">Automated plain-language threat narrative</div>
+            <div className="text-[10px] text-black/70 font-mono">{t('explanationBox.threatNarrativeSubtitle')}</div>
           </div>
         </div>
 
@@ -100,14 +106,14 @@ export const RiskExplanationBox: React.FC<RiskExplanationBoxProps> = ({
         <div className="text-[10px] text-black/75 font-mono font-bold">
           {copiedVictim ? (
             <span className="text-green-700 font-bold flex items-center gap-1">
-              <Check className="w-3 h-3 text-green-700" /> Victim SMS/Call Script Copied!
+              <Check className="w-3 h-3 text-green-700" /> {t('explanationBox.victimScriptCopied')}
             </span>
           ) : copiedOfficer ? (
             <span className="text-black font-bold flex items-center gap-1">
-              <Check className="w-3 h-3 text-black" /> Officer Brief Copied!
+              <Check className="w-3 h-3 text-black" /> {t('explanationBox.officerBriefCopied')}
             </span>
           ) : (
-            <span>Rule-based narrative • Jargon-free script available</span>
+            <span>{t('explanationBox.ruleBasedNarrative')}</span>
           )}
         </div>
 
@@ -118,7 +124,7 @@ export const RiskExplanationBox: React.FC<RiskExplanationBoxProps> = ({
             title="Copy plain-language officer narrative"
           >
             <Copy className="w-3 h-3" />
-            <span>Copy Brief</span>
+            <span>{t('explanationBox.copyBrief')}</span>
           </button>
 
           <button
@@ -127,7 +133,7 @@ export const RiskExplanationBox: React.FC<RiskExplanationBoxProps> = ({
             title="Copy non-technical SMS/Call script for updating the victim"
           >
             <MessageSquare className="w-3 h-3" />
-            <span>Copy for victim update</span>
+            <span>{t('explanationBox.copyVictimUpdate')}</span>
           </button>
         </div>
       </div>

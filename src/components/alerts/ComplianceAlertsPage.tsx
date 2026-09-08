@@ -4,6 +4,7 @@ import { ComplianceReferral, MockCase } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
 import { ReportModal } from '../common/ReportModal';
 import { getCaseById } from '../../data/mockCases';
+import { useLanguage } from '../../context/useLanguage';
 
 interface ComplianceAlertsPageProps {
   referrals: ComplianceReferral[];
@@ -14,6 +15,7 @@ export const ComplianceAlertsPage: React.FC<ComplianceAlertsPageProps> = ({
   referrals,
   casesList = []
 }) => {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCaseForReport, setSelectedCaseForReport] = useState<MockCase | null>(null);
   const [selectedReferralForReport, setSelectedReferralForReport] = useState<ComplianceReferral | null>(null);
@@ -46,16 +48,16 @@ export const ComplianceAlertsPage: React.FC<ComplianceAlertsPageProps> = ({
         <div>
           <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
             <Bell className="w-5 h-5 text-[#38BDF8]" />
-            <span>Compliance Referrals & Alert Queue</span>
+            <span>{t('alerts.title')}</span>
           </h1>
           <p className="text-xs text-[#8EA1B2] mt-0.5">
-            Dispatched simulated suspicious activity referrals (SAR/STR) generated across forensic investigations.
+            {t('alerts.subtitle')}
           </p>
         </div>
 
         <div className="flex items-center gap-2 font-mono-code text-xs">
           <span className="p-2 rounded-lg bg-[#0D1721] border border-[#243443] text-[#8EA1B2]">
-            Dispatched Queue: <strong className="text-white">{referrals.length}</strong>
+            {t('alerts.totalReferrals')}: <strong className="text-white">{referrals.length}</strong>
           </span>
           <span className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300">
             SIMULATION ONLY
@@ -83,12 +85,12 @@ export const ComplianceAlertsPage: React.FC<ComplianceAlertsPageProps> = ({
           <table className="w-full text-left text-xs font-mono-code">
             <thead className="bg-[#111F2C] border-b border-[#243443] text-[10px] text-[#8EA1B2] uppercase tracking-wider">
               <tr>
-                <th className="px-4 py-3">Reference Number</th>
-                <th className="px-4 py-3">Case ID & Chain</th>
+                <th className="px-4 py-3">{t('alerts.referralId')}</th>
+                <th className="px-4 py-3">{t('alerts.caseRef')}</th>
                 <th className="px-4 py-3">Threat Tier</th>
-                <th className="px-4 py-3">Target CEX & Amount</th>
-                <th className="px-4 py-3">Logged Timestamp</th>
-                <th className="px-4 py-3">Simulation Status</th>
+                <th className="px-4 py-3">{t('alerts.exchange')} & {t('alerts.suspiciousAmount')}</th>
+                <th className="px-4 py-3">{t('alerts.date')}</th>
+                <th className="px-4 py-3">{t('alerts.status')}</th>
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>

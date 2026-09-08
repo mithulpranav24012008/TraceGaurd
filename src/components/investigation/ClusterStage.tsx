@@ -3,6 +3,7 @@ import { Network, CheckCircle2, ArrowRight, ShieldAlert, Layers } from 'lucide-r
 import { MockCase } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
 import { truncateAddress } from '../../utils/formatters';
+import { useLanguage } from '../../context/useLanguage';
 
 interface ClusterStageProps {
   currentCase: MockCase;
@@ -13,6 +14,7 @@ export const ClusterStage: React.FC<ClusterStageProps> = ({
   currentCase,
   onAdvanceToNext
 }) => {
+  const { t } = useLanguage();
   const [selectedEntity, setSelectedEntity] = useState<number>(0);
   const cluster = currentCase.clusterData;
   const entities = cluster.clusterEntities;
@@ -23,11 +25,11 @@ export const ClusterStage: React.FC<ClusterStageProps> = ({
       <div className="p-5 rounded-xl bg-[#0D1721] border border-[#243443] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-white tracking-tight">Stage 2: Heuristic Address Clustering</h2>
+            <h2 className="text-base font-bold text-white tracking-tight">{t('cluster.title')}</h2>
             <RiskBadge level={currentCase.severity} score={cluster.risk} size="sm" />
           </div>
           <p className="text-xs text-[#8EA1B2] mt-1">
-            {cluster.description} Aggregating multi-sig, common-input, and behavioral telemetry.
+            {cluster.description} {t('cluster.subtitle')}
           </p>
         </div>
 
@@ -40,7 +42,7 @@ export const ClusterStage: React.FC<ClusterStageProps> = ({
             onClick={onAdvanceToNext}
             className="bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 font-bold px-4 py-2 rounded-lg text-xs font-mono-code flex items-center gap-2 transition-all cursor-pointer"
           >
-            <span>Continue Trace</span>
+            <span>{t('cluster.advanceStage')}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

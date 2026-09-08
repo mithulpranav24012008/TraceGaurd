@@ -4,6 +4,7 @@ import { MockCase } from '../../types';
 import { MOCK_CASES } from '../../data/mockCases';
 import { RiskBadge } from '../common/RiskBadge';
 import { CyberCellHandoffModal } from '../common/CyberCellHandoffModal';
+import { useLanguage } from '../../context/useLanguage';
 import { truncateAddress } from '../../utils/formatters';
 
 interface CaseFilesPageProps {
@@ -19,6 +20,7 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
   onNavigateToInvestigation,
   onUpdateCase
 }) => {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [riskFilter, setRiskFilter] = useState<string>('All');
@@ -63,10 +65,10 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
         <div>
           <h1 className="text-xl font-mono font-bold text-black uppercase tracking-tight flex items-center gap-2">
             <FolderSearch className="w-5 h-5 text-black" />
-            <span>Forensic Case Repository & Cyber Cell Triage Handoff</span>
+            <span>{t('cases.title')}</span>
           </h1>
           <p className="text-xs text-black/80 font-mono mt-0.5">
-            Active and archived blockchain fraud investigations. First-response triage layer feeding into specialist forensic units.
+            {t('cases.subtitle')}
           </p>
         </div>
 
@@ -90,7 +92,7 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by case ID, suspect address, exchange, or title..."
+              placeholder={t('cases.filterSearch')}
               className="w-full neo-input pl-9"
             />
           </div>
@@ -98,13 +100,13 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
           {/* Dropdown Filters */}
           <div className="flex items-center gap-3 font-mono text-xs text-black">
             <div className="flex items-center gap-1.5">
-              <span className="text-black/70 text-[11px] font-bold">STATUS:</span>
+              <span className="text-black/70 text-[11px] font-bold">{t('triage.status')}</span>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="neo-input py-1 cursor-pointer"
               >
-                <option value="All">All Statuses</option>
+                <option value="All">{t('common.all')}</option>
                 <option value="Investigating">Investigating</option>
                 <option value="Attributed">Attributed</option>
                 <option value="Alerted">Alerted</option>
@@ -112,13 +114,13 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
             </div>
 
             <div className="flex items-center gap-1.5">
-              <span className="text-black/70 text-[11px] font-bold">RISK:</span>
+              <span className="text-black/70 text-[11px] font-bold">{t('triage.risk')}</span>
               <select
                 value={riskFilter}
                 onChange={(e) => setRiskFilter(e.target.value)}
                 className="neo-input py-1 cursor-pointer"
               >
-                <option value="All">All Tiers</option>
+                <option value="All">{t('common.all')}</option>
                 <option value="Critical">Critical</option>
                 <option value="High">High</option>
                 <option value="Medium">Medium</option>
@@ -154,13 +156,13 @@ export const CaseFilesPage: React.FC<CaseFilesPageProps> = ({
           <table className="w-full text-left text-xs font-mono">
             <thead className="bg-[#FBBF24] border-b-2 border-black text-[10px] text-black font-mono font-bold uppercase tracking-wider">
               <tr>
-                <th className="px-4 py-3">Case ID & Scenario</th>
-                <th className="px-4 py-3">Chain & Target Address</th>
-                <th className="px-4 py-3">Threat Tier</th>
-                <th className="px-4 py-3">Attributed CEX</th>
-                <th className="px-4 py-3">Traced Funds</th>
-                <th className="px-4 py-3">Escalation Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th className="px-4 py-3">{t('cases.caseId')} & {t('cases.scenario')}</th>
+                <th className="px-4 py-3">{t('cases.chain')}</th>
+                <th className="px-4 py-3">{t('cases.severity')}</th>
+                <th className="px-4 py-3">{t('cases.riskScore')}</th>
+                <th className="px-4 py-3">{t('cases.amount')}</th>
+                <th className="px-4 py-3">{t('cases.status')}</th>
+                <th className="px-4 py-3 text-right">{t('cases.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y-2 divide-black text-black">

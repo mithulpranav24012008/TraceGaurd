@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Building2, AlertTriangle, ArrowRight, ShieldCheck, Database } from 'lucide-react';
 import { MockCase } from '../../types';
 import { truncateAddress } from '../../utils/formatters';
+import { useLanguage } from '../../context/useLanguage';
 
 interface AttributionStageProps {
   currentCase: MockCase;
@@ -14,6 +15,7 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
   onAdvanceToNext,
   onUpdateCase
 }) => {
+  const { t } = useLanguage();
   const attr = currentCase.attribution;
   const evidenceList = attr.evidence || [];
   const clusterEntities = currentCase.clusterData?.clusterEntities || [];
@@ -65,13 +67,13 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
       <div className="p-5 rounded-xl bg-[#0D1721] border border-[#243443] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-white tracking-tight">{attr.title}</h2>
+            <h2 className="text-base font-bold text-white tracking-tight">{t('stageAttribution.title')}</h2>
             <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-mono-code text-xs font-bold">
               {confidenceScore}% Confidence — {selectedEntity?.alias || attr.exchange}
             </span>
           </div>
           <p className="text-xs text-[#8EA1B2] mt-1">
-            Correlated heuristic cluster match identifying destination custodial service.
+            {t('stageAttribution.subtitle')}
           </p>
         </div>
 
@@ -79,7 +81,7 @@ export const AttributionStage: React.FC<AttributionStageProps> = ({
           onClick={onAdvanceToNext}
           className="bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 font-bold px-4 py-2 rounded-lg text-xs font-mono-code flex items-center gap-2 transition-all cursor-pointer shrink-0"
         >
-          <span>View Investigation Summary</span>
+          <span>{t('stageAttribution.advanceStage')}</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

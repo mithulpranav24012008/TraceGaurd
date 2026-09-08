@@ -3,6 +3,7 @@ import { ArrowRight, ShieldAlert, CheckCircle2, AlertTriangle } from 'lucide-rea
 import { MockCase } from '../../types';
 import { RiskBadge } from '../common/RiskBadge';
 import { RiskExplanationBox } from '../common/RiskExplanationBox';
+import { useLanguage } from '../../context/useLanguage';
 
 interface SummaryStageProps {
   currentCase: MockCase;
@@ -13,6 +14,7 @@ export const SummaryStage: React.FC<SummaryStageProps> = ({
   currentCase,
   onAdvanceToNext
 }) => {
+  const { t } = useLanguage();
   // Compute key dossier metrics dynamically from active case data
   const totalVolumeUSD =
     currentCase.suspiciousAmount > 0
@@ -41,11 +43,11 @@ export const SummaryStage: React.FC<SummaryStageProps> = ({
       <div className="p-5 rounded-xl bg-[#0D1721] border border-[#243443] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-white tracking-tight">Stage 6: Executive Investigation Summary</h2>
+            <h2 className="text-base font-bold text-white tracking-tight">{t('summary.title')}</h2>
             <RiskBadge level={currentCase.severity} score={currentCase.riskScore} size="sm" />
           </div>
           <p className="text-xs text-[#8EA1B2] mt-1">
-            Consolidated forensic dossier synthesizing all graph hops, cluster memberships, and counterparty findings.
+            {t('summary.subtitle')}
           </p>
         </div>
 
@@ -53,7 +55,7 @@ export const SummaryStage: React.FC<SummaryStageProps> = ({
           onClick={onAdvanceToNext}
           className="bg-[#38BDF8] hover:bg-[#0284C7] text-slate-950 font-bold px-4 py-2 rounded-lg text-xs font-mono-code flex items-center gap-2 transition-all cursor-pointer shrink-0"
         >
-          <span>Generate Compliance Referral</span>
+          <span>{t('summary.dossierTitle')}</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

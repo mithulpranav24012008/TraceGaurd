@@ -5,6 +5,7 @@ import { MockCase } from '../../types';
 import { ReportModal } from '../common/ReportModal';
 import { CyberCellHandoffModal } from '../common/CyberCellHandoffModal';
 import { RiskBadge } from '../common/RiskBadge';
+import { useLanguage } from '../../context/useLanguage';
 
 interface ReportsPageProps {
   casesList?: MockCase[];
@@ -15,6 +16,7 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({
   casesList = MOCK_CASES,
   onUpdateCase
 }) => {
+  const { t } = useLanguage();
   const [selectedCase, setSelectedCase] = useState<MockCase | null>(null);
   const [handoffCase, setHandoffCase] = useState<MockCase | null>(null);
 
@@ -25,10 +27,10 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({
         <div>
           <h1 className="text-xl font-mono font-bold text-black uppercase tracking-tight flex items-center gap-2">
             <FileText className="w-5 h-5 text-black" />
-            <span>Forensic Intelligence Dossiers & Triage Handoffs</span>
+            <span>{t('reports.title')}</span>
           </h1>
           <p className="text-xs text-black/80 font-mono mt-0.5">
-            Structured first-response forensic briefings formatted for Cyber Cell escalation and machine-readable JSON exports.
+            {t('reports.subtitle')}
           </p>
         </div>
 
