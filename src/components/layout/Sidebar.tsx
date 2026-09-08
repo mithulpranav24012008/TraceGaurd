@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Inbox,
   Search,
-  SearchCheck,
   FolderSearch,
   Network,
   ShieldAlert,
@@ -35,7 +34,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const { t } = useLanguage();
 
   const navItems = [
-    { id: 'track', label: t('nav.track'), icon: SearchCheck },
     { id: 'triage', label: t('nav.triage'), icon: Inbox },
     { id: 'investigation', label: t('nav.investigation'), icon: Search },
     { id: 'cases', label: t('nav.cases'), icon: FolderSearch },

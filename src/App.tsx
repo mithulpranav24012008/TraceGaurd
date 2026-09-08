@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { DemoDisclaimerBanner } from './components/common/DemoDisclaimerBanner';
@@ -18,7 +19,7 @@ import { MOCK_CASES, INITIAL_COMPLIANCE_REFERRALS } from './data/mockCases';
 import { initRegistry } from './data/nationalRegistryStore';
 import { Menu } from 'lucide-react';
 
-export function App() {
+function OfficerWorkspace() {
   const [activeTab, setActiveTab] = useState<NavigationTab>('investigation');
   const [currentStage, setCurrentStage] = useState<number>(1);
 
@@ -144,13 +145,6 @@ export function App() {
 
         {/* Viewport Content Canvas */}
         <div className="flex-1 overflow-y-auto bg-[#FDFBF7]">
-          {activeTab === 'track' && (
-            <PublicTrackPage
-              casesList={casesList}
-              onNavigateToOfficerSpace={() => setActiveTab('investigation')}
-            />
-          )}
-
           {activeTab === 'triage' && (
             <TriageQueuePage
               onSelectCase={handleSelectCase}
@@ -228,6 +222,15 @@ export function App() {
         </div>
       </div>
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <Routes>
+      <Route path="/track" element={<PublicTrackPage />} />
+      <Route path="/*" element={<OfficerWorkspace />} />
+    </Routes>
   );
 }
 

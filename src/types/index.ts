@@ -212,7 +212,6 @@ export interface TriageComplaint {
 }
 
 export type NavigationTab = 
-  | 'track'
   | 'triage'
   | 'investigation' 
   | 'cases' 

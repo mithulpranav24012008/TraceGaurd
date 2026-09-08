@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Search, ShieldCheck, PhoneCall, ExternalLink, FileText, CheckCircle2, AlertTriangle, ArrowRight, Lock } from 'lucide-react';
+import { Search, ShieldCheck, PhoneCall, ExternalLink, FileText, CheckCircle2, AlertTriangle, Lock } from 'lucide-react';
 import { useLanguage } from '../../context/useLanguage';
 import { MockCase } from '../../types';
+import { MOCK_CASES } from '../../data/mockCases';
 
 interface PublicTrackPageProps {
   casesList?: MockCase[];
-  onNavigateToOfficerSpace?: () => void;
 }
 
 interface CitizenSearchResult {
@@ -19,9 +19,19 @@ interface CitizenSearchResult {
 }
 
 export const PublicTrackPage: React.FC<PublicTrackPageProps> = ({
-  casesList = [],
-  onNavigateToOfficerSpace
+  casesList: propCasesList
 }) => {
+  const [casesList] = useState<MockCase[]>(() => {
+    if (propCasesList && propCasesList.length > 0) return propCasesList;
+    try {
+      const stored = localStorage.getItem('traceguard_cases');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return MOCK_CASES;
+  });
   const { language, setLanguage, t } = useLanguage();
   const [searchInput, setSearchInput] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
@@ -167,16 +177,6 @@ export const PublicTrackPage: React.FC<PublicTrackPageProps> = ({
               हिन्दी
             </button>
           </div>
-
-          {onNavigateToOfficerSpace && (
-            <button
-              onClick={onNavigateToOfficerSpace}
-              className="hidden md:flex items-center gap-1.5 neo-btn-sec px-3 py-1.5 text-xs"
-            >
-              <span>Officer Workspace</span>
-              <ArrowRight className="w-3.5 h-3.5 text-black" />
-            </button>
-          )}
         </div>
       </header>
 
